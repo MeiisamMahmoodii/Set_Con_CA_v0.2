@@ -15,12 +15,18 @@ def train():
     parser.add_argument('--beta', type=float, default=1e-2)
     parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--n_sets', type=int, default=1024, help='Number of synthetic sets (if not using data_path)')
-    parser.add_argument('--data_path', type=str, default=None, help='Path to a saved .pt file')
-    parser.add_argument('--save_path', type=str, default="data/setconca_model.pt", help='Path to save trained weights')
+    parser.add_argument('--n_sets', type=int, default=1024)
+    parser.add_argument('--data_path', type=str, default=None)
+    parser.add_argument('--save_path', type=str, default="data/setconca_model.pt")
+    
+    # NEW: Architectural options for MSE improvement
+    parser.add_argument('--use_topk', action='store_true', help='Use Top-K sparsity instead of Sigmoid')
+    parser.add_argument('--k', type=int, default=32, help='k for Top-K activation')
+    parser.add_argument('--agg_mode', type=str, default='mean', choices=['mean', 'attention'], help='Set aggregation method')
+    
     args = parser.parse_args()
 
-    # Initialize wandb (using mode disabled if not logged in to prevent script hang in automated runs)
+    # Initialize wandb
     wandb.init(project="setconca", config=vars(args), mode="disabled")
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -50,8 +56,21 @@ def train():
     dataloader = make_dataloader(dataset, batch_size=args.batch_size, shuffle=True)
 
     # Model
-    model = SetConCA(hidden_dim=args.hidden_dim, concept_dim=args.concept_dim).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=2e-4)  # Lower LR for stability with large C
+    model = SetConCA(
+        hidden_dim=args.hidden_dim, 
+        concept_dim=args.concept_dim,
+        use_topk=args.use_topk,
+        k=args.k
+    ).to(device)
+    
+    # Update aggregator mode if not default
+    if args.agg_mode != 'mean':
+        model.aggregator.mode = args.agg_mode
+        if args.agg_mode == 'attention':
+            from setconca.model.aggregator import AttentionAggregator
+            model.aggregator.att = AttentionAggregator(args.concept_dim).to(device)
+            
+    optimizer = optim.Adam(model.parameters(), lr=2e-4)
 
     for epoch in range(args.epochs):
         model.train()
