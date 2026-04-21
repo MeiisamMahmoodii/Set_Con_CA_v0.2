@@ -1,12 +1,14 @@
 """
 build_multi_dataset.py — Modular extraction for multi-model scaling.
 Supports Gemma-2-2b, Gemma-2-9b, Llama-3-8B, etc.
+Sealed with Seed 42 for research alignment.
 """
 
 import os
 import torch
 import torch.nn.functional as F
 import argparse
+import random
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModel, BitsAndBytesConfig
 
@@ -31,11 +33,18 @@ def extract_hidden_states(texts, tokenizer, model, device, max_length=64, batch_
     return torch.cat(all_hidden, dim=0)
 
 def build_knn_sets(hidden: torch.Tensor, texts: list[str], set_size: int, n_sets: int):
+    # Seed local to this function for deterministic KNN shuffling
+    random.seed(42)
+    torch.manual_seed(42)
+    
     N, D = hidden.shape
     normed = F.normalize(hidden, dim=-1)
     sim = normed @ normed.T
     n_anchors = min(n_sets, N)
-    anchor_idx = torch.randperm(N)[:n_anchors]
+    
+    # Deterministic selection
+    anchor_idx = torch.linspace(0, N-1, steps=n_anchors).long()
+    
     sets = []
     text_sets = []
     for a in anchor_idx:
@@ -48,14 +57,19 @@ def build_knn_sets(hidden: torch.Tensor, texts: list[str], set_size: int, n_sets
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_id", type=str, required=True, help="HuggingFace model ID")
-    parser.add_argument("--output_path", type=str, required=True, help="Path to save the dataset")
-    parser.add_argument("--load_in_4bit", action="store_true", help="Load model in 4-bit for VRAM saving")
+    parser.add_argument("--model_id", type=str, required=True)
+    parser.add_argument("--output_path", type=str, required=True)
+    parser.add_argument("--load_in_4bit", action="store_true")
     parser.add_argument("--set_size", type=int, default=32)
     parser.add_argument("--texts_per_class", type=int, default=1024)
     parser.add_argument("--sets_per_class", type=int, default=512)
-    parser.add_argument("--hf_token", type=str, help="HuggingFace Token")
+    parser.add_argument("--hf_token", type=str)
     args = parser.parse_args()
+
+    # Universal research seeds
+    random.seed(42)
+    torch.manual_seed(42)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
     os.makedirs(os.path.dirname(args.output_path), exist_ok=True) if os.path.dirname(args.output_path) else None
 
@@ -77,14 +91,14 @@ def main():
     else:
         model = AutoModel.from_pretrained(args.model_id, token=args.hf_token, torch_dtype=dtype, device_map="auto")
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.eval()
 
     print("Loading AG News dataset...")
-    dataset = load_dataset("ag_news", split="train")
-
+    # Use small subset but deterministic
+    full_dataset = load_dataset("ag_news", split="train")
+    
     grouped_texts = {}
-    for item in dataset:
+    for item in full_dataset:
         lbl = item["label"]
         if lbl not in grouped_texts: grouped_texts[lbl] = []
         if len(grouped_texts[lbl]) < args.texts_per_class:
@@ -102,11 +116,10 @@ def main():
         all_class_texts.extend(class_text_sets)
 
     final_dataset = torch.cat(all_class_sets, dim=0)
-    perm = torch.randperm(len(final_dataset))
-    final_dataset = final_dataset[perm]
-    final_texts = [all_class_texts[i.item()] for i in perm]
-
-    save_dict = {"hidden": final_dataset, "texts": final_texts }
+    # NO SHUFFLE HERE, or use fixed seed per model
+    # final_texts remains aligned with final_dataset
+    
+    save_dict = {"hidden": final_dataset, "texts": all_class_texts }
     torch.save(save_dict, args.output_path)
     print(f"Dataset saved to {args.output_path}. Shape: {final_dataset.shape}")
 
