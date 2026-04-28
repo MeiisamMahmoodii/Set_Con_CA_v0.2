@@ -1,0 +1,1923 @@
+Concept Component Analysis:
+A Principled Approach for Concept Extraction in LLMs
+Yuhang Liu1Erdun Gao1Dong Gong2Anton van den Hengel1Javen Qinfeng Shi1
+Project page:https://sites.google.com/view/yuhangliu/projects/cca
+Abstract
+Developing human understandable interpretation
+of large language models (LLMs) becomes in-
+creasingly critical for their deployment in essen-
+tial domains. Mechanistic interpretability seeks
+to mitigate the issues through extracts human-
+interpretable process and concepts from LLMs’
+activations. Sparse autoencoders (SAEs) have
+emerged as a popular approach for extracting in-
+terpretable and monosemantic concepts by decom-
+posing the LLM internal representations into a dic-
+tionary. Despite their empirical progress, SAEs
+suffer from a fundamental theoretical ambiguity:
+the well-defined correspondence between LLM
+representations and human-interpretable concepts
+remains unclear. This lack of theoretical ground-
+ing gives rise to several methodological chal-
+lenges, including difficulties in principled method
+design and evaluation criteria. In this work, we
+show that, under mild assumptions, LLM repre-
+sentations can be approximated as a linear mix-
+ture of the log-posteriors over concepts given the
+input context, through the lens of a latent vari-
+able model where concepts are treated as latent
+variables. This motivates a principled framework
+for concept extraction, namely Concept Compo-
+nent Analysis (ConCA), which aims to recover the
+log-posterior of each concept from LLM represen-
+tations through a unsupervised linear unmixing
+process. We explore a specific variant, termed
+sparse ConCA, which leverages a sparsity prior to
+address the inherent ill-posedness of the unmix-
+ing problem. We implement 12 sparse ConCA
+variants and demonstrate their ability to extract
+meaningful concepts across multiple LLMs, offer-
+ing theory-backed advantages over SAEs.
+1Australian Institute for Machine Learning, The University
+of Adelaide2School of Computer Science and Engineering, The
+University of New South Wales. Correspondence to: Yuhang Liu
+<yuhang.liu01@adelaide.edu.au>.
+Preprint. January 30, 2026.1. Introduction
+One of the critical questions surrounding the practical appli-
+cation of LLMs is the extent to which and how the concepts
+they espouse are ground in reality. The more general ques-
+tion is whether a model trained only on natural language
+can develop representations of concepts grounded in the
+real world (Bowman, 2024; Naveed et al., 2023). Under-
+standing this relationship is crucial, as it informs not only
+how we interpret model mechanism, but also how we can
+systematically analyze, evaluate, and manipulate these repre-
+sentations. A promising approach to investigating such ques-
+tions is to extract meaningful semantic units, i.e., human-
+interpretable concepts, embedded within the models’ inter-
+nal representations and behaviors (Singh et al., 2024). By
+studying these units, we can begin to probe which aspects
+of a model’s behavior are aligned with human-interpretable
+concepts, and how multiple concepts interact.
+1.1. Revisiting SAEs for Concept Extraction
+Sparse autoencoders (SAEs).Recently, SAEs have been
+explored for this purpose (Elhage et al., 2022; Bricken et al.,
+2023; Huben et al., 2023), offering a potential perspective
+through which to analyze model behavior, including how
+such concepts interact and compose to generate the next
+token. Technically, SAEs learn a set of features whoselinear
+combinations can reconstruct the internal representations of
+LLMs, while enforcing asparsityprior on the features, in
+the hope that each feature corresponds to a monosemantic
+concept (Huben et al., 2023; Gao et al., 2025; Braun et al.,
+2024; Rajamanoharan et al., 2024a;b; Mudide et al., 2024;
+Chanin et al., 2024; Lieberum et al., 2024; He et al., 2024;
+Karvonen et al., 2024; Bussmann et al., 2024).
+Hypotheses Behind SAEs.Linearity and sparsity, the two
+key components of SAEs, are jointly expected to promote
+the emergence of monosemantic and interpretable concepts.
+The justification for these two components primarily re-
+lies on two key hypotheses, (i) the linear representation
+hypothesis and (ii) the superposition hypothesis. The for-
+mer suggests that concepts are often encoded linearly in
+LLMs (Tigges et al., 2023; Nanda et al., 2023; Moschella
+1arXiv:2601.20420v2  [cs.LG]  29 Jan 2026
+Concept Component Analysis
+et al., 2022; Park et al., 2023; Li et al., 2024; Gurnee et al.,
+2023; Rajendran et al., 2024; Jiang et al., 2024), enabling
+them to be recovered via linear decoding. The latter argues
+that LLMs tend to represent more features than they have
+neurons for, leading to overlapping (i.e., superimposed) rep-
+resentations within the same neurons (Elhage et al., 2022).
+To make such representations reliable and interpretable, fea-
+tures should activate sparsely, reducing interference between
+them (Elhage et al., 2022; Huben et al., 2023).
+1.2. Motivation and Contributions
+While these two hypotheses support SAEs, the deeper theo-
+retical question remains unresolved.
+/thumbtackProblem.What is the theoretical relationship between
+LLM representations and human-interpretable concepts?
+A Deeper Look into SAEs.Without a clear answer, both
+principled method design and evaluation become major con-
+cerns. In terms of method design, for example, while the
+decoder in SAEs reconstructs representations throughlin-
+earcombinations of learned features, the encoder typically
+includes anonlinearactivation function, typically Relu ,
+following a linear layer. This asymmetry raises a concern
+about the rationale for introducing the nonlinear activation
+functions. Moreover, it remains unclear whether sparsity
+should be imposed directly on the feature space learned by
+SAEs, or instead on a transformed space derived from it,
+given the unclear relationship between these features and
+the underlying concepts. This unclear relationship, on the
+evaluation side, also makes principled assessment difficult,
+i.e., it remains unclear what criteria should be used to deter-
+mine whether a feature meaningfully captures a concept, as
+also recognized in recent works (Makelov et al., 2024; Gao
+et al., 2025; Kantamneni et al., 2025).
+Contributions.We propose a principled approach for ex-
+tracting concepts from LLM representations, grounded in
+a well-defined theoretical relationship between the repre-
+sentations and human-interpretable concepts (see Figure 1).
+We begin by analyzing this relationship through the lens
+of a latent variable model, in which text data are generated
+by an unknown process over latent, human-interpretable
+concepts. We show that, under mild conditions, LLM rep-
+resentations learned by next-token prediction frameworks
+can be approximately expressed as a linear mixture of the
+logarithm of the posteriors of individual latent concepts,
+conditioned on the input context. Based on this insight,
+we introduce a principled approach, that we label Concept
+Component Analysis (ConCA), which aims to invert the
+linear mixture to recover the log-posterior of each concept
+in an unsupervised manner. We propose a specific variant
+of ConCA, referred as Sparse ConCA, which incorporates
+a sparsity prior to regularize the solution space, motivatedby the widespread adoption of the superposition hypothesis.
+We emphasize that alternative regularization strategies re-
+main flexible and open for future exploration. We evaluate
+the proposed Sparse ConCA using linear probing with coun-
+terfactual text pairs, a theoretically motivated supervised
+method for concept extraction, and benchmark its perfor-
+mance against SAE variants across multiple model scales
+and architectures (Pythia (Biderman et al., 2023), Gemma3
+(Team et al., 2025), Qwen3 (Team, 2025)). We further test
+it on a downstream task spanning 113 datasets, empirically
+confirming the advantages of ConCA.
+2. What Do Representations in LLMs Learn?
+In this section we establish a theoretical connection between
+LLM representations learned through next-token prediction
+framework and human-interpretable concepts. To this end,
+we first construct a latent variable model (LVM) in which ob-
+served text data are generated by an unknown process over
+latent variables representing human-interpretable concepts.
+We then show that, when LLMs are trained on the observed
+data using a next-token prediction framework, their learned
+representations can be approximated as a linear mixture of
+the log-posteriors of individual latent variables, conditioned
+on the input context. This perspective not only deepens our
+understanding of how human-interpretable concepts are or-
+ganized within LLM representations, but more importantly,
+it provides a principled foundation for extracting concepts
+from the representations. We define concept as follows:
+Definition 2.1.Aconceptis defined as a discrete latent
+variable zi∈ Vi,|Vi|=k i,where each value in Vicorre-
+sponds to a distinct, human-interpretable semantic attribute
+(e.g., tense, plurality, sentiment, syntactic role, or topic).
+The full latent configuration is given by z= (z 1, . . . , z ℓ),
+whose components specify the underlying semantic factors
+that give rise to the observed input context xand the next
+tokenythrough the latent generative process.
+2.1.Preliminary: A Discrete Latent Variable Generative
+Model For Text
+We begin by a LVM in which human-interpretable concepts
+are modeled as latent variables governing the generation of
+text data (Liu et al., 2025a). Formally, both the observed
+context xand the next token yare assumed to be gener-
+ated from a set of latent variables z. Here xandyserve
+as input to the next-token prediction objective used to train
+LLMs. A human-interpretable concept is formally defined
+as a latent variable zithat captures a human-interpretable
+factor underlying the generation of text data, such as a
+topic, sentiment, syntactic role, or tense. Notably, arbi-
+trary interdependencies or structural relationships among
+the latent variables are allowed. We assume the observed
+variables x∈ Vnandy∈ V , and the latent variables
+2
+Concept Component Analysis
+ Latent Concept Space  MaleFemaleGender:Royalty:YesNo
+Unknown Generative ProcessObserved Text Space`King’`Queen’`Man’`Women’
+Next Token Prediction              LLM  Representation Space(Linear Mixtures of Concept Log-Posteriors)
+Concept Component AnalysisLog-Posterior Concept Space……Alogp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),+bAlogp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),+blogp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),logp(/uni007C),……Generative ModelInference ModelConcept Component Analysis
+Figure 1.We introduce a latent variable generative model in which observed the input context xand next token y, arises from an unknown
+underlying process over latent concepts z(Sec. 2.1). Under this model, we show that LLM representations fx(x), learned by next-token
+prediction, can be approximated as a linear mixture of the column vector obtained by stacking log-posteriors of individual latent concepts
+logp(z i|x), conditioned on the input, i.e.,f x(x)≈A
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
++b, whereAis a mixing matrix andb
+is a constant (Sec. 2.2). Motivated by this, we propose Concept Component Analysis (ConCA), a method for linearly unmixing LLM
+representationsf x(x)to recover the log-posteriors over individual latent conceptslogp(z i|x)(Sec. 3).
+z= (z 1, . . . , z ℓ)∈ V 1× ··· × V ℓto be discrete1, with
+zi∈ Vi,|Vi|=k i, i= 1, . . . , ℓ . Under this formulation,
+the joint distribution over the observed context xand next
+tokenyis given by:
+p(x, y) =X
+zp(x|z)p(y|z)p(z),(1)
+where p(z) is a prior over the latent concepts, and p(x|z)
+andp(y|z) model the conditional generation of context and
+next token, respectively.
+2.2. Representations in LLMs Linearly Encode
+Log-Posteriors over Concepts
+Intuitively, since the latent concepts zcharacterize the un-
+derlying generative factors of the text data, as defined in
+Eq. 1, the representations learned from such data should en-
+code information about these concepts. To examine in detail
+how these representations capture latent concepts, we now
+turn to the next-token prediction framework, which serves
+as the standard training framework for LLMs. Specifically,
+the next-token prediction framework models the conditional
+distribution of the next tokenygiven the input contextx2:
+p(y|x) =exp (f(x)Tg(y))P
+yiexp (f(x)Tg(yi)).(2)
+Here, yidenotes a specific value of the output token y,
+f(x)∈Rmmaps the input xinto a m-dimensional (depend-
+ing on the specific model used) representation space, and
+1A detailed justification for the discrete assumption can be
+found in Liu et al. (2025a).
+2More rigorously, this assumes a parametric form of the con-
+ditional distribution p(y|x) as a softmax over inner products in
+an optimally discriminative representation space. Such optimality
+assumption is canonical for establishing clear and meaningful iden-
+tifiability results (Hyvarinen & Morioka, 2016; Hyvarinen et al.,
+2019; Khemakhem et al., 2020).g(y)∈Rmretrieves the classifier weight vector correspond-
+ing to tokeny, i.e., the look-up table used for prediction.
+Given the generative model from Eq. 1 and the inference
+model from Eq. 2, our goal is to formally characterize how
+the learned representations f(x) relate to the latent concepts
+z. In particular, we seek to establish a precise mathematical
+relationship, thereby serving as the theoretical foundation
+for concept component analysis developed in Sec. 3. We
+now present the following key result:
+Theorem 2.2.Suppose latent variables zand the observed
+variables xandyfollow the generative models defined in
+Eq. 1. Assume the following holds:
+(i)(Diversity Condition)There exist m+ 1 values of y, such
+that the matrix L= 
+g(y=y 1)−g(y=y 0), ...,g(y=
+ym)−g(y=y 0)
+of sizem×mis invertible,
+(ii)(Informational Sufficiency Condition)The conditional
+entropy of the latent concepts given the context is close to
+zero, i.e.,H(z|x)→0,
+(iii) (Regularity Condition)For any two values yiandy0, the
+total variation (TV) distance between the corresponding
+latent concept posteriors satisfies TV 
+p(z|y i), p(z|
+y0)
+=1
+2P
+zp(z|y i)−p(z|y 0)=o(|log(1−
+e−H(z|x))|−1),asH(z|x)→0,
+then the representations f(x) in LLMs, which are learned
+through the next-token prediction framework, are related to
+the true latent variablesz, by the following relationship:
+f(x)≈A
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
++b,(3)
+where Ais am×(Pℓ
+i=1ki)matrix, and bis a bias vector3.
+3Here, [logp(z i|x)] zidenotes the column vector of
+log-probabilities of all possible values of zi.
+[logp(z 1|
+x)]z1;. . .; [logp(z ℓ|x)] zℓrepresents the column vector ob-
+tained by stacking these vectors.
+3
+Concept Component Analysis
+Justification for the Conditions. Condition (i) is closely
+related to the data diversity assumption in earlier work for
+identifiability analysis in the context of nonlinear indepen-
+dent component analysis (Hyvarinen & Morioka, 2016; Hy-
+varinen et al., 2019; Khemakhem et al., 2020), and has
+recently been employed to identifiability analyses of la-
+tent variables in the context of LLMs (Roeder et al., 2021;
+Marconato et al., 2025; Liu et al., 2025a). Intuitively, Condi-
+tion (i) implies that there is a sufficiently large number of dis-
+tinct values of ythat the mdifference vectors g(yi)−g(y 0)
+(fori= 1, . . . , m ) span the image of g. This is a mild as-
+sumption, as pointed out by Roeder et al. who emphasized
+that the set of m+ 1 values {yi}m
+i=0required to generate
+difference vectors g(yi)−g(y 0)that are linearly depen-
+dent has measure zero, given that both the initialization and
+subsequent updates of the parameters of gare stochastic.
+Turning to Condition (ii), it can be seen as amild relaxation
+of a standard invertibility assumption commonly adopted for
+identifiability analysis within causal representation learning
+community, i.e., the mapping from ztoxin the generative
+model (Eq. 1) is assumed to be deterministic and invertible.
+This implies H(z|x) = 0 , to ensure exact recovery of the
+latent variables. By contrast, our assumption only requires
+thatH(z|x)→0 , allowing for approximate invertibility
+fromztoxin practice. This relaxation also implies that
+only an approximate recovery is achievable, as shown in
+Eq. 3. Finally, in the context of the latent variable model in
+Eq. 1, Condition (iii) requires that the posterior distributions
+p(z|y) vary smoothly across different tokens. This is intu-
+itive in practice, as individual tokens are typically associated
+with only a small subset of latent concepts, while each latent
+concept may correspond to many different tokens, leading
+to limited variation inp(z|y)(Liu et al., 2025a).
+♂lightbulbInspiration:Eq. 3 in Theorem 2.2 implies that LLM
+representations, learned through the next-token predic-
+tion framework, are essentially a linear mixture of the
+log-posteriors of individual latent concepts given the
+input context, that is, the logp(z i|x). This provides a
+theoretical foundation for exploring individual concepts
+by linearly unmixing the representations, which moti-
+vates the development of ourConCAin Sec. 3.
+3. ConCA: A Principled Approach for
+Concept Extraction in LLMs
+Grounded in Theorem 2.2, we now introduceConCA, a
+principled approach that recovers thelog posteriorsof in-
+dividual latent concepts conditional on the input context,
+i.e.,logp(z i|x), by inverting the linear mixture in Eq. 3, in
+a unsupervised way. This enables us to decompose LLM
+representations f(x) into interpretable concept-level com-
+ponents.3.1. Challenges in Designing ConCA
+Recovering logp(z i|x)fromf(x) presents two main chal-
+lenges:
+/exclamati⌢n-triangleKey Challenges: 1Ill-posed inverse problem:
+The inversion of Eq. 3 is inherently ill-posed because
+there exist many possible solutions that produce the
+same LLM representations. Without additional con-
+straints or regularization, the solution space is large and
+ambiguous, leading to non-unique decompositions. 2
+Underdetermined problem and overfitting:The is-
+sue above is particularly critical when the dimension of
+the latent concept space exceeds that of the observed
+representations (i.e., ℓ > m ), corresponding to the well-
+known underdetermined case. This occurs because, from
+the model’s perspective, the number of degrees of free-
+dom to be estimated increases, which not only signif-
+icantly expands the set of possible solutions but also
+amplifies the risk of overfitting.
+To address challenge 1, we impose a sparsity prior, requir-
+ing that for each context x, only a small subset of latent
+concepts zis activated. We refer to this variant assparse
+ConCA. This inductive bias is motivated by two consid-
+erations: (i) it aligns with the superposition hypothesis, a
+widely discussed phenomenon in the study of SAEs, and
+(ii) sparsity ensures the identifiability of latent factors under
+certain assumptions, i.e., the individual log-probabilities of
+latent concepts can be uniquely recovered, as established in
+the theory of sparse dictionary learning (Elad & Bruckstein,
+2002; Gribonval & Schnass, 2010; Spielman et al., 2012;
+Arora et al., 2014). Importantly, we highlight the following:
+⋆Highlight:Unlike SAEs, which recover concepts
+loosely, like a blurry sketch, sparse ConCA recov-
+ers a clearly defined concepts, i.e., the log-posteriors
+logp(z i|x).
+This key distinction fundamentally changes how sparsity
+should be interpreted and enforced. In SAEs and sparse cod-
+ing, sparsity is directly imposed on the latent feature space,
+where values near zero correspond to inactive features. In
+ConCA, however, the situation is inverted. Specifically,
+the latent feature space in ConCA corresponds to the log-
+posteriors, i.e., logp(z i|x). A value of logp(z i|x) = 0
+corresponds to p(zi|x) = 1 , meaning the concept ziisfully
+activerather than inactive. Consequently, sparsity in ConCA
+should be enforced in the exponential form of the latent fea-
+ture space, i.e., the posteriors p(zi|x), ensuring that only a
+small subset of concepts is truly active.
+Despite its advantages, sparsity alone does not fully resolve
+the challenge of overfitting, particularly in underdetermined
+4
+Concept Component Analysis
+Aspect SAEs ConCA
+Theoretical grounding(i) Linear representation hypothesis
+(ii) Superposition hypothesisTheorem 2.2
+ObjectiveRecover monosemantic features Recoverlogp(z i|x)
+ArchitectureEncoder: linear + nonlinear activation
+Decoder: linearEncoder: linear + module for overfitting
+Decoder: linear
+Role of sparsityOn feature space On exp-transformed feature space
+Evaluation criterionHeuristic, lacks principled metric Theoretically motivated (Sec. 4)
+Table 1.Comparison between SAEs and the proposed ConCA. ConCA provides a principled, theoretically grounded framework for
+disentangling LLM representations, while SAEs are largely motivated by empirical hypotheses.
+settings where the dimensionality of zis much higher than
+that of f, as mentioned in challenge 2. While the sparsity
+prior helps restrict the solution space, it does not guarantee
+generalizable or semantically meaningful decompositions
+in practical scenarios. Although theoretical results provide
+identifiability guarantees under ideal conditions, real-world
+challenges, such as limited data and optimization difficulties,
+often violate these conditions, leading to potential overfit-
+ting and less reliable concept recovery. In such settings,
+multiple sparse solutions may fit the observed representa-
+tion equally well, and some may capture meaningless noise
+or non-semantic patterns rather than true underlying con-
+cepts. Therefore, techniques to mitigate overfitting may be
+both useful and even necessary in real applications.
+3.2. Sparse ConCA: Architecture and Training
+Objective
+According to the analysis above, we propose sparse ConCA
+as follows:
+ˆz=R(W ef(x) +b e), ˆf(x) =W dˆz+b d.(4)
+This is a typical autoencoder architecture, where R(·) de-
+notes a general regularization module applied to mitigate
+overfitting, including but not limited to Dropout, and Lay-
+erNorm, as the analysis above to address the challenge 2.
+WeandWdare learnable weight matrices of the encoder
+and decoder, respectively, and be,bdare the correspond-
+ing biases. The vector ˆzcorresponds to an estimate of
+[logp(z i|x)] zi. Let the set of all learnable parameters
+beΘ ={W e,be,Wd,bd}. We train the proposed sparse
+ConCA by minimizing the following objective with respect
+toΘ:
+min
+ΘExh
+||ˆf(x)−f(x)||2
+2+αS(g( ˆz))i
+,(5)
+where we apply g(·) to the representations ˆz(correspond-
+ing to log-posterior in theory), to map them back into the
+probability domain, where sparse activation patterns can be
+meaningfully enforced, as motivated by the analysis above
+to address challenge 1. Ideally, the exact exp(·) function
+would be optimal, but it is prone to numerical instability and
+exploding gradients when ˆztakes large values. Therefore,we employ a smooth surrogate in practice, see Sec. 4 for
+further implementation details. This regularization function
+S(·) is then applied so as to encourage sparsity on g(ˆz).
+This can be implemented using standard sparsity constraints
+such as L1regularization or structured sparsity variants4.
+The hyperparameter αcontrols the trade-off between re-
+construction fidelity and sparsity, allowing the model to be
+tuned to the expected degree of sparsity.
+The key distinctions between our proposed ConCA frame-
+work and SAEs are summarized in Table 1. In particular,
+ConCA challenges two empirically common design choices
+in SAE-style methods:
+⋆Nonlinear activation functions (e.g., ReLU) in SAE-
+style encoders may be unnecessary.
+⋆Sparsity should be imposed on the exponentially
+transformed representation space, rather than raw one.
+4. Experiments
+We train the proposed sparse ConCA on a subset of the
+Pile (the first 200 million tokens) (Gao et al., 2020). The
+regularization function R(·) is implemented using 4 normal-
+ization strategies, including LayerNorm (Ba et al., 2016),
+Dropout (Srivastava et al., 2014), BatchNorm (Ioffe &
+Szegedy, 2015), and GroupNorm (Wu & He, 2018). For
+the function g(·), not exponential function directly, we ex-
+plore the exponential with 3 different activation functions,
+SELU (Klambauer et al., 2017), SoftPlus (Dugas et al.,
+2000), and ELU (Clevert et al., 2015). Although they are not
+exact exponentials, these functions preserve exponential-
+like behavior for small (i.e., negative) values, ensure nu-
+merical and gradient stability, and provide smooth surro-
+gates suitable for applying sparsity regularization. In to-
+tal, we implement 12 sparse ConCA variants across these
+configurations. Sparsity, i.e., S(·), is primarily enforced
+viaL1normalization in this work, other choices remain
+4We emphasize that sparsity is a design choice, other forms
+of regularization are potentially applicable. For instance, non-
+negativity (Lee & Seung, 1999; Hoyer, 2004) or bounded-range
+constraints (Cruces, 2010; Erdogan, 2013), given that the learned
+features are expected to correspond to probabilities.
+5
+Concept Component Analysis
+flexible. To evaluate the effect of model scale, we use rep-
+resentations from Pythia models of varying sizes: 70M,
+1.4B, and 2.8B Biderman et al. (2023). To assess model
+generalization, we also test across different architectures,
+including Pythia-1.4B, Gemma3-1b (Team et al., 2025),
+and Qwen3-1.7B (Team, 2025). We compare the proposed
+sparse ConCA with various SAE variants, including top- k
+SAE (Gao et al., 2025), batch-top- kSAE (Bussmann et al.,
+2024),p-annealing SAE (Karvonen et al., 2024).
+Figure 2.Ablation study of 4 different normalization methods and
+3 activation functions. For GroupNorm , the number of groups
+(num_groups ) is set to 4, 8, 16, or 32. Left axis shows Mean
+of Pearson Correlation (MPC), right axis shows MSE. Each sub-
+plot corresponds to one combination of normalization method
+and activation function, with each configuration run three times.
+Across all configurations, ConCA exhibits a remarkably stable
+correlation regime (MPC ≈0.72–0.74, excluding BatchNorm),
+with performance largely insensitive to the sparsity level. Notably,
+the MSE is affected by the number of groups used in GroupNorm,
+i.e., fewer groups lead to lower MSE. Overall, LayerNorm emerges
+as a strong choice, offering consistently good performance in both
+MPC and MSE.
+We evaluate sparse ConCA using two metrics designed to
+assess both faithfulness and interpretability:
+•Reconstruction losscaptures how well the original LLM
+representations are preserved after decomposition. Since
+our goal is to reveal the internal structure of the model
+without altering its behavior, low reconstruction loss is
+essential to ensure that concept extraction introduces min-
+imal distortion. Specifically, we use mean squared error
+(MSE) as our reconstruction loss metric.
+•Pearson correlationquantifies how well the ConCA-
+extracted features align with theoretically consistent su-
+pervised estimates of logp(z i|x)for each latent concept
+zi. Specifically, for each latent concept zi, we construct
+counterfactual pairs that differ only in the value of zi
+while keeping all other variables unchanged, and traina linear classifier to predict this difference, yielding a
+supervised estimate of logp(z i|x). This estimator is the-
+oretically motivated, see Sec. F5. We then compute the
+Pearson Correlation (PC) between this supervised esti-
+mate of logp(z i|x)and the unsupervised ConCA feature.
+Higher correlation indicates more accurate recovery.
+To compute PC, we require counterfactual text pairs as men-
+tioned above. However, constructing such counterfactual
+pairs is highly challenging due to the complexity and sub-
+tlety of natural language, as noted in prior works (Park et al.,
+2023; Jiang et al., 2024), and remains non-trivial even for
+human annotators. For our evaluation, we adopt 27 coun-
+terfactual pairs from Park et al. (2023), each differing in a
+single concept, as testing dataset. These pairs were derived
+from the Big Analogy Test dataset (Gladkova et al., 2016).
+Ablation StudyWe first conduct an ablation study over
+normalization strategies, activation functions, and spar-
+sity strength as mentioned above, to understand the de-
+sign choices of sparse ConCA. In total, this yields 21
+configurations (For GroupNorm , the number of groups
+(num_groups ) is set to 4, 8, 16, and 32, respectively).
+Each configuration is trained with varying sparsity coef-
+ficients α∈ {1e−1,5e−2,1e−2, . . . ,5e−5}, and every ex-
+periment is repeated three times with training on Pythia-
+70M. We report results on the two key evaluation metrics
+as mentioned, i.e., reconstruction loss and Pearson corre-
+lation. Both metrics are summarized in Figure 2, where
+the left y-axis shows correlation and the right y-axis shows
+reconstruction loss.
+Findings.Three main observations emerge:
+•Normalization.The primary role of normalization
+methods in our framework is to mitigate overfitting.
+ForGroupNorm , increasing the number of groups
+(num_groups ) tends to result in slightly higher recon-
+struction loss. Conversely, LayerNorm achieves the
+lowest reconstruction loss among the considered meth-
+ods (Dropout ,BatchNorm ). This trend suggests that
+full-feature normalization, as performed by LayerNorm ,
+better preserves the overall structure of LLM representa-
+tions. This may be because, LayerNorm stabilizes per-
+sample activations and preserves global feature correla-
+tions, which helps ConCA recover concept log-posteriors
+more faithfully and generalize better than the others.
+•Activation.The purpose of the activation functions is
+to serve as a surrogate for the exact exp(·) function, en-
+abling more effective enforcement of sparsity. Roughly,
+forGroupNorm , all three activations ( SELU ,ELU, and
+SoftPlus ) perform similarly, with Pearson correlation
+5We note that Liu et al. (2025a) provide a similar approach, but
+our result is derived from Theorem 2.2.
+6
+Concept Component Analysis
+Figure 3.Comparison of SAE variants and the proposed ConCA variant across different scales and architectures. The left two shows the
+results for Pythia family with varying sizes (70m, 1.4b, 2.8b), while the right compares different architectures across multiple models
+(Gemma-3-1b, Pythia-1.4b, Qwen3-1.7b). Pearson correlation (left axis) and MSE (right axis) are reported for each method. ConCA
+variants (BatchNorm, GroupNorm, LayerNorm), overall, achieve higher MPC than SAE baselines (Top-k, Batch-Top-k, Panneal), with
+LayerNorm-ConCA performing best across all settings (approximately 0.70–0.80). SAE methods remain in a lower band (approximately
+0.60–0.70) and show weaker gains with model scale. Reconstruction error (MSE) varies substantially across methods: only Panneal
+(SAE) obtain lower MSE, whereas ConCA maintains strong both MPC and MSE. Overall, the figure highlights that ConCA more reliably
+extracts concepts, robust across model size and architecture. Full numerical mean and std values, see Sec. Q.
+values around 0.725–0.73. In the context of LayerNorm
+andDropout ,SoftPlus appears slightly better than
+the other two, whereas for BatchNorm ,SELU seems
+slightly better.
+•Sparsity.The sparsity coefficient αcontrols a trade-off:
+too large a value may introduce excessive information
+loss, while too small a value fails to induce meaningful
+structure. Overall, across the range [5e−3, . . . ,1e−2], the
+performance in both reconstruction loss and Pearson cor-
+relation remains relatively stable.
+Takeaway.The ablation study demonstrates that careful
+choices of normalization and activation functions signifi-
+cantly improve the performance of sparse ConCA. In the fol-
+lowing experiments, considering both reconstructuion loss
+and Pearson Correlation, we focus on the most promising
+configurations: GroupNorm withnum_groups= 4 and
+Softplus ,LayerNorm withSoftplus ,BatchNorm
+withSoftplus , labeled as Groupnorm, LayerNorm, and
+BatchNorm in the following, respectively. For all of these,
+the sparsity hyperparameter, we set α= 1e−4. These design
+choices are consistent across repeated trials, highlighting
+the stability of the proposed sparse ConCA.
+Comparison on Counterfactual Pairs.We next conductexperiments comparing various SAE variants, including
+including Topk SAE (Gao et al., 2025), Batch -Topk SAE
+(Bussmann et al., 2024), P-anneal SAE (Karvonen et al.,
+2024), and the proposed ConCA configurations mentioned
+inTakeawayabove. We conduct these experiments across
+different scales of the Pythia family to evaluate the scalabil-
+ity and effectiveness of each method. Each method is run
+across multiple random seeds to ensure robustness, and we
+present both the mean and standard deviation of the metrics.
+The left in Figure 3 highlights how the proposed ConCA
+configurations consistently achieve higher Pearson corre-
+lation while maintaining competitive reconstruction loss
+compared to the SAE variants, as model size increases from
+Pythia-70m to Pythia-2.8b. This performance advantage is
+mainly due to the theoretical grounding of ConCA. Specifi-
+cally, ConCA employs a principled framework with sparsity
+on the exponentiated feature space, whereas SAEs rely on
+heuristic assumptions, resulting in more interpretable and
+accurate monosemantic concepts across Pythia scales. No-
+tably, when considering both MSE and Pearson correlation,
+the LayerNorm configuration emerges as the better choice.
+The advantages of ConCA are further highlighted across dif-
+ferent model families, including Gemma-3-1b, Pythia-1.4b,
+and Qwen3-1.7B, as shown in the right of Figure 3. ConCA
+configurations generally outperform SAE variants in both re-
+7
+Concept Component Analysis
+Figure 4.Rank-based fraction of features exhibiting significant changes between counterfactual pairs for SAE and ConCA variants.
+ConCA shows smaller feature variations, indicating more stable feature responses under counterfactual pairs.
+construction and Pearson correlation, demonstrating the ro-
+bustness and broad applicability of ConCA. Figure 4 shows
+the rank-based fraction of features that change significantly
+between counterfactual pairs, indicating that ConCA pro-
+duces smaller feature variations than SAE variants under
+counterfactual conditions. See Sec. H for details on how this
+metric is computed and for additional visualization results.
+Figure 5.Test AUC of SAE variants and the proposed ConCA
+variants under different few-shot settings across 113 datasets (Top),
+and out-of-distribution tasks across 8 datasets (Bottom), respec-
+tively. An example of visualization can be found in Sec. I.
+Downstream TasksIn the final stage, we conduct a series
+of few-shot linear probing experiments to evaluate how well
+the features extracted by SAEs and ConCA capture monose-
+mantic, human-interpretable concepts. This evaluation is
+particularly relevant because disentangled representations
+tend to transfer easily and robustly, making them especially
+suitable for few-shot learning and out-of-distribution shift
+tasks (Fumero et al., 2023).
+To this end, we collect 113 binary classification datasets
+from Kantamneni et al. (2025) and use them to train lin-
+ear classifiers on features extracted by SAEs and ConCA
+variants under limited training samples, specifically 4, 8,
+16, 32, and 128 samples drawn randomly. After training,we evaluate the linear classifiers and report the Area Under
+the Receiver Operating Characteristic Curve (AUC). The
+left panel of Figure 5 shows a trend where ConCA often
+achieves higher AUC than SAE variants in few-shot set-
+tings, particularly for LayerNorm and GroupNorm variants,
+although the differences are not statistically significant un-
+der the current sample size.
+Furthermore, we extend our evaluation to 8out-of-
+distribution(OOD) datasets from Kantamneni et al. (2025),
+which are designed to test robustness under distributional
+shifts. These datasets include fictional character substitution,
+random letter insertion, name order reversal, multilingual
+translation perturbations, as well as OOD splits from GLUE-
+X. As shown in the right in Figure 5, ConCA consistently
+achieves superior performance across nearly all OOD set-
+tings, indicating that the representations it learns generalize
+more robustly under distributional shifts.
+The improvements above are likely attributable to ConCA’s
+principled framework, grounded in Theorem 2.2, which mo-
+tivates theorem-driven method design by enforcing sparsity
+in the exponentiated feature space and leveraging normal-
+ization to avoid overfitting, thereby yielding transferable
+features under both few-shot and OOD scenarios.
+5. Conclusion
+Observing the lack of a clear theoretical understanding be-
+hind SAEs motivated us to formalize the relationship be-
+tween LLM representations and human-interpretable con-
+cepts. We showed that, under mild assumptions, LLM rep-
+resentations can be approximated as linear mixtures of the
+log-posteriors of latent concepts. Building on this insight,
+we introduced ConCA, including a sparse variant, to re-
+cover these concept posteriors in an unsupervised manner.
+Empirical results across multiple models and benchmarks
+demonstrate that ConCA extracts features that outperform
+SAE variants in both faithfulness and utility. Looking for-
+ward, our framework opens the door to principled analysis,
+manipulation, and evaluation of LLM representations, as
+well as exploration of alternative regularization strategies to
+further enhance interpretability.
+8
+Concept Component Analysis
+Impact Statement
+This paper presents work whose goal is to advance the field
+of machine learning. There are many potential societal
+consequences of our work, none of which we feel must be
+specifically highlighted here.
+References
+Aharon, M., Elad, M., and Bruckstein, A. K-svd: An algo-
+rithm for designing overcomplete dictionaries for sparse
+representation.IEEE Transactions on signal processing,
+54(11):4311–4322, 2006.
+Ahuja, K., Mahajan, D., Wang, Y ., and Bengio, Y . Inter-
+ventional causal representation learning. InICML, pp.
+372–407. PMLR, 2023.
+Arora, S., Ge, R., and Moitra, A. New algorithms for
+learning incoherent and overcomplete dictionaries. In
+Conference on Learning Theory, pp. 779–806. PMLR,
+2014.
+Arora, S., Ge, R., Ma, T., and Moitra, A. Simple, efficient,
+and neural algorithms for sparse coding. InConference
+on learning theory, pp. 113–149. PMLR, 2015.
+Ba, J. L., Kiros, J. R., and Hinton, G. E. Layer normalization.
+arXiv preprint arXiv:1607.06450, 2016.
+Biderman, S., Schoelkopf, H., Anthony, Q. G., Bradley,
+H., O’Brien, K., Hallahan, E., Khan, M. A., Purohit, S.,
+Prashanth, U. S., Raff, E., et al. Pythia: A suite for ana-
+lyzing large language models across training and scaling.
+InInternational Conference on Machine Learning, pp.
+2397–2430. PMLR, 2023.
+Bowman, S. R. Eight things to know about large language
+models.Critical AI, 2(2), 2024.
+Braun, D., Taylor, J., Goldowsky-Dill, N., and Sharkey, L.
+Identifying functionally important features with end-to-
+end sparse dictionary learning.Advances in Neural Infor-
+mation Processing Systems, 37:107286–107325, 2024.
+Brehmer, J., De Haan, P., Lippe, P., and Cohen, T. Weakly
+supervised causal representation learning.arXiv preprint
+arXiv:2203.16437, 2022.
+Bricken, T., Templeton, A., Batson, J., Chen, B., Jermyn, A.,
+Conerly, T., Turner, N., Anil, C., Denison, C., Askell, A.,
+Lasenby, R., Wu, Y ., Kravec, S., Schiefer, N., Maxwell,
+T., Joseph, N., Hatfield-Dodds, Z., Tamkin, A., Nguyen,
+K., McLean, B., Burke, J. E., Hume, T., Carter, S.,
+Henighan, T., and Olah, C. Towards monosemanticity:
+Decomposing language models with dictionary learning.
+Transformer Circuits Thread, 2023.Buchholz, S., Rajendran, G., Rosenfeld, E., Aragam, B.,
+Schölkopf, B., and Ravikumar, P. Learning linear causal
+representations from interventions under general nonlin-
+ear mixing.arXiv preprint arXiv:2306.02235, 2023.
+Bussmann, B., Leask, P., and Nanda, N. Batchtopk sparse
+autoencoders.arXiv preprint arXiv:2412.06410, 2024.
+Cai, Y ., Liu, Y ., Gao, E., Jiang, T., Zhang, Z., Hengel, A.
+v. d., and Shi, J. Q. On the value of cross-modal mis-
+alignment in multimodal representation learning.arXiv
+preprint arXiv:2504.10143, 2025.
+Chanin, D., Wilken-Smith, J., Dulka, T., Bhatnagar, H.,
+Golechha, S., and Bloom, J. A is for absorption: Studying
+feature splitting and absorption in sparse autoencoders.
+arXiv preprint arXiv:2409.14507, 2024.
+Clevert, D.-A., Unterthiner, T., and Hochreiter, S. Fast
+and accurate deep network learning by exponential linear
+units (elus).arXiv preprint arXiv:1511.07289, 4(5):11,
+2015.
+Cruces, S. Bounded component analysis of linear mixtures:
+A criterion of minimum convex perimeter.IEEE Trans-
+actions on Signal Processing, 58(4):2141–2154, 2010.
+Dugas, C., Bengio, Y ., Bélisle, F., Nadeau, C., and Garcia,
+R. Incorporating second-order functional knowledge for
+better option pricing.Advances in neural information
+processing systems, 13, 2000.
+Dumitrescu, B. and Irofti, P.Dictionary learning algorithms
+and applications. Springer, 2018.
+Eggert, J. and Korner, E. Sparse coding and nmf. In2004
+IEEE International Joint Conference on Neural Networks
+(IEEE Cat. No. 04CH37541), volume 4, pp. 2529–2533.
+IEEE, 2004.
+Elad, M.Sparse and redundant representations: from theory
+to applications in signal and image processing. Springer
+Science & Business Media, 2010.
+Elad, M. and Bruckstein, A. M. A generalized uncertainty
+principle and sparse representation in pairs of bases.IEEE
+Transactions on Information Theory, 48(9):2558–2567,
+2002.
+Elhage, N., Hume, T., Olsson, C., Schiefer, N., Henighan,
+T., Kravec, S., Hatfield-Dodds, Z., Lasenby, R., Drain,
+D., Chen, C., Grosse, R., McCandlish, S., Kaplan, J.,
+Amodei, D., Wattenberg, M., and Olah, C. Toy models
+of superposition.Transformer Circuits Thread, 2022.
+Erdogan, A. T. A class of bounded component analysis
+algorithms for the separation of both independent and
+dependent sources.IEEE Transactions on Signal Process-
+ing, 61(22):5730–5743, 2013.
+9
+Concept Component Analysis
+Fumero, M., Wenzel, F., Zancato, L., Achille, A., Rodolà,
+E., Soatto, S., Schölkopf, B., and Locatello, F. Leveraging
+sparse and shared feature activations for disentangled rep-
+resentation learning. InAdvances in Neural Information
+Processing Systems, 2023.
+Gao, L., Biderman, S., Black, S., Golding, L., Hoppe, T.,
+Foster, C., Phang, J., He, H., Thite, A., Nabeshima, N.,
+et al. The pile: An 800gb dataset of diverse text for
+language modeling.arXiv preprint arXiv:2101.00027,
+2020.
+Gao, L., la Tour, T. D., Tillman, H., Goh, G., Troll, R.,
+Radford, A., Sutskever, I., Leike, J., and Wu, J. Scaling
+and evaluating sparse autoencoders. InThe Thirteenth
+International Conference on Learning Representations,
+2025.
+Gladkova, A., Drozd, A., and Matsuoka, S. Analogy-based
+detection of morphological and semantic relations with
+word embeddings: what works and what doesn’t. In
+Proceedings of the NAACL Student Research Workshop,
+pp. 8–15, 2016.
+Gribonval, R. and Schnass, K. Dictionary identifica-
+tion—sparse matrix-factorization via ℓ1-minimization.
+IEEE Transactions on Information Theory, 56(7):3523–
+3539, 2010.
+Gu, Y . and Dunson, D. B. Bayesian pyramids: Identifiable
+multilayer discrete latent structure models for discrete
+data.Journal of the Royal Statistical Society Series B:
+Statistical Methodology, 85(2):399–426, 2023.
+Gurnee, W., Nanda, N., Pauly, M., Harvey, K., Troit-
+skii, D., and Bertsimas, D. Finding neurons in a
+haystack: Case studies with sparse probing.arXiv
+preprint arXiv:2305.01610, 2023.
+He, Z., Shu, W., Ge, X., Chen, L., Wang, J., Zhou, Y ., Liu,
+F., Guo, Q., Huang, X., Wu, Z., et al. Llama scope:
+Extracting millions of features from llama-3.1-8b with
+sparse autoencoders.arXiv preprint arXiv:2410.20526,
+2024.
+Hoyer, P. O. Non-negative matrix factorization with sparse-
+ness constraints.Journal of machine learning research, 5
+(Nov):1457–1469, 2004.
+Huben, R., Cunningham, H., Smith, L. R., Ewart, A., and
+Sharkey, L. Sparse autoencoders find highly interpretable
+features in language models. InThe Twelfth International
+Conference on Learning Representations, 2023.
+Hyvarinen, A. and Morioka, H. Unsupervised feature ex-
+traction by time-contrastive learning and nonlinear ica.
+Advances in neural information processing systems, 29,
+2016.Hyvarinen, A., Sasaki, H., and Turner, R. Nonlinear ica us-
+ing auxiliary variables and generalized contrastive learn-
+ing. InThe 22nd international conference on artificial
+intelligence and statistics, pp. 859–868. PMLR, 2019.
+Ioffe, S. and Szegedy, C. Batch normalization: Accelerating
+deep network training by reducing internal covariate shift.
+InInternational conference on machine learning, pp. 448–
+456. pmlr, 2015.
+Jiang, Y ., Rajendran, G., Ravikumar, P., Aragam, B., and
+Veitch, V . On the origins of linear representations in
+large language models.arXiv preprint arXiv:2403.03867,
+2024.
+Kantamneni, S., Engels, J., Rajamanoharan, S., Tegmark,
+M., and Nanda, N. Are sparse autoencoders useful? a case
+study in sparse probing.arXiv preprint arXiv:2502.16681,
+2025.
+Karvonen, A., Wright, B., Rager, C., Angell, R., Brinkmann,
+J., Smith, L., Mayrink Verdun, C., Bau, D., and Marks, S.
+Measuring progress in dictionary learning for language
+model interpretability with board game models.Advances
+in Neural Information Processing Systems, 37:83091–
+83118, 2024.
+Khemakhem, I., Kingma, D., Monti, R., and Hyvarinen,
+A. Variational autoencoders and nonlinear ica: A unify-
+ing framework. InInternational conference on artificial
+intelligence and statistics, pp. 2207–2217. PMLR, 2020.
+Kivva, B., Rajendran, G., Ravikumar, P., and Aragam, B.
+Learning latent causal graphs via mixture oracles.Ad-
+vances in Neural Information Processing Systems, 34:
+18087–18101, 2021.
+Klambauer, G., Unterthiner, T., Mayr, A., and Hochreiter,
+S. Self-normalizing neural networks.Advances in neural
+information processing systems, 30, 2017.
+Koh, P. W., Nguyen, T., Tang, Y . S., Mussmann, S., Pierson,
+E., Kim, B., and Liang, P. Concept bottleneck models. In
+International conference on machine learning, pp. 5338–
+5348. PMLR, 2020.
+Kong, L., Chen, G., Huang, B., Xing, E. P., Chi, Y ., and
+Zhang, K. Learning discrete concepts in latent hierarchi-
+cal models.arXiv preprint arXiv:2406.00519, 2024.
+Lee, D. D. and Seung, H. S. Learning the parts of objects
+by non-negative matrix factorization.nature, 401(6755):
+788–791, 1999.
+Leemann, T., Kirchhof, M., Rong, Y ., Kasneci, E., and
+Kasneci, G. When are post-hoc conceptual explanations
+identifiable? InUncertainty in Artificial Intelligence, pp.
+1207–1218. PMLR, 2023.
+10
+Concept Component Analysis
+Li, K., Patel, O., Viégas, F., Pfister, H., and Wattenberg, M.
+Inference-time intervention: Eliciting truthful answers
+from a language model.Advances in Neural Information
+Processing Systems, 36, 2024.
+Lieberum, T., Rajamanoharan, S., Conmy, A., Smith, L.,
+Sonnerat, N., Varma, V ., Kramár, J., Dragan, A., Shah,
+R., and Nanda, N. Gemma scope: Open sparse autoen-
+coders everywhere all at once on gemma 2.arXiv preprint
+arXiv:2408.05147, 2024.
+Liu, Y ., Zhang, Z., Gong, D., Gong, M., Huang, B., Hen-
+gel, A. v. d., Zhang, K., and Shi, J. Q. Identifying
+weight-variant latent causal models.arXiv preprint
+arXiv:2208.14153, 2022.
+Liu, Y ., Zhang, Z., Gong, D., Gao, E., Huang, B., Gong, M.,
+Hengel, A. v. d., Zhang, K., and Shi, J. Q. Beyond DAGs:
+A latent partial causal model for multimodal learning.
+arXiv preprint arXiv:2402.06223, 2024a.
+Liu, Y ., Zhang, Z., Gong, D., Gong, M., Huang, B., Hengel,
+A. v. d., Zhang, K., and Shi, J. Q. Identifiable latent
+neural causal models.arXiv preprint arXiv:2403.15711,
+2024b.
+Liu, Y ., Zhang, Z., Gong, D., Gong, M., Huang, B., van den
+Hengel, A., Zhang, K., and Shi, J. Q. Identifiable latent
+polynomial causal models through the lens of change.
+InThe Twelfth International Conference on Learning
+Representations, 2024c.
+Liu, Y ., Gong, D., Cai, Y ., Gao, E., Zhang, Z., Huang, B.,
+Gong, M., Hengel, A. v. d., and Shi, J. Q. I predict
+therefore i am: Is next token prediction enough to learn
+human-interpretable concepts from data?arXiv preprint
+arXiv:2503.08980, 2025a.
+Liu, Y ., Zhang, Z., Gong, D., Gong, M., Huang, B., van den
+Hengel, A., Zhang, K., and Shi, J. Q. Latent covariate
+shift: Unlocking partial identifiability for multi-source
+domain adaptation.Transactions on Machine Learning
+Research, 2025b.
+Maaten, L. v. d. and Hinton, G. Visualizing data using
+t-sne.Journal of machine learning research, 9(Nov):
+2579–2605, 2008.
+Makelov, A., Lange, G., and Nanda, N. Towards principled
+evaluations of sparse autoencoders for interpretability and
+control.arXiv preprint arXiv:2405.08366, 2024.
+Marconato, E., Passerini, A., and Teso, S. Interpretability
+is in the mind of the beholder: A causal framework for
+human-interpretable representation learning.Entropy, 25
+(12):1574, 2023.Marconato, E., Lachapelle, S., Weichwald, S., and Gresele,
+L. All or none: Identifiable linear properties of next-
+token predictors in language modeling.arXiv preprint
+arXiv:2410.23501, 2024.
+Marconato, E., Lachapelle, S., Weichwald, S., and Gresele,
+L. All or none: Identifiable linear properties of next-token
+predictors in language modeling. InThe 28th Interna-
+tional Conference on Artificial Intelligence and Statistics,
+2025.
+Massidda, R., Geiger, A., Icard, T., and Bacciu, D. Causal
+abstraction with soft interventions. InConference on
+Causal Learning and Reasoning, pp. 68–87. PMLR,
+2023.
+Moschella, L., Maiorca, V ., Fumero, M., Norelli, A., Lo-
+catello, F., and Rodolà, E. Relative representations enable
+zero-shot latent space communication.arXiv preprint
+arXiv:2209.15430, 2022.
+Mudide, A., Engels, J., Michaud, E. J., Tegmark, M., and
+de Witt, C. S. Efficient dictionary learning with switch
+sparse autoencoders.arXiv preprint arXiv:2410.08201,
+2024.
+Nanda, N., Lee, A., and Wattenberg, M. Emergent linear rep-
+resentations in world models of self-supervised sequence
+models.arXiv preprint arXiv:2309.00941, 2023.
+Naveed, H., Khan, A. U., Qiu, S., Saqib, M., Anwar, S.,
+Usman, M., Akhtar, N., Barnes, N., and Mian, A. A
+comprehensive overview of large language models.arXiv
+preprint arXiv:2307.06435, 2023.
+Oikarinen, T., Das, S., Nguyen, L. M., and Weng, T.-W.
+Label-free concept bottleneck models.arXiv preprint
+arXiv:2304.06129, 2023.
+Park, K., Choe, Y . J., and Veitch, V . The linear represen-
+tation hypothesis and the geometry of large language
+models.arXiv preprint arXiv:2311.03658, 2023.
+Poeta, E., Ciravegna, G., Pastor, E., Cerquitelli, T., and Bar-
+alis, E. Concept-based explainable artificial intelligence:
+A survey.arXiv preprint arXiv:2312.12936, 2023.
+Rajamanoharan, S., Conmy, A., Smith, L., Lieberum, T.,
+Varma, V ., Kramár, J., Shah, R., and Nanda, N. Improving
+dictionary learning with gated sparse autoencoders.arXiv
+preprint arXiv:2404.16014, 2024a.
+Rajamanoharan, S., Lieberum, T., Sonnerat, N., Conmy, A.,
+Varma, V ., Kramár, J., and Nanda, N. Jumping ahead:
+Improving reconstruction fidelity with jumprelu sparse
+autoencoders.arXiv preprint arXiv:2407.14435, 2024b.
+11
+Concept Component Analysis
+Rajendran, G., Buchholz, S., Aragam, B., Schölkopf, B., and
+Ravikumar, P. Learning interpretable concepts: Unifying
+causal representation learning and foundation models.
+arXiv preprint arXiv:2402.09236, 2024.
+Roeder, G., Metz, L., and Kingma, D. On linear identifia-
+bility of learned representations. InInternational Con-
+ference on Machine Learning, pp. 9030–9039. PMLR,
+2021.
+Schölkopf, B., Locatello, F., Bauer, S., Ke, N. R., Kalch-
+brenner, N., Goyal, A., and Bengio, Y . Toward causal
+representation learning.Proceedings of the IEEE, 109(5):
+612–634, 2021.
+Schut, L., Tomasev, N., McGrath, T., Hassabis, D., Pa-
+quet, U., and Kim, B. Bridging the human-ai knowledge
+gap: Concept discovery and transfer in alphazero.arXiv
+preprint arXiv:2310.16410, 2023.
+Schwalbe, G. Concept embedding analysis: A review.arXiv
+preprint arXiv:2203.13909, 2022.
+Seigal, A., Squires, C., and Uhler, C. Linear causal
+disentanglement via interventions.arXiv preprint
+arXiv:2211.16467, 2022.
+Shen, X., Liu, F., Dong, H., Lian, Q., Chen, Z., and Zhang,
+T. Weakly supervised disentangled generative causal
+representation learning.The Journal of Machine Learning
+Research, 23(1):10994–11048, 2022.
+Singh, C., Inala, J. P., Galley, M., Caruana, R., and Gao, J.
+Rethinking interpretability in the era of large language
+models.arXiv preprint arXiv:2402.01761, 2024.
+Spielman, D. A., Wang, H., and Wright, J. Exact recovery
+of sparsely-used dictionaries. InConference on Learn-
+ing Theory, pp. 37–1. JMLR Workshop and Conference
+Proceedings, 2012.
+Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I.,
+and Salakhutdinov, R. Dropout: a simple way to prevent
+neural networks from overfitting.The journal of machine
+learning research, 15(1):1929–1958, 2014.
+Taeb, A., Ruggeri, N., Schnuck, C., and Yang, F. Provable
+concept learning for interpretable predictions using vari-
+ational autoencoders.arXiv preprint arXiv:2204.00492,
+2022.
+Team, G., Kamath, A., Ferret, J., Pathak, S., Vieillard, N.,
+Merhej, R., Perrin, S., Matejovicova, T., Ramé, A., Riv-
+ière, M., et al. Gemma 3 technical report.arXiv preprint
+arXiv:2503.19786, 2025.
+Team, Q. Qwen3 technical report, 2025. URL https:
+//arxiv.org/abs/2505.09388.Tigges, C., Hollinsworth, O. J., Geiger, A., and Nanda,
+N. Linear representations of sentiment in large language
+models.arXiv preprint arXiv:2310.15154, 2023.
+Varici, B., Acarturk, E., Shanmugam, K., Kumar, A., and
+Tajer, A. Score-based causal representation learning with
+interventions.arXiv preprint arXiv:2301.08230, 2023.
+V on Kügelgen, J., Sharma, Y ., Gresele, L., Brendel, W.,
+Schölkopf, B., Besserve, M., and Locatello, F. Self-
+supervised learning with data augmentations provably
+isolates content from style. InNeurIPS, 2021.
+von Kügelgen, J., Besserve, M., Wendong, L., Gresele, L.,
+Keki ´c, A., Bareinboim, E., Blei, D., and Schölkopf, B.
+Nonparametric identifiability of causal representations
+from unknown interventions.Advances in Neural Infor-
+mation Processing Systems, 36, 2023.
+Wu, Y . and He, K. Group normalization. InProceedings of
+the European conference on computer vision (ECCV), pp.
+3–19, 2018.
+Yang, Y ., Panagopoulou, A., Zhou, S., Jin, D., Callison-
+Burch, C., and Yatskar, M. Language in a bottle: Lan-
+guage model guided concept bottlenecks for interpretable
+image classification. InProceedings of the IEEE/CVF
+conference on computer vision and pattern recognition,
+pp. 19187–19197, 2023.
+12
+Concept Component Analysis
+Appendix
+Table of Contents
+A Related Work 14
+B Limitations and Discussion 15
+C Comparison of the result in Liu et al. (2025a) 16
+D Lemmas in the Context ofH(z|x)→017
+E Proof of Theorem 2.2 20
+F Justification for Log-Posterior Estimation via Linear Probing 22
+G Experimental Details 23
+H Visualization of Counterfactual Pair Experiments 25
+I Visualization of Classification Tasks 25
+J Acknowledgment of LLMs 28
+K Practical Diagnostic for the Diversity Condition 28
+L Informational Sufficiency Diagnostics 30
+M Synthetic validation of marginal vs. joint identifiability. 30
+N Verifying Exponential Substitutes on Pythia-70m 32
+O Activation Patching Evaluation 32
+P Experiments on Additional Counterfactual Concept Pairs 33
+Q Detailed Results of Figure 3 34
+R Relation with Linear Representation Hypothesis 34
+13
+Concept Component Analysis
+A. Related Work
+Sparse Autoencoders and Dictionary LearningThe proposed ConCA framework is closely related to Sparse Autoen-
+coders (SAEs) (Rajamanoharan et al., 2024a;b; Gao et al., 2025; Braun et al., 2024; Bricken et al., 2023; Huben et al., 2023;
+Gao et al., 2025; Mudide et al., 2024; Chanin et al., 2024; Lieberum et al., 2024; He et al., 2024; Karvonen et al., 2024;
+Bussmann et al., 2024), as both aim to extract and monosemantic human-interpretable concepts from LLM representations
+in order to provide mechanistic explanations for their success. However, the two approaches differ fundamentally in their
+theoretical foundations. ConCA is grounded in a rigorous theoretical framework, as established in Theorem 2.2, while
+SAEs rely on assumptions such as the linear representation hypothesis and the superposition hypothesis. This foundational
+difference leads to notable divergences in both method design and evaluation protocols, as discussed in the Introduction. In
+addition, our work is also closely connected to the well-established framework of dictionary learning (Dumitrescu & Irofti,
+2018; Eggert & Korner, 2004; Elad, 2010; Elad & Bruckstein, 2002; Aharon et al., 2006; Arora et al., 2015). Specifically,
+this work bridges next-token prediction framework and dictionary learning by showing that LLM representations acquired
+through the next-token prediction framework can be further meaningfully decomposed.
+Causal Representation LearningThis work is also related to causal representation learning (Schölkopf et al., 2021),
+which seeks to identify latent causal variables from observational data (Brehmer et al., 2022; V on Kügelgen et al., 2021;
+Massidda et al., 2023; von Kügelgen et al., 2023; Ahuja et al., 2023; Seigal et al., 2022; Shen et al., 2022; Liu et al., 2022;
+Buchholz et al., 2023; Varici et al., 2023; Liu et al., 2024c; 2025b; 2024b;a; Hyvarinen & Morioka, 2016; Hyvarinen et al.,
+2019; Khemakhem et al., 2020; Cai et al., 2025; Rajendran et al., 2024). Most of those works focus on continuous latent and
+observed variables, we explore the setting of discrete variables. A subset of studies has investigated causal representation
+learning in discrete spaces (Gu & Dunson, 2023; Kong et al., 2024; Kivva et al., 2021), but these typically assume specific
+graphical structures and rely on invertible mappings from latent to observed variables. In contrast, our approach does not
+require such assumptions, offering greater flexibility.
+Identifiability Analysis for LLMsSeveral prior studies (Marconato et al., 2024; Roeder et al., 2021) have explored
+identifiability within the inference space, revealing alignments between representations obtained from distinct inference
+models. However, these findings remain confined to the inference space and do not extend to identifying the true latent
+variables in latent variable models. More recently, Jiang et al. (2024) examined the emergence of linear structures under a
+different generative framework, attributing them to the implicit bias introduced by gradient-based optimization. In contrast,
+our approach offers a theoretical explanation rooted in identifiability theory, directly linking the observed linear patterns
+to the ground-truth latent structure. This shift in perspective provides a deeper and more principled understanding of the
+underlying mechanisms.
+Concept DiscoveryConcept discovery aims to extract human-interpretable concepts from pre-trained models, and has
+emerged as a key area within machine learning (Schut et al., 2023; Yang et al., 2023; Marconato et al., 2023; Oikarinen et al.,
+2023; Koh et al., 2020; Schwalbe, 2022; Poeta et al., 2023; Taeb et al., 2022). While empirical methods have flourished,
+theoretical understanding of when and how such concepts can be reliably identified remains limited. In contrast, the proposed
+ConCA is grounded in rigorous theoretical results. The work of Leemann et al. (2023) investigates concept identifiability
+under the assumption that the non-linear mapping is known a priori. In contrast, our results establish identifiability guarantees
+without requiring such prior knowledge. A recent advance by Rajendran et al. (2024) offers formal identifiability results
+for continuous latent concepts under a likelihood-matching framework, while our work focuses on discrete concepts, and
+approaches the problem from a different angle, i.e., rooted in the next-token prediction paradigm, which underpins modern
+LLMs training. This shift in both focus and framework allows us to derive new identifiability for the discrete setting.
+14
+Concept Component Analysis
+B. Limitations and Discussion
+Theoretical limitations.Our theoretical analysis in Theorem 2.2 relies on several assumptions, including the Diversity
+Condition (i) and the Informational Sufficiency Condition (ii). While we provide justifications and argue that these
+assumptions are likely mild in practice, they represent idealized conditions that may not hold exactly in real-world
+datasets. Nonetheless, we believe they are reasonable: most have been introduced in prior work, and some, such as the
+Informational Sufficiency Condition (ii), are already considered relaxations in previous identifiability analyses within the
+causal representation learning community.
+Methodological limitations.In addition, sparse ConCA applies regularization to recover concept-level posteriors, but
+in practice we do not use the exponential function directly on ˆz≈[logp(z i|x)]zi. Instead, we employ exponential-like
+activation functions, such as SELU ,SoftPlus , andELU, which approximate exponential behavior for small input values
+while ensuring numerical stability and smooth gradients. As a result, the sparsity prior only approximately reflects true
+posterior activation. Additionally, underdetermined settings ( ℓ > m ) and deviations from theoretical assumptions can lead
+to multiple plausible solutions, some capturing noise rather than meaningful concepts.
+Discussion.Despite the theoretical, methodological, and evaluation limitations discussed above, sparse ConCA provides a
+principled framework for understanding and decomposing LLM representations at the concept level. The approach highlights
+the potential of leveraging sparsity and structured priors to recover interpretable latent factors, even under underdetermined
+settings or approximate assumptions. Furthermore, our work emphasizes the importance of carefully designed evaluation
+frameworks, as concept-level recovery in natural language remains inherently challenging. We hope that these insights
+will motivate future research to incorporate additional probabilistic constraints, explore alternative regularization strategies,
+and develop larger and more diverse benchmarks to better evaluate and improve concept extraction methods in LLMs.
+Ultimately, sparse ConCA serves as a starting point for building more interpretable, reliable, and theoretically grounded
+tools for analyzing complex representations in LLM.
+15
+Concept Component Analysis
+C. Comparison of the result in Liu et al. (2025a)
+The theoretical result Theorem 2.2 in this work is totally different with that of Liu et al. (2025a). For comparison, here we
+re-write the result in Liu et al. (2025a) as follows:
+Theorem C.1(Liu et al. (2025a)).Suppose latent variables zand the observed variables xandyfollow the generative
+models defined in Eq. 1, and assume thatztakes values in a finite set of cardinalityk. Assume the following holds:
+(i)(Diversity Condition 1)There existQ
+iki+ 1values of y, so that the matrix L= 
+g(y=y 1)−g(y=y 0), ...,g(y=
+yk)−g(y=y 0)
+of sizeQ
+iki×Q
+ikiis invertible,
+(ii)(Diversity Condition 2)There exist k+ 1 distinct values of y, i.e., y0,...,yk, such that the matrix ˆL= 
+[p(z=z i|y=
+y1)−p(z=z i|y=y 0)]zi, ...,[p(z=z i|y=y k)−p(z=z i|y=y 0)]zi
+of the sizek×kis invertible
+(iii) (Approximate Invertibility Condition)The mapping from zto(x, y) is approximately invertible in the sense that the
+posterior p(z|x, y) is sharply peaked, i.e., there exists a most probable z∗such that p(z=z∗|x, y)≥1−ϵ for
+someϵ∈[0,1)withϵ→0.
+Then the true latent variables zare mathematically related to the representations in LLMs, i.e., f(x), which are learned
+through the next-token prediction framework, by the following relationship:
+f(x)≈A[logp(z=z i|x)]zi+b,(6)
+whereA= ( ˆLT)−1L, andbis a bias vector.
+It is worth emphasizing that the representation characterized in Theorem C.1, while allowing for linear unmixing, fundamen-
+tally operates at the level ofjointlatent configurations, i.e., Eq. 6. Even if the mixing matrix were perfectly inverted, the
+resulting representation would only recover logp(z|x) over the full configuration space. Such a representation does not
+admit a direct concept-level interpretation, since recovering the marginal posterior of an individual latent concept requires
+computing logp(z j|x) = logP
+z−jp(zj,z−j|x), a nonlinear log-sum-exp operation that cannot, in general, be achieved
+through linear unmixing of joint log-posteriors.
+By contrast, our result establishes a strictly finer structure: the LLM representation f(x) is approximately a linear mixture
+over themarginallog-posteriors of individual latent components,
+f(x)≈A
+logp(z 1|x), . . . ,logp(z ℓ|x)
++b.(7)
+This explicit component-wise decomposition is crucial. Unlike joint-level representations, it implies that each latent
+concept posterior p(zj|x)can be individually recovered through linear unmixing, enabling concept-level identifiability and
+interpretability. More importantly, this structural characterization provides a direct methodological implication: to extract
+interpretable concepts from LLMs, representation learning must operate in a space aligned with the marginal log-posterior
+structure. The ConCA framework is designed precisely to satisfy this requirement. By explicitly modeling and unmixing
+representations at the level of individual latent components, ConCA is not a heuristic design choice, but a principled
+algorithmic realization of the structure implied by our theory.
+16
+Concept Component Analysis
+D. Lemmas in the Context ofH(z|x)→0
+For ease of exposition in the following sections, we first introduce the following lemmas.
+Lemma D.1(Factorization of the Posterior as Conditional Entropy Vanishes).Suppose latent causal variables z=
+(z1, . . . , z ℓ)and observed variablexfollow the causal generative model defined in Eq. 1. Then:
+p(z|x)≈ℓY
+i=1p(zi|x),asH(z|x)→0.(8)
+Intuition.When H(z|x) = 0 , the observation xuniquely determines every coordinate zi, so no residual dependence
+remains between them. If the conditional entropy is merely small, the remaining dependencies are weak and the posterior is
+well-approximated byQ
+ip(zi|x).
+Proof.Define the product of marginals as:
+q(z|x) :=ℓY
+i=1p(zi|x).(9)
+The Kullback–Leibler divergence betweenp(z|x)andq(z|x)is
+DKL 
+p(z|x)∥q(z|x)
+=Ep(z|x)"
+logp(z|x)
+Qℓ
+i=1p(zi|x)#
+.(10)
+Recall that conditional entropy satisfies
+H(z|x) =−E p(z|x) logp(z|x),(11)
+and similarly for each marginal,
+H(zi|x) =−E p(zi|x)logp(z i|x).(12)
+Thus,
+DKL 
+p(z|x)∥q(z|x)
+=Ep(z|x)"
+logp(z|x)−ℓX
+i=1logp(z i|x)#
+(13)
+=−H(z|x)−ℓX
+i=1Ep(z|x) [−logp(z i|x)](14)
+=ℓX
+i=1H(zi|x)−H(z|x),(15)
+where we have used the law of total expectation to replaceE p(z|x) [−logp(z i|x)]byH(z i|x).
+By the chain rule of entropy, for eachiwe have
+H(z|x)−H(z i|x) =H(z −i|zi,x),(16)
+wherez −idenotes all components exceptz i. Since entropy is non-negative for discrete case,
+H(z|x)≥H(z i|x).(17)
+Then, ifH(z|x)→0, we necessarily have
+H(zi|x)→0,for alli= 1, . . . , ℓ.(18)
+17
+Concept Component Analysis
+Combining the above,
+DKL 
+p(z|x)∥q(z|x)
+=ℓX
+i=1H(zi|x)−H(z|x)→0.(19)
+Lemma D.2(Exact Linear Representation of Joint Log Posterior via Full Marginals).Let z= (z 1, . . . , z ℓ)∈ V 1× ··· × V ℓ
+to be discrete, with zi∈ Vi,|Vi|=k i, i= 1, . . . , ℓ , then there exists a fixed (assignment-independent)selector matrix
+S∈ {0,1}M×P
+ikiwithM=Q
+ikisuch that
+[logp(z|x)] z≈S
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+,(20)
+where the approximation becomes accurate as H(z|x)→0 (i.e., the posterior concentrates on a few high-probability
+assignments). The j-th row of Sselects, for each i, the entry in
+[logp(z 1|x)] z1, , . . . ,[logp(z ℓ|x)] zℓ
+corresponding to
+the value ofz iin thej-th joint assignmentz(j).
+Intuition.The vector
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+stacks all single-variable log-posteriors. The selector
+matrix Spicks, for each joint assignment, the corresponding entries in
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+so that
+S
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+reconstructs the joint log-posterior [logp(z|x)] z. Under low conditional entropy
+H(z|x)→0, only a few joint assignments dominate, making this approximation accurate.
+Proof.LetM=Q
+ikiand enumerate all joint assignments asVℓ={z(1), . . . ,z(M)}. Consider the vector
+[logp(z|x)] z∈RM,(21)
+whosej-th entry islogp(z(j)|x).
+Step 1 (Factorization under low entropy).By Lemma D.1, asH(z|x)→0,
+p(z|x)≈ℓY
+i=1p(zi|x) =⇒logp(z(j)|x)≈ℓX
+i=1logp(z(j)
+i|x)(22)
+wherez(j)
+idenotes the value of thei-th latent variable in thej-th joint assignmentz(j).
+Step 2 (Construction of selector matrix).Construct S∈ {0,1}M×P
+ikiso that its j-th row has exactly one 1in each
+block corresponding to variable zi, selecting the entry that corresponds to the value of ziinz(j), and all other entries in that
+row are0.
+Then for eachj,
+(S
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+)j=ℓX
+i=1logp(z(j)
+i|x)≈logp(z(j)|x),(23)
+so the linear map exactly reproduces the sum of marginal log-probabilities for the joint assignment.
+Step 3 (Validity under low entropy).Because the posterior concentrates on a few high-probability assignments as
+H(z|x)→0, the sum-of-marginals approximation is accurate for the entries corresponding to these assignments. Thus
+[logp(z|x)] z≈S
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+,(24)
+as claimed. The matrix Sis fixed (assignment-independent) and encodes the mapping from full marginal logs to joint-log
+vector.
+18
+Concept Component Analysis
+Lemma D.3(Expectation difference vanishes under posterior concentration).Let (z,x, y) follow a generative model with
+discrete latent z. Assume that H(z|x)→0 . For any yi, y0, the conditional distributions satisfy: TV 
+p(z|y i), p(z|
+y0)
+=olog(1−e−H(z|x))−1
+(i.e., the Regularity Condition (iii)). Then, for anyy iandy 0,
+Ep(z|y i)[logp(z|x)]−E p(z|y 0)[logp(z|x)]−→0asH(z|x)→0.(25)
+Proof.Define
+z∗(x)∈arg max
+zp(z|x), m(x) := max
+zp(z|x).(26)
+For any discrete distributionq, it holds thatH(q)≥ −log∥q∥ ∞. Applying this top(z|x)yields
+−logm(x)≤H(z|x), m(x)≥e−H(z|x).(27)
+Hence,
+1−m(x)≤1−e−H(z|x)−→0asH(z|x)→0.(28)
+For anyy, write
+hy(x) :=E p(z|y) [logp(z|x)] =X
+zp(z|y) logp(z|x).(29)
+Then
+hyi(x)−h y0(x) =X
+z 
+p(z|y i)−p(z|y 0)
+logp(z|x).(30)
+By triangle inequality, we have
+|hyi(x)−h y0(x)|=X
+z 
+p(z|y i)−p(z|y 0)
+logp(z|x) (31)
+≤X
+zp(z|y i)−p(z|y 0)·logp(z|x) (32)
+≤
+max
+zlogp(z|x)X
+zp(z|y i)−p(z|y 0).(33)
+Using the identityP
+z|p(z)−q(z)|= 2 TV(p, q),we obtain
+|hyi(x)−h y0(x)| ≤2 TV 
+p(z|y i), p(z|y 0)
+·max
+zlogp(z|x).(34)
+Since p(z∗|x) =m(x)→1 , we have |logp(z∗|x)|=|logm(x)| →0 . Hence the maximum of |logp(z|x)| is
+attained on the complement z̸=z∗, whose total probability mass is 1−m(x) . Aszis discrete with finite support, there
+existsz̸=z∗such thatp(z|x)≥(1−m(x)), which implies
+max
+z|logp(z|x)|≲|log(1−m(x))| ≤ |log(1−e−H(z|x))|.(35)
+Therefore,
+|hyi(x)−h y0(x)|≲2 TV 
+p(z|y i), p(z|y 0)
+|log(1−e−H(z|x))|.(36)
+Under TV 
+p(z|y i), p(z|y 0)
+=o
+1 log(1−e−H(z|x) )
+., the right-hand side converges to zero as H(z|x)→0 ,
+completing the proof.
+19
+Concept Component Analysis
+E. Proof of Theorem 2.2
+Theorem 2.1.Suppose latent variables zand the observed variables xandyfollow the generative models defined in Eq. 1.
+Assume the following holds:
+(i)(Diversity Condition)There exist m+ 1 values of y, so that the matrix L= 
+g(y=y 1)−g(y=y 0), ...,g(y=
+ym)−g(y=y 0)
+of sizem×mis invertible,
+(ii)(Informational Sufficiency Condition)The conditional entropy of the latent concepts given the context is close to zero,
+i.e.,H(z|x)→0,
+then the representations f(x) in LLMs, which are learned through the next-token prediction framework, are related to the
+true latent variablesz, by the following relationship:
+f(x)≈A
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
++b,(37)
+whereAis am×(Pℓ
+i=1ki)matrix,bis a bias vector.
+Intuition.Each LLM representation f(x) encodes a combination of all latent concepts. Under the Diversity, observing
+representations across multiple diverse outputs yprovides linearly independent constraints that reveal how all latent concepts
+contribute together, i.e., the joint posterior. When the latent concepts are nearly determined by x, i.e., the Informational
+Sufficiency Condition, the joint posterior decomposes into marginal posteriors, allowing f(x) to be expressed as a linear
+mixture of the log-posteriors of individual concepts.
+Proof. Recall that next-token prediction can be viewed as a multinomial logistic regression model, where the conditional
+distribution is approximated as
+p(y|x) =exp 
+f(x)⊤g(y)
+P
+y′exp 
+f(x)⊤g(y′).(38)
+Here,f(x)andg(y)denote the learned representations ofxandy, respectively, both lying inRm.
+On the other hard, under the latent-variable formulation in Eq. 1, the conditional distribution is given by marginalization:
+p(y|x) =X
+zp(y|z)p(z|x).(39)
+Equating Eq. 38 and Eq. 39, we obtain
+exp 
+f(x)⊤g(y)
+P
+y′exp 
+f(x)⊤g(y′)=X
+zp(y|z)p(z|x).(40)
+Taking logarithms on both sides, one arrives at
+f(x)⊤g(y)−logZ(x) = logX
+zp(y|z)p(z|x),(41)
+whereZ(x) =P
+y′exp(f(x)⊤g(y′))is the partition function.
+We now focus on the right-hand side. Using Bayes’ rule and the conditional independence assumption y⊥x|z , we can
+decompose:
+logp(y|x) =E p(z|y)h
+logp(y,z|x)
+p(z|y,x)i
+(42)
+=Ep(z|y) [logp(z|x)] +E p(z|y) [logp(y|z)]−E p(z|y) [logp(z|y,x)].(43)
+Combining Eq. 41 and Eq. 43, we arrive at
+f(x)⊤g(y)−logZ(x) =E p(z|y) [logp(z|x)]−E p(z|y) [logp(z|y,x)] +b y,(44)
+20
+Concept Component Analysis
+where we setb y:=E p(z|y) [logp(y|z)]for notational convenience.
+For concreteness, let y0, y1, . . . , y mdenote the outcomes satisfying the diversity condition in condition (i). In particular, for
+y=y 0we have
+f(x)⊤g(y0)−logZ(x) =X
+zp(z|y 0) logp(z|x)−h y0+by0,(45)
+withh y0:=P
+zp(z|y 0) logp(z|y 0,x). Similarly, fory=y 1,
+f(x)⊤g(y1)−logZ(x) =X
+zp(z|y 1) logp(z|x)−h y1+by1.(46)
+Subtracting Eq. equation 45 from Eq. equation 46, we obtain
+ 
+g(y1)−g(y 0)⊤f(x) =X
+z 
+p(z|y 1)−p(z|y 0)
+logp(z|x)
+−(h y1−hy0) + (b y1−by0).(47)
+Since ycan take m+ 1 distinct values, Eq. 47 yields mlinearly independent equations. Collecting them together, we obtain
+ 
+fy(y1)−f y(y0), . . . ,f y(yℓ)−f y(y0)⊤
+| {z }
+L⊤fx(x)(48)
+= 
+[p(z|y 1)−p(z|y 0)]z, . . . ,[p(z|y ℓ)−p(z|y 0)]z⊤
+| {z }
+ˆL[logp(z|x)] z
+−[h y1−hy0, . . . , h yℓ−hy0]| {z }
+hy+ [by1−by0, . . . , b yℓ−by0]| {z }
+by.(49)
+By the diversity condition, the matrixL∈Rm×mis invertible. Hence we can solve forf x(x):
+fx(x) = (L⊤)−1ˆL[logp(z|x)] z−(L⊤)−1hy+ (L⊤)−1by|{z}
+b.(50)
+Then, asH(z|x)→0, by lemmas D.2 and D.3, we have:
+fx(x) = (L⊤)−1ˆL S
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+| {z }
+by Lemma C.2−(L⊤)−1hy|{z}
+by Lemma C.3,→0+b.(51)
+Finally, definingA= (L⊤)−1ˆLScompletes the proof.
+21
+Concept Component Analysis
+F. Justification for Log-Posterior Estimation via Linear Probing
+Corollary 3.1.Suppose Theorem 2.1 holds, i.e.,
+f(x)≈A
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
++b.(52)
+Letx0andx1be two counterfactual samples that differ only in the i-th latent concept zi, each with its own ground-truth label.
+Then the corresponding representations (f(x 0),f(x 1))are linearly separable with respect to these labels. In particular,
+there exists a weight matrix Wsuch that W˜A(i)≈I, and the associated logits recover the marginal posterior [p(zi|x)] zi
+over all possible values of zi. In the context where ziis binary, the logits reduce to a two-dimensional vector, and the
+softmax recovers the marginal posteriorp(z i= 0|x),or equivalently,p(z i= 1|x) = 1−p(z i= 0|x).
+Intuition.The key idea is that each latent concept contributes to the representation along a distinct linear direction.
+Changing only one concept shifts the representation along its direction, so a simple linear classifier can isolate this change
+and recover the marginal posterior. For binary concepts, this reduces to a one-dimensional separation, while for multi-class
+concepts, each class corresponds to its own direction.
+Proof.Consider the approximation
+f(x)≈Ag(x) +b,g(x) =
+[logp(z 1|x)] z1;. . .; [logp(z ℓ|x)] zℓ
+.
+For the counterfactual samples x0andx1differing only in zi, we pass the representations into a linear classifier with weights
+W. The classifier produces logits
+logits≈W 
+Ag(x) +b
+,(53)
+wherelogitsis a vector over all possible values ofz i. In the binary case, this is a two-dimensional vector
+[logp(z i= 0|x),logp(z i= 1|x)]⊤,
+and in the multi-class case, it contains one entry per category.
+For correct classification under cross-entropy loss, the logits should recover the log-posterior for all categories (up to an
+additive constant):
+logits=
+logp(z i=k|x)
+k+const,(54)
+wherekindexes all possible values ofz i, and the constant does not affect the softmax output.
+Comparing equation 53 and equation 54, we require
+W˜A(i)≈I,(55)
+where ˜A(i)is the block of columns of Aassociated with all possible values of zi. This condition ensures that the classifier
+isolates the contribution fromz iand produces the correct logits.
+Binary case:When ziis binary, ˜A(i)has two columns, and the logits reduce to a two-dimensional vector [logp(z i= 0|
+x),logp(z i= 1|x)]⊤. After softmax, we directly obtain the marginal posterior
+p(zi= 0|x), p(z i= 1|x) = 1−p(z i= 0|x).
+Therefore, the counterfactual pair (x0,x1)is linearly separable with respect to their ground-truth labels in both the general
+multi-class and binary cases.
+22
+Concept Component Analysis
+G. Experimental Details
+Training DataFor all experiments, we use pre-trained LLMs downloaded from https://huggingface.co/ ,
+including Pythia-70m, 1.4b, 2.8b (Biderman et al., 2023), Gemma3-1b (Team et al., 2025), and Qwen3-1.7b (Team, 2025).
+LLM representations are extracted from these models using the first 200 million tokens of the Pile dataset, obtained
+from https://huggingface.co/datasets/EleutherAI/the_pile_deduplicated (Gao et al., 2020).
+For each token, we record the corresponding representation from the model’s last hidden layer, aligned with Theorem 2.2.
+These pre-extracted representations form the training data for the proposed sparse ConCA and SAEs.
+Table 2.Counterfactual concept pairs used for evaluation, adapted from Park et al. (2023).
+#Concept Example Word Pair Counts
+Verb inflections
+1 verb−→3pSg (accept, accepts) 50
+2 verb−→Ving (add, adding) 50
+3 verb−→Ved (accept, accepted) 50
+4 Ving−→3pSg (adding, adds) 50
+5 Ving−→Ved (adding, added) 50
+6 3pSg−→Ved (adds, added) 50
+7 verb−→V + able (accept, acceptable) 50
+8 verb−→V + er (begin, beginner) 50
+9 verb−→V + tion (compile, compilation) 50
+10 verb−→V + ment (agree, agreement) 50
+Adjective transformations
+11 adj−→un + adj (able, unable) 50
+12 adj−→adj + ly (according, accordingly) 50
+21 adj−→comparative (bad, worse) 87
+22 adj−→superlative (bad, worst) 87
+23 frequent−→infrequent (bad, terrible) 86
+Size, thing, noun
+13 small−→big (brief, long) 25
+14 thing−→color (ant, black) 50
+15 thing−→part (bus, seats) 50
+16 country−→capital (Austria, Vienna) 158
+17 pronoun−→possessive (he, his) 4
+18 male−→female (actor, actress) 52
+19 lower−→upper (always, Always) 73
+20 noun−→plural (album, albums) 100
+Language translations
+24 English−→French (April, avril) 116
+25 French−→German (ami, Freund) 128
+26 French−→Spanish (annee, año) 180
+27 German−→Spanish (Arbeit, trabajo) 228
+Testing Data for Results in Figures 2 and 3.For evaluation, we use counterfactual text pairs that differ in only a single
+concept while keeping all other aspects unchanged. We emphases again that constructing such pairs is challenging due to
+the complexity of natural language, as also highlighted in Park et al. (2023); Jiang et al. (2024). We adopt 27 high-precision
+counterfactual concepts from Park et al. (2023), derived from the Big Analogy Test dataset (Gladkova et al., 2016), as our
+testing dataset. Table 2 lists the 27 concepts, one illustrative pair per concept, and the number of pairs used for evaluation.
+Despite its modest size, this benchmark suffices to meaningfully distinguish method performance and validate the sensitivity
+of our evaluation framework.
+23
+Concept Component Analysis
+Algorithm 1Evaluation of SAE/ConCA Concepts via Supervised Linear Classification
+Require:Trained SAEs/ConCA, 27 counterfactual pairs{x i}27
+i=1
+Ensure:Mean Pearson correlation between SAE features and concept logits
+1:Step 1: Obtain concept logits
+2:fori= 1to27do
+3:Train LogisticRegression on thei-th counterfactual pair
+4:Compute logits i=logit(ck= 1|f(x i))
+5:end for
+6:Stack logits to forms= (s 1, s2, . . . , s 27)
+7:Step 2: Extract SAEs and ConCA latent features
+8:fori= 1to27do
+9:Passf(x i)through SAE to get latentˆ z i
+10:Compute element-wise exponentiation ˜zi= exp(ˆ z i)
+11:end for
+12:Stack features to form ˜z∈R27×D
+13:Step 3: Compute correlation matrix
+14:ford= 1toDdo
+15:Compute Pearson correlationR d=C(s, ˜z:,d)(Ddenotes SAEs/ConCA’s feature dimension)
+16:end for
+17:Step 4: Solve assignment problem
+18:Apply Hungarian algorithm onRto obtain optimal assignment.
+19:Compute assigned Pearson correlations
+20:Step 5: Aggregate metric
+21:Report mean Pearson correlation across the 27 concepts.
+Testing Data for Downsteam Tasks in Figure 5.For the few-show learning setting in Figure 5, we leverage a previously
+collected set of 113 binary classification datasets from Kantamneni et al. (2025), covering diverse tasks including challenging
+cases such as front-page headline detection and logical entailment. Each dataset provides prompts and binary targets (0 or
+1), with prompt lengths ranging from 5 to 1024 tokens. Refer to Table 3 in Kantamneni et al. (2025) for details. For the
+out-of-distribution task in Figure 5, we also leverage 8 datasets from Kantamneni et al. (2025). These include: These include:
+2 preexisting GLUE-X datasets designed as “extreme” versions of tasks testing grammaticality and logical entailment, 3
+datasets with altered language, i.e., Tanslated to Frech, Spanish, and German, and 3 datasets with syntactic modifications
+substitutions of names (Fictional Characters, Random Letter Inserted, and Reversed Name Order) with cartoon characters.
+Probes are trained in standard settings and evaluated on these out-of-distribution test examples. Both two dataset can be
+downloaded fromhttps://github.com/JoshEngels/SAE-Probes/tree/main.
+Training Pipeline.All ConCA and SAE variants use a feature dimension of 215, based on empirical settings from sparse
+SAEs. They are trained for 20,000 optimization steps with a batch size of 10,000, using the Adam optimizer with an initial
+learning rate of 1×10−4and a linear warm-up over the first 200 steps. For the top- kand batch-top- kSAEs, kis set to
+32. P-annealing SAEs incorporate a sparsity warm-up of 400 steps with an initial sparsity penalty coefficient 0.1. All
+experiments are run on a server equipped with 4 NVIDIA A100 GPUs.
+Pearson correlation coefficientWe use the PCC as the evaluation metric, as described in experiments. Algorithm 1
+summarizes the procedure: for each of the 27 counterfactual concept pairs, we first obtain concept logits using a supervised
+linear classifier. The same inputs are then passed through the trained SAE to extract latent features, which are exponentiated
+and stacked into a feature matrix. We compute the Pearson correlation between each SAE feature and the corresponding
+concept logit, and solve the assignment problem using the Hungarian algorithm to account for permutation indeterminacy.
+The mean Pearson correlation across all concepts is reported as the final evaluation score.
+AUC.The Area Under the Curve (AUC) is used to evaluate the performance of a binary classifier for concept prediction.
+The ROC curve plots the True Positive Rate (TPR) against the False Positive Rate (FPR) at different threshold levels,
+illustrating the trade-off between correctly predicting positive instances and incorrectly predicting negative instances. The
+24
+Concept Component Analysis
+Figure 6.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [3pSg
+- Ved] ,[adj - adj + ly] , and[adj - comparative] . For each concept, the top-32 features with highest differences are
+selected, and points show the fraction of features exhibiting significant changes (mean ± std across seeds). Higher fractions indicate more
+variant features.
+AUC measures the total area under this curve, ranging from 0 to 1. An AUC of 1.0 indicates perfect classification, 0.5
+corresponds to random guessing, and values closer to 0 indicate poor performance. This metric provides an aggregate,
+threshold-independent measure of the classifier’s ability to discriminate between the two classes.
+Linear Probing in Downstream Tasks.In our few-shot experiments, we first apply different SAEs and ConCA variants
+to the representations of pretrained LLMs to obtain feature embeddings. We then train a logistic regression classifier (using
+the LogisticRegression implementation from the scikit-learn package) on these features with limited labeled examples. To
+mitigate overfitting given the high dimensionality of the features, we employ an L2 penalty and select the regularization
+strength through cross-validation. In our out-of-distribution shift experiments, we again train a logistic regression classifier
+on the extracted features. To avoid overfitting to the in-distribution validation split, we fix the regularization strength to its
+default value (i.e., C=1.0 in LogisticRegression) instead of tuning it via cross-validation. This ensures a fairer and more
+stable evaluation under distribution shift.
+H. Visualization of Counterfactual Pair Experiments
+To more clearly illustrate the advantages of the proposed ConCAs, we perform a visualization analysis based on features
+extracted by ConCA and SAE variants from counterfactual pairs. Specifically, we first select the top 32 ( kin top- k) features
+with the highest average absolute difference between a counterfactual pair, focusing on the most significant variations while
+avoiding dilution from less responsive features. We then compute the rank-based fraction of significant features over these
+32 features across multiple thresholds to ensure robustness.The fraction measures the proportion of selected features
+exhibiting significant changes, providing a metric of feature sensitivity and stability in response to a single concept change.
+Intuitively, if the learned features are expected to capture a single concept as much as possible, their responses should be
+small—that is, the fraction will be low.The results are visualized using scatter plots with mean and standard deviation to
+capture both distribution and central tendency. This analysis highlights how ConCAs capture selective and meaningful
+feature variations, complementing the quantitative metrics reported earlier. For GroupNorm, we apply the same procedure
+independently within each group. That is, the 32 selection and rank-based fraction calculation are performed per group, and
+the final metric is obtained by averaging across all groups. This ensures that group-level normalization does not interfere
+across groups, making the evaluation consistent for GroupNorm settings. Algorithm 2 summarizes the procedure.
+Figures 4, 6–13 show the rank-based fraction of significant features for the proposed ConCA and SAE variants across
+27 counterfactual pairs, on Pythia-2.8b. The LayerNorm configuration exhibits the smallest fractions, indicating more
+stable or less variant feature changes under counterfactual conditions. In contrast, the Batch-Topk and Topk SAE variants
+produce larger fractions, reflecting more variable feature responses. BatchNorm and Panneal configurations display similar
+intermediate behavior. Overall, these trends are broadly aglined with the MPC results shown in Figure 3.
+I. Visualization of Classification Tasks
+To better understand why ConCA features transfer effectively under the few-shot setting, we visualize the features extracted
+by the proposed ConCA and SAEs variants from test data using t-SNE. By projecting all features into 2D space, we
+can observe the structure and separability of learned representations, providing intuition for the superior downstream
+25
+Concept Component Analysis
+Figure 7.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [English
+- French],[French - German], and[French - Spanish].
+Figure 8.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [frequent
+- infrequent],[German - Spanish], and[lower - upper].
+Figure 9.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [male -
+female],[noun - plural], and[pronoun - possessive].
+Figure 10.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [small -
+big],[thing - color], and[thing - part].
+26
+Concept Component Analysis
+Figure 11.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [verb -
+3pSg],[verb - V + able], and[verb - V + er].
+Figure 12.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [verb -
+V + ment],[verb - V + tion], and[verb - Ved].
+Figure 13.Rank-based fraction of significant features for SAE and ConCA variants across three counterfactual pair concepts: [verb -
+Ving],[Ving - Ved], and[Ving - Ved].
+27
+Concept Component Analysis
+Algorithm 2Compute Rank-Based Fraction of Significant Features for Counterfactual Pairs
+Require:Features of counterfactual pair(z s,zt),k,normalization, number of groupsG
+Ensure:Fraction of significant features
+1:Compute element-wise absolute difference:diff=|z s−zt|
+2:ifnormalization== "Group"then
+3:Splitdiff,z s,ztintoGgroups
+4:forg= 1toGdo
+5:Select top-k g= max(1, k/G)elements in groupgbased ondiff
+6:Convert group featureszg
+s,zg
+tto percentile ranks
+7:Compute absolute rank differences for top-k gelements
+8:Evaluate significance across multiple thresholdsT={0.1,0.2,0.3,0.4,0.5}
+9:Compute average fraction of significant features for groupg
+10:end for
+11:Average fractions across groups to obtain overall fraction
+12:else
+13:Select top-kelements globally based ondiff
+14:Convert selected featuresz s,ztto percentile ranks
+15:Compute absolute rank differences for top-kelements
+16:Evaluate significance across multiple thresholdsT={0.1,0.2,0.3,0.4,0.5}
+17:Compute average fraction of significant features
+18:end if
+RETURN: Overall fraction of significant features
+performance of ConCA compared to SAE variants. Figure 14 provides t-SNE visualization (Maaten & Hinton, 2008) of
+features of testing data, extracted by SAE and ConCA variants, on a example of the few-shot task, which shows that ConCA
+configurations (e.g., LayerNorm, BatchNorm, GroupNorm) produce more compact and well-separated clusters, indicating
+more stable and discriminative representations compared to SAE variants.
+J. Acknowledgment of LLMs
+We acknowledge that large language models (LLMs) were used in this work only for word-level tasks, including correcting
+typos, improving grammar, and refining phrasing. No substantive content, results, or scientific interpretations were generated
+by LLMs. All scientific ideas, analyses, and conclusions presented in this manuscript are solely the work of the authors.
+K. Practical Diagnostic for the Diversity Condition
+The diversity condition in our theory requires that the model’s output space contains enough linearly independent directions.
+Although the assumption is existential (it only requires that there exists such a set of output tokens), it is useful to provide an
+empirical procedure showing that modern LLMs indeed offer sufficiently diverse outputs. Since exhaustively checking all
+possible token combinations is infeasible, we design a practical proxy that searches for a diverse subset of outputs.
+We begin by randomly sampling a large set of candidate tokens from the model’s vocabulary. One token is chosen as a
+reference output. For each remaining candidate, we compute the difference between its output embedding and that of the
+reference token. These differences represent all available output directions relative to the reference. To find a subset of tokens
+whose directions are as independent as possible, we apply a greedy selection procedure based on LU decomposition with
+pivoting. This method reorders the candidate directions in decreasing order of their contribution to the overall dimensionality.
+Taking the first 2,048 directions (for Pythia-12B) yields a set of outputs that spans the most independent subspace available
+within the candidate pool. We then assess how diverse this selected set actually is by measuring the spectrum of singular
+values derived from the chosen directions. A well-spread singular-value spectrum indicates that the selected outputs span a
+nearly full-dimensional space.
+Across all model sizes, the spectra exhibit a consistent pattern. The largest several hundred singular values remain high and
+decay smoothly, indicating that each model provides a substantial number of independent output directions. As the index
+28
+Concept Component Analysis
+Figure 14.Visualization of features extracted by SAE and ConCA variants on a example of few-shot classification task datasets. Each
+point represents a test sample, colored by its class label. ConCA configurations (e.g., LayerNorm, BatchNorm, GroupNorm) produce
+more compact and well-separated clusters, indicating more stable and discriminative representations compared to SAE variants.
+Figure 15.Singular-value spectra of the greedily selected output-difference matrix across Pythia-70m, Pythia-1.4B, and Pythia-2.8B. Each
+curve plots the log-scale singular values (largest to smallest) obtained from a large candidate pool of output tokens using LU-pivoting
+selection. The spectra decay smoothly and only collapse in the final few dimensions, indicating that each model provides a numerically
+full-rank set of output directions and that the diversity assumption can be approximately satisfied in practice.
+29
+Concept Component Analysis
+approaches the effective dimensionality of the model, the tail of the spectrum gradually drops, but only the final few singular
+values approach very small magnitudes. This behavior suggests that the selected output directions nearly span the model’s
+representational space and are far from the rank-deficient structure we observe when tokens are selected at random.
+Interestingly, the point at which the spectrum begins to decline sharply shifts with model scale (See Figure 15): larger
+models (1.4B and above) maintain strong singular values for a greater proportion of directions compared to the 70m variant.
+This reflects the natural trend that larger models encode richer and more varied output embeddings. Nevertheless, even the
+70m model remains numerically full-rank down to its final few dimensions.
+L. Informational Sufficiency Diagnostics
+Our theory requires an informational sufficiency condition: the learned representation should contain enough information to
+reliably determine the related latent concept. For binary latent factors, this means the posterior distribution over the factor
+should be sharply peaked given the representation. Although this assumption is mild and standard in representation analyses,
+it is useful to provide a practical diagnostic showing that LLMs indeed satisfy it. We use the constructed 27 counterfactual
+concept pairs as mentioned in Table 2. These pairs cover a broad variety of concept types while keeping each concept
+operationally well-defined.
+For each concept pair, we gather a list of word pairs exhibiting the target transformation. We extract last-token representations
+from the model for each word, forming two embedding sets corresponding to the two concept values. We then train a linear
+probe (logistic regression) to classify the target concept using 70/30 train–test splits repeated with three random seeds. The
+linear probe is intentionally simple: rather than maximising accuracy, its role is to estimate an empirical distribution p(z|x) ,
+allowing us to measure the uncertainty the representation leaves about the concept.
+To quantify how well the representation specifies the latent concept, we compute the conditional entropy of the probe’s
+predicted distribution over the concept: entropy near 0 bits indicates that the representation almost perfectly determines the
+concept; entropy near 1 bit corresponds to complete uncertainty (uniform prediction).
+Across the 27 evaluated concepts (See Figure 16), we observe a clear and consistent trend: larger Pythia models yield
+substantially lower conditional entropy, indicating increasingly informative representations. The 70M model shows moderate
+informational sufficiency (typically 0.1–0.3 bits, with a few harder concepts higher), while the 1.4B and 2.8B models exhibit
+uniformly low entropies (mostly below 0.15 bits). This pattern suggests that, at the model scales relevant for our theoretical
+analysis, the representations almost deterministically encode the target concept. Consequently, the informational-sufficiency
+(approximate invertibility) assumption is empirically well supported.
+M. Synthetic validation of marginal vs. joint identifiability.
+To complement our theoretical discussion in Appendix C, and also compare our ConCA and SAEs, we design a synthetic
+experiment as follow. We begin by sampling 5 binary latent variables whose causal dependencies follow an Erd ˝os–Rényi
+(ER) random directed acyclic graph (DAG). Each graph is drawn with an expected number of edges equal to 10. For every
+node in the DAG, we define a conditional distribution over its parents using a Bernoulli model whose parameters are sampled
+uniformly from the interval [0.2,0.8]. We also generate counterfactual data that only in one latent variable while keeping the
+remains unchanged, to train base model and also train linear probing as evaluation. To simulate a nonlinear mixture process,
+we then convert the latent variable samples into one-hot format and randomly apply a permutation matrix to the one-hot
+encoding, generating one-hot observed samples. These are then transformed into binary observed samples. To simulate
+next-token prediction, we randomly mask a part of the binary observed data, e.g.„ xi, and predict it by use the remaining
+portion x\i. After training, we obtain the learned representations. Note that we set the representation dimension to 10 (i.e.,
+component-wise posterior corresponds to 2×5 ) in order to highlight the difference between our theoretical result and the
+formulation in (Liu et al., 2025a), which requires a representation dimension of 32 (i.e., joint posterior corresponds to25).
+Given the above setup, our first experiment aims to highlight the difference between our theoretical result and the formulation
+in (Liu et al., 2025a). To this end, we train a linear probe on the learned representations (as justified by Corollary 3.1). The
+probe achieves a classification accuracy of 0.923 (std: 0.021). This demonstrates that 2×5 dimensional representations
+are already sufficient for linear classification, and that 25dimensional representations required by Liu et al. (2025a) are
+unnecessary, thereby empirically supporting our theoretical result in Theorem 2.2.
+Our second experiment is to verify the performance of our ConCA and SAEs on the learned representations. To this end,
+30
+Concept Component Analysis
+Figure 16.Conditional entropy for the 27 concept pairs across three Pythia model scales (70m, 1.4b, 2.8b). Lower entropy indicates that
+the representation more sharply determines the underlying concept. As model size increases, entropies consistently decrease—especially
+for non-trivial semantic contrasts—illustrating that informational sufficiency (approximate invertibility) emerges naturally.
+31
+Concept Component Analysis
+Activation Type Clamp Range Pearson↑MSE↓
+Exp[−20,20] 0.7029±0.0081 10.59±2.10
+Exp[−30,30] 0.7055±0.0148 11.18±0.85
+Exp[−40,40] 0.7020±0.0077 11.03±0.97
+Exp[−50,50] 0.7006±0.0018 10.65±0.55
+SoftPlus (ours)—0.7324±0.0002 7.63±0.40
+Table 3.Performance comparison of exponential and SoftPlus activation variants under clamped toy settings. SoftPlus achieves consistently
+higher Pearson correlation and lower MSE, even when the exponential is artificially stabilized.
+we train SAEs (Panneal), and ConCA (LayerNorm). We compute Pearson correlation between logits obtained by linear
+probing trained on counterfactual pair, and features obtained by SAEs and ConCA. The results are as follows: ConCA:
+0.813 (std: 0.031) SAEs: 0.635 (std: 0.046). We emphasize that the scope of this work focuses on the theoretical guarantee
+in Theorem 2.1, which addresses identifiability up to the linear mixtures. Achieving unique recovery of individual concepts
+is substantially challenging. While additional assumptions, such as sparsity conditions familiar from compressed sensing,
+can in principle support uniqueness, it remains unclear whether the mixing matrix Ain our setting satisfies the specific
+sparsity or incoherence conditions required. Exploring these assumptions is an interesting direction for future work.
+N. Verifying Exponential Substitutes on Pythia-70m
+A core modeling choice in ConCA is the replacement of the exponential function with numerically stable surrogates such as
+SoftPlus, motivated by the fact that LLM activations lie in ranges that make the true exponential function prone to gradient
+explosion and instability. To further validate this design choice, we conduct an additional controlled experiment where the
+exponential function becomes numerically stable.
+Specifically, we construct a toy setting by clamping the final-layer hidden activations of Pythia-70m to bounded ranges
+where exponential function can be safely evaluated without numerical overflow. We consider the four clamping windows as
+shown in Table 3. We additionally include LayerNorm and the same sparsity penalty used in our SoftPlus variant to ensure
+comparability. We then train ConCA variants using the true exponential under these artificially stabilized conditions, and
+compare them with our SoftPlus-based variant. Performance is evaluated using both Pearson correlation (between recovered
+concepts and linear-probe ground truth) and MSE reconstruction error.
+Three observations emerge: Exp becomes usable only under artificial clamping. Even when stabilized, exp-based ConCA
+exhibits lower Pearson correlation ( 0.69–0.72) and higher MSE ( 10–12) across all clamp settings. SoftPlus consistently
+outperforms exp, achieving both the highest correlation ( 0.73) and the lowest MSE ( 7–8), despite being evaluated under
+more challenging, unclamped activation distributions. Together, these findings demonstrate that the surrogate activations
+used in ConCA are not only numerically safer but also better aligned with empirical behavior, even in settings explicitly
+constructed to favor the exponential function. This experiment thus reinforces our modeling choice and supports the
+theoretical motivation behind replacing exp in ConCA.
+O. Activation Patching Evaluation
+Activation patching is widely regarded as one of the strongest tests of functional interpretability. Unlike reconstruction-based
+metrics (e.g., MSE) or alignment metrics (e.g., Pearson correlation), activation patching directly measures whether a
+representation—after being encoded and reconstructed by a concept-extraction model—still leads the LLM to make similar
+token-level predictions. To evaluate this, we measure how substituting an internal hidden state with its ConCA/SAE
+reconstruction affects the LLM’s output logits. If a dictionary model faithfully captures the underlying functional structure,
+the LLM’s predictions should remain largely unchanged.
+We use 10k randomly sampled token activations from The Pile activation dataset of Pythia-70m. Sampling is performed
+once, cached, and reused across models to ensure perfect comparability. For each sampled activation, we: 1: feed the
+original hidden state into the model’s final prediction layer to obtain the baseline logits. 2: reconstruct the hidden state using
+either our ConCA or SAEs. 3: feed the reconstructed activation back into the model and compare the resulting logits with
+the baseline. We report three widely used functional metrics: Argmax Match: whether the top predicted token stays the
+32
+Concept Component Analysis
+Figure 17.Activation patching comparison across ConCA and SAE variants on Pythia-70M using 10,000 cached hidden activations
+from The Pile. (a) Argmax Match (higher is better): ConCA variants preserve the model’s top prediction more reliably than SAE
+baselines. (b) Top-10 Overlap (higher is better): ConCA reconstructions retain substantially more of the model’s predictive structure. (c)
+Jensen–Shannon Divergence (lower is better): ConCA achieves lower distributional distortion, indicating higher functional faithfulness.
+Figure 18.Pearson correlation and MSE between predicted concept logits and matched dictionary features across model scales (Pythia-
+70M, 1.4B, 2.8B) and dictionary learning methods. Mean ± standard deviation over three random seeds is shown. ConCA variants achieve
+higher Pearson correlation than SAE baselines, with the performance gap most visible in smaller models and remaining stable as scale
+increases.
+same. Top-10 Overlap: fraction of overlapping tokens in the top-10 predictions. Jensen–Shannon Divergence: distributional
+distance between original and reconstructed logits (lower is better). Each metric is averaged over all 10,000 activations.
+The results in Figure 17 show that ConCA-BatchNorm achieves the best overall performance across metrics. SAE-top-k and
+SAE-batch-top-k show the largest divergence, indicating functional mismatch despite good sparsity. ConCA variants exhibit
+lower variance, suggesting more stable behavior across diverse activations. This experiment demonstrates that: ConCA
+reconstructions lead the LLM to make more similar predictions, confirming that ConCA retains functional information more
+faithfully than SAEs.
+P. Experiments on Additional Counterfactual Concept Pairs
+While the original 27 counterfactual concept pairs from Park et al. (2023) provide clean, expert-curated evaluations along
+several core linguistic axes (verb inflections, adjective morphology, noun attributes, and multilingual translations), they
+cover only a small portion of the semantic space relevant to modern LLM behavior. In particular, many practically important
+concepts, such as sentiment polarity, toxicity, factuality, stance, politeness, or degree/intensity—are not represented in the
+original benchmark. These dimensions are widely studied in interpretability and safety research, and their inclusion offers a
+more comprehensive evaluation of concept alignment.
+To complement the original dataset, we construct 23 additional counterfactual concept pairs, each designed to capture a
+single semantic concept for linear probing and our theoretical disentanglement analysis. For every concept, we curate 50
+pairs where only the targeted semantic attribute changes while all other factors (POS category, morphological structure,
+lexical frequency, etc.) remain controlled.
+These new concepts span five broader semantic families—sentiment polarity, toxicity/politeness, factuality/truthfulness,
+stance/subjectivity, and degree/intensity—and are summarized in Table 4. Importantly, the pairs were constructed to satisfy
+the same identifiability constraints emphasized in our main text: each pair differs in one concept, preventing confounding
+correlations across multiple latent factors. This makes the dataset suitable both for linear probing and for measuring
+concept-level disentanglement.
+A concise overview of the 23 added concepts is provided (full list and examples in Table 4). Overall, the results in the left
+33
+Concept Component Analysis
+in Figure 18 show that the ConCA variants demonstrate substantially stronger alignment than standard SAE baselines. In
+Pythia-70M, ConCA methods outperform SAEs by a large margin, indicating more faithful feature extraction in low-capacity
+language models. As model size increases to 1.4B and 2.8B, all methods improve, but ConCA retains a consistent advantage:
+LayerNorm-ConCA yields the highest and most stable correlations across scales, followed closely by GroupNorm and
+BatchNorm. In contrast, SAE-Top-k and Batch-Top-k lag significantly behind, and Panneal improves with scale but remains
+below ConCA. These results indicate that ConCA’s normalization-driven design leads to more stable and interpretable
+feature learning, particularly in smaller models where dictionary training is more brittle.
+Q. Detailed Results of Figure 3
+While Figure 3 includes error bands reflecting variability across random seeds, many of these standard deviations are
+extremely small and therefore not visually distinguishable in the plots. To make these differences explicit, we report the full
+numerical mean and std values for each method–model pair in Tables 5 and 6.
+R. Relation with Linear Representation Hypothesis
+In Theorem 2.1, the mixing matrix Aoffers a way to interpret how latent semantic information may be organized within the
+representation space of LLMs. At a high level, Acan be viewed as describing how the log-posteriors of latent concepts
+might be linearly combined inside hidden activations. This perspective is related to the broaderLinear Representation
+Hypothesis, which suggests that certain semantic attributes in neural representations may interact in an approximately linear
+manner.
+Under this view, each column of Amay be interpreted as indicating a possible direction associated with a particular latent
+factor, while differences across rows could correspond to the kinds ofdifference vectorsoften observed in counterfactual
+pairs or steering-vector analyses. In particular, when two inputs differ only in one latent concept, their representation
+difference may align with the corresponding column of A, reminiscent of the vector arithmetic phenomena discussed in
+both word embeddings and modern LLMs.
+Such observations hint that Amay induce a geometric structure in which examples sharing similar latent concept values
+tend to cluster along certain affine subspaces, while changes in concept values correspond to movement along interpretable
+directions. From this perspective, the mixing matrix provides a possible explanation for why linear unmixing methods like
+ConCA can recover meaningful concept-level variations in practice. Of course, these interpretations are exploratory, and
+the precise geometric structure may depend on various factors such as model architecture, data distribution, and training
+objective.
+34
+Concept Component Analysis
+Table 4.Additional counterfactual concept pairs (sentiment, toxicity, factuality/truthfulness, stance, politeness). Each concept contains 50
+pairs.
+#Concept Example Pair Word Pair Counts
+Sentiment polarity
+1 positive→negative (happy, sad) 50
+2 positive→neutral (amazing, average) 50
+3 negative→neutral (terrible, ordinary) 50
+Toxicity
+4 toxic→neutral (stupid, silly) 50
+5 toxic→polite (idiot, friend) 50
+6 rude→polite (shut up, please speak) 50
+Factuality / Truthfulness
+7 true→false (earth, flat-earth) 50
+8 factual→nonfactual (oxygen, magic-power) 50
+9 real→fictional (doctor, wizard) 50
+Stance / Subjectivity
+10 supportive→opposed (agree, oppose) 50
+11 approving→disapproving (praise, blame) 50
+12 subjective→objective (biased, neutral) 50
+Politeness / Formality
+13 polite→impolite (sorry, shut-up) 50
+14 formal→informal (assist, help) 50
+15 respectful→disrespectful (sir, dude) 50
+Emotion / Tone
+16 calm→angry (calm, furious) 50
+17 excited→bored (excited, uninterested) 50
+18 friendly→hostile (friendly, hostile) 50
+Intensity / Degree
+19 mild→strong (warm, hot) 50
+20 weak→strong (soft, solid) 50
+21 low-certainty → high-
+certainty(maybe, definitely) 50
+Common semantic axes
+22 general→specific (animal, dog) 50
+23 concrete→abstract (chair, justice) 50
+35
+Concept Component Analysis
+Method Model Pearson (MPC) MSE
+BatchNorm pythia-70m0.6500±0.00552 8.3305±4.10287
+pythia-1.4b0.7543±0.00004 1.6418±0.00135
+pythia-2.8b0.7630±0.00132 2.4657±0.04794
+GroupNorm pythia-70m0.7285±0.00094 9.0071±1.36961
+pythia-1.4b0.7914±0.00222 6.3021±0.09493
+pythia-2.8b0.8038±0.00059 7.1652±0.30648
+LayerNorm pythia-70m0.7325±0.00015 7.6272±0.40461
+pythia-1.4b0.7958±0.00009 5.2756±0.09484
+pythia-2.8b0.8074±0.00178 3.5708±0.45880
+Batch-TopK pythia-70m0.5687±0.00691 24.6165±0.10317
+pythia-1.4b0.6856±0.00205 24.3850±0.08773
+pythia-2.8b0.7037±0.00211 23.7690±0.07034
+TopK pythia-70m0.5851±0.01090 22.9035±0.03389
+pythia-1.4b0.6969±0.00399 22.7108±0.10553
+pythia-2.8b0.7074±0.00810 22.5243±0.03869
+Panneal pythia-70m0.6474±0.00816 7.7097±0.08165
+pythia-1.4b0.7413±0.00234 5.7218±0.08165
+pythia-2.8b0.7613±0.00205 6.3563±0.03300
+Table 5.Comparison of Pearson correlation (MPC) and MSE across normalization methods and Pythia model scales. Each cell reports
+mean ± standard deviation over random seeds.
+Method Model Pearson (MPC) MSE
+BatchNorm Qwen3-1.7B0.7281±0.00050 3.3193±0.00026
+gemma-3-1b-pt0.6853±0.00374 1.5604±0.00057
+pythia-1.4b0.7543±0.00004 1.6418±0.00135
+GroupNorm Qwen3-1.7B0.7979±0.00023 6.1347±0.00051
+gemma-3-1b-pt0.7791±0.00123 6.5240±0.05917
+pythia-1.4b0.7914±0.00222 6.3021±0.09493
+LayerNorm Qwen3-1.7B0.7900±0.00034 5.9607±0.05288
+gemma-3-1b-pt0.7738±0.00019 6.1671±0.12262
+pythia-1.4b0.7958±0.00009 5.2756±0.09484
+Batch-TopK Qwen3-1.7B0.6926±0.01003 18.1650±0.11887
+gemma-3-1b-pt0.6617±0.00301 44.4503±0.20351
+pythia-1.4b0.6856±0.00205 24.3850±0.08773
+Panneal Qwen3-1.7B0.7345±0.00500 3.1175±0.03114
+gemma-3-1b-pt0.6770±0.00419 2.7399±0.02055
+pythia-1.4b0.7413±0.00234 5.7218±0.08165
+TopK Qwen3-1.7B0.7027±0.00024 15.0734±0.03822
+gemma-3-1b-pt0.6758±0.00334 42.6148±0.18811
+pythia-1.4b0.6969±0.00399 22.7108±0.10553
+Table 6.Comparison of Pearson correlation (MPC) and MSE across methods and architectures. Values are mean ± standard deviation over
+random seeds.
+36

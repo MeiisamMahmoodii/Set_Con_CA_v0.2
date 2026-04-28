@@ -1,0 +1,166 @@
+{
+  "exp1_set_vs_pointwise": {
+    "SetConCA": {
+      "mse": 0.1472,
+      "stability": 0.2484,
+      "l0": 0.2473
+    },
+    "Pointwise": {
+      "mse": 0.1126,
+      "stability": 0.2625,
+      "l0": 0.25
+    }
+  },
+  "exp2_s_scaling": {
+    "1": {
+      "mse": 2.5019,
+      "stability": 0.3367,
+      "l0": 0.25
+    },
+    "3": {
+      "mse": 2.0541,
+      "stability": 0.3425,
+      "l0": 0.25
+    },
+    "8": {
+      "mse": 1.7856,
+      "stability": 0.3659,
+      "l0": 0.25
+    },
+    "16": {
+      "mse": 1.6515,
+      "stability": 0.3817,
+      "l0": 0.25
+    },
+    "32": {
+      "mse": 1.5889,
+      "stability": 0.3904,
+      "l0": 0.25
+    }
+  },
+  "exp3_aggregator_ablation": {
+    "mean": {
+      "mse": 1.7856,
+      "stability": 0.3659,
+      "l0": 0.25
+    },
+    "attention": {
+      "mse": 1.7772,
+      "stability": 0.2971,
+      "l0": 0.2487
+    },
+    "random": {
+      "mse": 2.1393,
+      "stability": null,
+      "l0": 0.25
+    }
+  },
+  "exp4_cross_family": {
+    "SetConCA": {
+      "mse_src": 1.9614218473434448,
+      "mse_tgt": 0.6856275200843811,
+      "cka_before": 0.0013355513414999155,
+      "cka_after": 0.013716483500173546,
+      "transfer_overlap": 0.6744538834951457
+    },
+    "Pointwise": {
+      "transfer_overlap": 0.5273058252427184
+    },
+    "Random": {
+      "transfer_overlap": 0.24848300970873785
+    }
+  },
+  "exp5_intra_family": {
+    "mses": {
+      "Gemma-3-1B": 1.608595371246338,
+      "Gemma-3-4B": 1.9614218473434448,
+      "Gemma-2-9B": 2.615391254425049
+    },
+    "cka_matrix": {
+      "Gemma-3-1B_vs_Gemma-3-1B": 1.0,
+      "Gemma-3-1B_vs_Gemma-3-4B": 0.0127,
+      "Gemma-3-1B_vs_Gemma-2-9B": 0.0052,
+      "Gemma-3-4B_vs_Gemma-3-1B": 0.0127,
+      "Gemma-3-4B_vs_Gemma-3-4B": 1.0,
+      "Gemma-3-4B_vs_Gemma-2-9B": 0.0026,
+      "Gemma-2-9B_vs_Gemma-3-1B": 0.0052,
+      "Gemma-2-9B_vs_Gemma-3-4B": 0.0026,
+      "Gemma-2-9B_vs_Gemma-2-9B": 1.0
+    },
+    "transfer_matrix": {
+      "Gemma-3-1B_vs_Gemma-3-1B": 1.0,
+      "Gemma-3-1B_vs_Gemma-3-4B": 0.5846,
+      "Gemma-3-1B_vs_Gemma-2-9B": 0.5916,
+      "Gemma-3-4B_vs_Gemma-3-1B": 0.588,
+      "Gemma-3-4B_vs_Gemma-3-4B": 1.0,
+      "Gemma-3-4B_vs_Gemma-2-9B": 0.5859,
+      "Gemma-2-9B_vs_Gemma-3-1B": 0.5825,
+      "Gemma-2-9B_vs_Gemma-3-4B": 0.5871,
+      "Gemma-2-9B_vs_Gemma-2-9B": 1.0
+    },
+    "names": [
+      "Gemma-3-1B",
+      "Gemma-3-4B",
+      "Gemma-2-9B"
+    ]
+  },
+  "exp6_sota_comparison": {
+    "Set-ConCA": {
+      "mse": 0.14715948204199472,
+      "stability": 0.24839274088541666,
+      "l0": 0.2473297119140625
+    },
+    "ConCA (S=1)": {
+      "mse": 0.12483676274617513,
+      "stability": 0.2809651692708333,
+      "l0": 0.25
+    },
+    "SAE (pointwise)": {
+      "mse": 0.21281464397907257,
+      "stability": 0.294921875,
+      "l0": 0.2775421142578125
+    },
+    "PCA": {
+      "mse": 0.03227819874882698,
+      "stability": 0.97381591796875,
+      "l0": 0.9875640869140625,
+      "exp_var": 0.9677218198776245
+    },
+    "ICA": {
+      "mse": 0.03227784484624863,
+      "stability": null,
+      "l0": 0.90985107421875
+    },
+    "Random": {
+      "mse": 1.0595743656158447,
+      "stability": 0.0,
+      "l0": 0.993438720703125
+    }
+  },
+  "exp7_steering": {
+    "alphas": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      5.0,
+      10.0
+    ],
+    "SetConCA_avg": [
+      0.8503753878176212,
+      0.8732834830880165,
+      0.8825498968362808,
+      0.8898610919713974,
+      0.8948407769203186,
+      0.8962375745177269
+    ],
+    "Random_avg": [
+      0.8503753878176212,
+      0.7793704271316528,
+      0.5307063143700361,
+      0.32404020431567915,
+      0.12854442931711674,
+      0.023367126705124974
+    ]
+  }
+}

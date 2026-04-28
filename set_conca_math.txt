@@ -1,0 +1,168 @@
+Set-ConCA: Extending Concept Component
+Analysis from Point Representations to
+Representation Sets
+Yuhang Liu
+March 2026
+1 Abstract
+Concept Component Analysis (ConCA) was originally introduced to study whether
+hidden representations learned by large models admit a concept-oriented de-
+composition under a probabilistic interpretation. In the original Sparse ConCA
+formulation, each latent component is interpreted as an approximation to a
+latent log-posterior quantity conditioned on a single representation. However,
+many semantic phenomena in modern foundation models are inherently dis-
+tributional rather than pointwise: concepts often emerge across paraphrases,
+reasoning trajectories, or local families of hidden states. This motivates extend-
+ing ConCA from single representations to representation sets. In this section,
+we introduce Set-ConCA, a principled extension of Sparse ConCA that esti-
+mates concept representations from local representation sets. The proposed
+formulation preserves the probabilistic interpretation of ConCA while introduc-
+ing permutation-invariant aggregation and subset consistency regularization,
+enabling more stable concept learning under local representation distributions.
+2 Motivation
+The original Sparse ConCA assumes that a hidden representationf(x) admits
+a concept decomposition through:
+ˆz≈[logp(z i|x)] zi,(1)
+where each latent component potentially corresponds to a semantically mean-
+ingful concept.
+This formulation differs fundamentally from standard sparse autoencoders,
+where latent sparsity is usually imposed directly on raw activations without
+probabilistic interpretation.
+1
+Sparse ConCA instead argues that sparsity should be imposed on a trans-
+formed probability-like domain:
+g(ˆz),(2)
+whereg(·) maps latent log-posterior-like quantities back into a numerically sta-
+ble probability space.
+However, concept learning from a single representation remains inherently
+fragile:
+•a single hidden representation may contain local noise,
+•contextual variation may dominate latent activation,
+•semantic concepts often manifest through multiple nearby realizations
+rather than isolated points.
+Therefore, we extend concept learning from individual representations to
+local representation sets:
+X={x 1, . . . ,x m}.(3)
+The goal is to estimate concept structure shared across the set rather than
+relying on a single sample.
+3 Sparse ConCA Recap
+The original Sparse ConCA is defined as:
+ˆz=R(W ef(x) +b e), ˆf(x) =W dˆz+b d.(4)
+The training objective is:
+min
+ΘExh
+∥ˆf(x)−f(x)∥2
+2+αS(g( ˆz))i
+,(5)
+where:
+Θ ={W e,be,W d,bd}.
+Here:
+•R(·) denotes regularization such as LayerNorm or Dropout,
+•g(·) maps latent log-posterior into probability-like space,
+•S(·) imposes sparsity.
+4 Set-ConCA Architecture
+To extend Sparse ConCA to representation sets, we consider:
+X={x 1, . . . ,x m}.(6)
+2
+4.0.1 3.1 Element Encoding
+Each sample is encoded independently:
+ui=W ef(xi) +b e, i= 1, . . . , m.(7)
+Unlike many sparse autoencoder formulations, no arbitrary nonlinear clip-
+ping is introduced here, preserving latent posterior interpretation.
+4.1 Set Aggregation
+A permutation-invariant pooling operatorP(·) is applied:
+¯uX=P({u 1, . . . ,u m}).(8)
+The simplest choice is mean pooling:
+¯uX=1
+mmX
+i=1ui.(9)
+The set-level latent representation becomes:
+ˆzX=R( ¯uX).(10)
+This corresponds to:
+ˆzX≈[logp(z i| X)] zi.(11)
+4.2 Shared + Residual Decoder
+A naive decoder would collapse all samples to the same reconstruction.
+Instead, we define:
+ˆf(xi) =W(s)
+dˆzX+W(r)
+dui+b d.(12)
+Here:
+•W(s)
+dˆzXcaptures shared concept structure,
+•W(r)
+duicaptures instance-specific residual information.
+4.3 4. Training Objective
+The learnable parameters are:
+Θ ={W e,be,W(s)
+d,W(r)
+d,bd}.
+The objective is:
+min
+ΘEX"
+1
+mmX
+i=1∥ˆf(xi)−f(x i)∥2
+2+αS(g( ˆzX)) +βL cons#
+.(13)
+3
+4.4 Sparse Probability-Domain Regularization
+As in Sparse ConCA, sparsity is applied on:
+g(ˆzX),(14)
+rather than directly on raw latent values.
+The exact exponential map is avoided for numerical stability.
+4.5 Subset Consistency Regularization
+Given two random subsets:
+X(a),X(b)⊂ X,
+we define:
+Lcons=∥ˆzX(a)−ˆzX(b)∥2
+2.(15)
+This encourages concept stability under subsampling.
+5 Theoretical Perspective: Posterior Interpre-
+tation under Set Aggregation
+The original Sparse ConCA interprets:
+ˆz≈[logp(z i|x)] zi.(16)
+For sets:
+X={x 1, . . . ,x m},
+assume conditional independence:
+p(zi| X)∝p(z i)mY
+j=1p(xj|zi).(17)
+Taking logarithm:
+logp(z i| X) = logp(z i) +mX
+j=1logp(x j|zi) +C.(18)
+Thus set-level posterior corresponds to accumulated pointwise evidence.
+Since:
+uj=W ef(xj) +b e≈[logp(z i|xj)]zi,(19)
+mean pooling yields:
+¯uX=1
+mmX
+j=1uj,(20)
+which approximates normalized posterior aggregation.
+Therefore:
+ˆzX=R( ¯uX) (21)
+admits interpretation as empirical set-level posterior estimation.
+4
+6 Why Set-ConCA Matters
+Compared with Sparse ConCA, Set-ConCA extends concept learning from point
+representations to local representation distributions.
+This improves:
+•concept stability,
+•robustness to local sampling noise,
+•invariance across paraphrases,
+•suitability for reasoning trajectories.
+7 Immediate Practical Implementation
+A minimal practical implementation uses:
+•linear encoder,
+•mean pooling,
+•shared + residual decoder,
+•smooth probability surrogate,
+•L1sparsity,
+•subset consistency regularization.
+No heavy generator is necessary in the first stage.
+8 Future Extensions
+Set-ConCA naturally supports future extensions:
+•slot-based concept decomposition,
+•hierarchical local-global concept learning,
+•trajectory-level concept dynamics,
+•posterior drift analysis for hallucination and safety.
+This makes Set-ConCA a natural next step toward concept-level world mod-
+eling in large language models.
+5

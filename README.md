@@ -1,48 +1,74 @@
-# Set-ConCA v0.2: Distributional Concept Component Analysis
+# Set-ConCA
 
-**NeurIPS 2026 Submission Readiness Phase**
+**Concept Component Analysis on Representation Sets**
 
-Set-ConCA is a framework for **Mechanistic Interpretability** that shifts the fundamental unit of analysis from individual hidden states to **Representation Sets** (local neighborhoods). 
+Set-ConCA discovers concept components that are stable across *sets* of representations (paraphrases, trajectory steps, local neighbourhoods) rather than processing a single vector at a time.
 
-This repository contains the validated implementation for **v0.2**, featuring Top-K activation, improved causal faithfulness, and the first demonstration of **Cross-Model Latent Transplantation**.
+## Architecture
 
-## 🛰️ Scientific Breakthroughs
-
-### 1. The Semantic Emergence Threshold ($S=8$)
-We have identified a universal transition in concept stability. Modern LLMs (Gemma-2, Llama-3, Gemma-3) require a neighborhood of approximately **8 instances** to manifest stable semantic anchors that are robust to distributional noise.
-
-### 2. Latent Transplantation (Gemma ↔ Llama)
-We successfully bridged the concept spaces of disparate model families.
-- **Top-K Overlap:** 12.53%
-- **Significance:** **10.4x better than random chance.**
-- Set-ConCA acts as a "Universal Coordinate System" for aligning concepts across different LLM architectures.
-
-### 3. Causal Faithfulness (60%)
-By resolving the **Energy Gap** (reconstruction magnitude shrinkage) via Norm-Alignment, we achieve a **60% Faithfulness Score** on causal intervention benchmarks.
-
----
-
-## 🛠️ Repository Structure
-
-- `docs/paper/`: Complete NeurIPS 2026 LaTeX manuscript and bibliography.
-- `setconca/`: Core implementation featuring Top-K and Attention Aggregation.
-- `eval_faithfulness.py`: Causal diagnostic tool using `TransformerLens`.
-- `train_bridge.py`: Linear bridge trainer for cross-model mapping.
-- `build_multi_dataset.py`: Synchronized extraction pipeline (Locked Seed 42).
-
-## 🚀 Getting Started
-
-```bash
-# Install dependencies
-uv sync
-
-# Extract Aligned Concepts
-uv run python build_multi_dataset.py --model_id google/gemma-2-2b --output_path data/gemma.pt
-uv run python build_multi_dataset.py --model_id meta-llama/Meta-Llama-3-8B --output_path data/llama.pt --load_in_4bit
-
-# Train the Bridge
-uv run python train_bridge.py
+```
+x (B, S, D)
+  └─ ElementEncoder   → u  (B, S, C)   linear, no activation
+  └─ SetAggregator    → z  (B, C)      mean-pool + LayerNorm  [or attention]
+  └─ DualDecoder      → f̂  (B, S, D)   shared + residual streams
 ```
 
-## 📝 Citation
-Please refer to the full manuscript in `docs/paper/setconca_neurips.tex` for formal citation and theoretical foundations.
+**Loss:** `MSE + α · sparsity(u_bar) + β · consistency(x, encode_agg)`
+
+## Training
+
+```bash
+# Synthetic data (quick sanity check)
+uv run python train.py --epochs 10
+
+# Real hidden-state dataset
+uv run python train.py \
+    --data_path data/gemma3_1b_dataset.pt \
+    --concept_dim 256 \
+    --use_topk --k 32 \
+    --agg_mode attention \
+    --lr 1e-4 --epochs 200 \
+    --save_path checkpoints/gemma_topk.pt
+
+# Key flags
+#   --use_topk          hard Top-K sparsity (disables Sigmoid-L1 term)
+#   --k INT             k for Top-K  [32]
+#   --agg_mode STR      mean | attention  [mean]
+#   --alpha FLOAT       sparsity coefficient  [0.1]
+#   --beta  FLOAT       consistency coefficient  [0.01]
+#   --seed  INT         random seed  [0]
+```
+
+## Tests
+
+```bash
+uv run pytest tests/ -v
+```
+
+## NeurIPS Experiments
+
+```bash
+# Full pipeline (real LLM extraction + all 5 experiments)
+uv run python experiments/neurips/run_all.py
+
+# Individual experiments (synthetic smoke test)
+uv run python -m experiments.neurips.runner.exp1_set_vs_pointwise
+```
+
+## Project layout
+
+```
+setconca/
+  model/      encoder.py  aggregator.py  decoder.py  setconca.py
+  losses/     sparsity.py  consistency.py
+  data/       dataset.py
+experiments/
+  neurips/
+    data_pipeline/   extract_activations.py  dataset_builder.py  neighbors.py
+    runner/          exp1…exp5  eval_metrics.py
+    run_all.py
+tests/
+  test_setconca.py   (all unit + experiment smoke tests)
+train.py
+pyproject.toml
+```

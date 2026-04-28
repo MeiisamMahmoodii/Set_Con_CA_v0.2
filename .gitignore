@@ -1,21 +1,31 @@
-# Data and Large Files
+# Data and large binary files
 data/
+checkpoints/
 *.pt
-*.pdf
 *.bin
 *.h5
 
-# Python Environment
+# Results / temp outputs
+*.pdf
+*.log
+*.csv
+.coverage
+
+# Python environment
 .venv/
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+
+# AI assistant notes
+CLAUDE.md
+.claude/
 
 # System
 .DS_Store
 Thumbs.db
 
-# Documentation build
+# Build
 build/
 dist/
-*.egg-info/

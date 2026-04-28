@@ -1,0 +1,18 @@
+{
+  "exp1_set_vs_pointwise": {
+    "SetConCA":  {"mse": 0.1472, "stability": 0.2484, "l0": 0.2473},
+    "Pointwise": {"mse": 0.1126, "stability": 0.2625, "l0": 0.2500}
+  },
+  "exp2_s_scaling": {
+    "1":  {"mse": 2.5019, "stability": 0.3367, "l0": 0.2500},
+    "3":  {"mse": 2.0541, "stability": 0.3425, "l0": 0.2500},
+    "8":  {"mse": 1.7856, "stability": 0.3659, "l0": 0.2500},
+    "16": {"mse": 1.6515, "stability": 0.3817, "l0": 0.2500},
+    "32": {"mse": 1.5889, "stability": 0.3904, "l0": 0.2500}
+  },
+  "exp3_aggregator_ablation": {
+    "mean":      {"mse": 1.7856, "stability": 0.3659, "l0": 0.2500},
+    "attention": {"mse": 1.7772, "stability": 0.2971, "l0": 0.2487},
+    "random":    {"mse": 2.1393, "stability": null,   "l0": 0.2500}
+  }
+}
