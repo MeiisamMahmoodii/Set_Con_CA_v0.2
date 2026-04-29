@@ -1,7 +1,7 @@
-# Graph Report - C:\Users\MPC\Documents\code\SetConCA  (2026-04-29)
+# Graph Report - .  (2026-04-29)
 
 ## Corpus Check
-- 39 files · ~235,704 words
+- 39 files · ~235,807 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

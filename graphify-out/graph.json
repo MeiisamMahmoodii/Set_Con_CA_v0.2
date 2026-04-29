@@ -1986,18 +1986,18 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\MPC\\Documents\\code\\SetConCA\\experiments\\neurips\\runner\\eval_metrics.py",
       "source_location": "L32",
-      "id": "eval_metrics_rationale_32",
       "community": 13,
-      "norm_label": "centered kernel alignment over representations."
+      "norm_label": "centered kernel alignment over representations.",
+      "id": "eval_metrics_rationale_32"
     },
     {
       "label": "x: target model residual stream activation     z_concept: source model set-conca",
       "file_type": "rationale",
       "source_file": "C:\\Users\\MPC\\Documents\\code\\SetConCA\\experiments\\neurips\\runner\\eval_metrics.py",
       "source_location": "L61",
-      "id": "eval_metrics_rationale_61",
       "community": 13,
-      "norm_label": "x: target model residual stream activation     z_concept: source model set-conca"
+      "norm_label": "x: target model residual stream activation     z_concept: source model set-conca",
+      "id": "eval_metrics_rationale_61"
     },
     {
       "label": "exp1_set_vs_pointwise.py",
@@ -11176,18 +11176,6 @@
     {
       "relation": "uses",
       "confidence": "INFERRED",
-      "source_file": "setconca\\model\\setconca.py",
-      "source_location": "L4",
-      "weight": 0.8,
-      "_src": "aggregator_setaggregator",
-      "_tgt": "setconca_setconca",
-      "confidence_score": 0.5,
-      "source": "aggregator_setaggregator",
-      "target": "setconca_setconca"
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
       "source_file": "tests\\test_setconca.py",
       "source_location": "L23",
       "weight": 0.8,
@@ -11352,6 +11340,18 @@
       "confidence_score": 0.5,
       "source": "aggregator_setaggregator",
       "target": "test_setconca_rationale_421"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "setconca\\model\\setconca.py",
+      "source_location": "L4",
+      "weight": 0.8,
+      "_src": "aggregator_setaggregator",
+      "_tgt": "setconca_setconca",
+      "confidence_score": 0.5,
+      "source": "aggregator_setaggregator",
+      "target": "setconca_setconca"
     },
     {
       "relation": "contains",
@@ -11404,18 +11404,6 @@
     {
       "relation": "uses",
       "confidence": "INFERRED",
-      "source_file": "setconca\\model\\setconca.py",
-      "source_location": "L5",
-      "weight": 0.8,
-      "_src": "decoder_dualdecoder",
-      "_tgt": "setconca_setconca",
-      "confidence_score": 0.5,
-      "source": "decoder_dualdecoder",
-      "target": "setconca_setconca"
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
       "source_file": "tests\\test_setconca.py",
       "source_location": "L24",
       "weight": 0.8,
@@ -11580,6 +11568,18 @@
       "confidence_score": 0.5,
       "source": "decoder_dualdecoder",
       "target": "test_setconca_rationale_421"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "setconca\\model\\setconca.py",
+      "source_location": "L5",
+      "weight": 0.8,
+      "_src": "decoder_dualdecoder",
+      "_tgt": "setconca_setconca",
+      "confidence_score": 0.5,
+      "source": "decoder_dualdecoder",
+      "target": "setconca_setconca"
     },
     {
       "relation": "contains",
@@ -11632,18 +11632,6 @@
     {
       "relation": "uses",
       "confidence": "INFERRED",
-      "source_file": "setconca\\model\\setconca.py",
-      "source_location": "L3",
-      "weight": 0.8,
-      "_src": "encoder_elementencoder",
-      "_tgt": "setconca_setconca",
-      "confidence_score": 0.5,
-      "source": "encoder_elementencoder",
-      "target": "setconca_setconca"
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
       "source_file": "tests\\test_setconca.py",
       "source_location": "L22",
       "weight": 0.8,
@@ -11808,6 +11796,18 @@
       "confidence_score": 0.5,
       "source": "encoder_elementencoder",
       "target": "test_setconca_rationale_421"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "setconca\\model\\setconca.py",
+      "source_location": "L3",
+      "weight": 0.8,
+      "_src": "encoder_elementencoder",
+      "_tgt": "setconca_setconca",
+      "confidence_score": 0.5,
+      "source": "encoder_elementencoder",
+      "target": "setconca_setconca"
     },
     {
       "relation": "contains",
