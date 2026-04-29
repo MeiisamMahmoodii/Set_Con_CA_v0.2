@@ -17,12 +17,13 @@
 * **Layerwise proxy search:** best pseudo-layer pair is **early -> mid = 0.7413**.
 * **Relative-depth mapping:** 60% depth lands at **mid -> mid = 0.7405**.
 * **Steering by layer bucket:** late pseudo-layer bucket gives the strongest gain (**+0.1861** at `alpha=5`).
-* **Cross-language EN/FR:** now has a real **WMT14 fr-en** benchmark path with completed tensors for **Qwen-3B**, **Qwen-7B**, **Mistral-7B**, and **Gemma-2-2B**.
-* **WMT14 multilingual result:** Set-ConCA averages **0.3187** raw overlap over the completed 8-pair matrix; this is competitive but **not** a win over several dense/pointwise alignment references on the current 128-anchor run.
+* **Multilingual benchmarks finalized:** final-pass matrices completed for **WMT14 fr-en** and **OPUS100 multi-en**, each with **7 models / 26 directed pairs**.
+* **Final-pass multilingual means:** Set-ConCA averages **0.3802** (WMT14) and **0.3688** (OPUS100), while ConCA(S=1) is **0.3720 / 0.3725**.
+* **Coverage now includes:** Qwen-3B/7B, Mistral-7B, Gemma-2-2B, Llama-3.2-1B/3B, and Phi-3.5-mini.
 
 ## Current Positioning
 * **Best framing:** Set-ConCA is a credible set-based sparse concept method with strong cross-family transfer and steering evidence, plus a now-working multilingual benchmark path.
 * **Unsafe framing now:** claiming consistency is essential, corruption proves semantic dependence, PCA-32 improves transfer, or Set-ConCA beats all strong baselines on raw WMT14 EN/FR overlap.
 
 ---
-*Verified on RTX 3090 GPU | 2,048 anchors | 5 seeds | 60 tests passed*
+*Verified on RTX 3090 GPU | Full end-to-end final pass completed | 62 tests passed*

@@ -13,3 +13,4 @@
 - `[x]` Update Figure Gallery with new charts
 - `[x]` Synchronize results and SOTA comparisons in `README.md`
 - `[x]` Create final walkthrough
+- `[x]` Run end-to-end final pass (`pytest`, `run_evaluation_v2`, `run_extended_alignment`, multilingual builders, WMT14+OPUS100 matrix runs) and persist terminal log in `results/final_full_pass.log`

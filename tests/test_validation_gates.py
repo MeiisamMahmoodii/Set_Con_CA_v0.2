@@ -24,6 +24,20 @@ def test_METRIC_02_topk_overlap_batch_is_bounded():
     assert 0.0 <= ov <= 1.0
 
 
+def test_METRIC_02b_topk_overlap_uses_absolute_activation():
+    z1 = np.array([-10.0, 2.0, 1.0, 0.5], dtype=np.float32)
+    z2 = np.array([-9.0, 3.0, 0.1, 0.2], dtype=np.float32)
+    # If abs-TopK is used, both pick indices {0,1} -> perfect overlap.
+    assert topk_overlap(z1, z2, k=2) == pytest.approx(1.0, abs=1e-12)
+
+
+def test_METRIC_02c_topk_overlap_caps_k_to_feature_dim():
+    z1 = np.array([0.2, -0.4, 0.1], dtype=np.float32)
+    z2 = np.array([0.1, -0.5, 0.3], dtype=np.float32)
+    ov = topk_overlap(z1, z2, k=99)
+    assert 0.0 <= ov <= 1.0
+
+
 def test_METRIC_03_cka_is_symmetric():
     rng = np.random.default_rng(123)
     x = rng.normal(size=(32, 16)).astype(np.float32)

@@ -1,0 +1,33 @@
+# Baselines Index
+
+## Why baseline-by-baseline docs
+
+- Each baseline has different assumptions and fairness constraints.
+- [[Activation_Patching]]
+- [[CCA]]
+- [[ConCA_S=1]]
+- [[Contrastive_Alignment]]
+- [[CrossCoder]]
+- [[Deep_CCA]]
+- [[Gated_SAE]]
+- [[Gromov_Wasserstein]]
+- [[ICA]]
+- [[INLP]]
+- [[LEACE]]
+- [[Matryoshka_SAE]]
+- [[NMF]]
+- [[Optimal_Transport]]
+- [[PCA]]
+- [[PCA_threshold]]
+- [[PWCCA]]
+- [[Random]]
+- [[RepE]]
+- [[SAE_L1]]
+- [[SAE_TopK]]
+- [[SVCCA]]
+- [[Set_ConCA]]
+- [[Sparse_ICA]]
+- [[Sparse_NMF]]
+- [[Switch_SAE]]
+- [[Tuned_Lens]]
+- [[k_Sparse_Learned_Threshold]]

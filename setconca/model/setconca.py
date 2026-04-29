@@ -39,7 +39,8 @@ def compute_loss(model, x, alpha=1e-3, beta=1e-2, gamma=10.0, lambda_res=0.1):
     u = model.encoder(x)
     z_hat, u_bar, u_res = model.aggregator(u)
     
-    if getattr(model, 'use_topk', False):
+    use_topk = getattr(model, 'use_topk', False)
+    if use_topk:
         # Top-K Sparsity: Directly zero out non-top-k indices of z_hat
         topk_vals, topk_indices = torch.topk(z_hat, model.k, dim=-1)
         mask = torch.zeros_like(z_hat)

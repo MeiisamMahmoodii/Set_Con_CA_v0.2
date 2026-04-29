@@ -4,6 +4,8 @@ checkpoints/
 *.pt
 *.bin
 *.h5
+.agent
+*graphify*
 
 # Results / temp outputs
 *.pdf

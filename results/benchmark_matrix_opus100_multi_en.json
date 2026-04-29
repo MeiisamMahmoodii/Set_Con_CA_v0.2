@@ -1,0 +1,3320 @@
+{
+  "dataset": "opus100_multi_en",
+  "models": [
+    "gemma_2_2b",
+    "llama_3_2_1b_instruct",
+    "llama_3_2_3b_instruct",
+    "mistral_7b_instruct_v0_3",
+    "phi_3_5_mini_instruct",
+    "qwen2_5_3b_instruct",
+    "qwen2_5_7b_instruct"
+  ],
+  "pairs": {
+    "llama_3_2_1b_instruct__to__llama_3_2_3b_instruct": {
+      "meta": {
+        "src": "llama_3_2_1b_instruct",
+        "tgt": "llama_3_2_3b_instruct",
+        "category": "within_family",
+        "family": "llama"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3592233009708738,
+          "ridge_overlap": 0.3586165048543689
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.36893203883495146
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.22026699029126215
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7503033980582524
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.3422330097087379
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7281553398058253
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5552184466019418
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4975728155339806
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.4117111650485437
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.3804611650485437
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5797936893203883
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.28125
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5036407766990292
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.39563106796116504
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5976941747572816
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.42597087378640774
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6814320388349514
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.30066747572815533
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7099514563106796
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7754854368932039
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8768203883495146
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.2858009708737864
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.404126213592233
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4368932038834951
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6749267578125
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.00634765625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4208131067961165
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_3b_instruct__to__llama_3_2_1b_instruct": {
+      "meta": {
+        "src": "llama_3_2_3b_instruct",
+        "tgt": "llama_3_2_1b_instruct",
+        "category": "within_family",
+        "family": "llama"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3874393203883495,
+          "ridge_overlap": 0.3871359223300971
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3370752427184466
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9993932038834952
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9660194174757282
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9684466019417476
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9651092233009708
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5743325242718447
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.5209344660194175
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.4092839805825243
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.38561893203883496
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.6095266990291263
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.96875
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5631067961165048
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3483009708737864
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5989077669902912
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.3950242718446602
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.7014563106796117
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.29004854368932037
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7345266990291263
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7861043689320388
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8149271844660194
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9150485436893204
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9993932038834952
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.466626213592233
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.7076416015625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.0048828125
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.44690533980582525
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_1b_instruct__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "llama_3_2_1b_instruct",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "small_small",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.36893203883495146,
+          "ridge_overlap": 0.3704490291262136
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3607402912621359
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.2806432038834951
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.31765776699029125
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9748179611650486
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.4845266990291262
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.44902912621359226
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.39229368932038833
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.3786407766990291
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.6152912621359223
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.34375
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.6067961165048543
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3404126213592233
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5527912621359223
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.3804611650485437
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6298543689320388
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.26061893203883496
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5843446601941747
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6777912621359223
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.6507888349514563
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.32038834951456313
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.3425364077669903
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4672330097087379
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.5859375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.003173828125
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4080703883495146
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "qwen2_5_3b_instruct__to__llama_3_2_1b_instruct": {
+      "meta": {
+        "src": "qwen2_5_3b_instruct",
+        "tgt": "llama_3_2_1b_instruct",
+        "category": "small_small",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3783373786407767,
+          "ridge_overlap": 0.3816747572815534
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3382888349514563
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.24817961165048544
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9635922330097088
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.22694174757281554
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9626820388349514
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5115291262135923
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4878640776699029
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.3753033980582524
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.36802184466019416
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5870752427184466
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.96875
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5804004854368932
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3780339805825243
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.558252427184466
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.41808252427184467
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6274271844660194
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.18112864077669902
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6905339805825242
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7760922330097088
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7760922330097088
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.33343446601941745
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.21935679611650485
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.37985436893203883
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.7081298828125
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.002685546875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4535800970873786
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_3b_instruct__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "llama_3_2_3b_instruct",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "big_big",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3932038834951456,
+          "ridge_overlap": 0.39563106796116504
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.4077669902912621
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.6774878640776699
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.59375
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.4869538834951456
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.46298543689320387
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.3995752427184466
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.3746966019417476
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5804004854368932
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.502123786407767
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3925970873786408
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5794902912621359
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4362864077669903
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6674757281553398
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.2776092233009709
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6969053398058253
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7524271844660194
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7824635922330098
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.44660194174757284
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.648681640625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.021728515625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4056432038834951
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "qwen2_5_7b_instruct__to__llama_3_2_3b_instruct": {
+      "meta": {
+        "src": "qwen2_5_7b_instruct",
+        "tgt": "llama_3_2_3b_instruct",
+        "category": "big_big",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3473907766990291,
+          "ridge_overlap": 0.35315533980582525
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.35315533980582525
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7496966019417476
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7178398058252428
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5148665048543689
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.47845873786407767
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.39805825242718446
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.38076456310679613
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5509708737864077
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5133495145631068
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.4029126213592233
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5807038834951457
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4338592233009709
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6662621359223301
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.28519417475728154
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7017597087378641
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7675970873786407
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.9053398058252428
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.5552184466019418
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6920166015625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.021484375
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.410497572815534
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_1b_instruct__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "llama_3_2_1b_instruct",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "small_big",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.4092839805825243,
+          "ridge_overlap": 0.41140776699029125
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.4108009708737864
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.3115898058252427
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.6741504854368932
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.15776699029126215
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.6213592233009708
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.46086165048543687
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4411407766990291
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.3880461165048544
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.36711165048543687
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5843446601941747
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.28125
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.4887742718446602
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.2858009708737864
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5503640776699029
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.30339805825242716
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6377427184466019
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.2700242718446602
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7050970873786407
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7496966019417476
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7211771844660194
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.18021844660194175
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.2503033980582524
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.3125
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.63525390625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.002685546875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.42900485436893204
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_3b_instruct__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "llama_3_2_3b_instruct",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "big_small",
+        "family": "llama_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3558859223300971,
+          "ridge_overlap": 0.36225728155339804
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3619538834951456
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9723907766990292
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9329490291262136
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9796723300970874
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.48725728155339804
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4517597087378641
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.3916868932038835
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.38561893203883496
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.6031553398058253
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5879854368932039
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.31978155339805825
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5794902912621359
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.3592233009708738
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6595873786407767
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.3734830097087379
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.625
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6875
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.6893203883495146
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9368932038834952
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4842233009708738
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.58544921875
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.01171875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4429611650485437
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "mistral_7b_instruct_v0_3__to__llama_3_2_1b_instruct": {
+      "meta": {
+        "src": "mistral_7b_instruct_v0_3",
+        "tgt": "llama_3_2_1b_instruct",
+        "category": "single_vs_family",
+        "family": "mistral"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.39896844660194175,
+          "ridge_overlap": 0.40018203883495146
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.33222087378640774
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9993932038834952
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.964502427184466
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9684466019417476
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.960254854368932
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5288228155339806
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4869538834951456
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.38774271844660196
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.36438106796116504
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5925364077669902
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.96875
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5233616504854369
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3950242718446602
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5424757281553398
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4399271844660194
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6401699029126213
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.2682038834951456
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7296723300970874
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.783373786407767
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7527305825242718
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9150485436893204
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9993932038834952
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.42354368932038833
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.70654296875
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.00341796875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4368932038834951
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "mistral_7b_instruct_v0_3__to__llama_3_2_3b_instruct": {
+      "meta": {
+        "src": "mistral_7b_instruct_v0_3",
+        "tgt": "llama_3_2_3b_instruct",
+        "category": "single_vs_family",
+        "family": "mistral"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.35072815533980584,
+          "ridge_overlap": 0.35133495145631066
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.36347087378640774
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7509101941747572
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7172330097087378
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5364077669902912
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.49302184466019416
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.39350728155339804
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.3880461165048544
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5576456310679612
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.48270631067961167
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.42354368932038833
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5989077669902912
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4830097087378641
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6735436893203883
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.29065533980582525
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6975121359223301
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7724514563106796
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.9684466019417476
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.3561893203883495
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6920166015625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.02099609375
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.42475728155339804
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "phi_3_5_mini_instruct__to__llama_3_2_1b_instruct": {
+      "meta": {
+        "src": "phi_3_5_mini_instruct",
+        "tgt": "llama_3_2_1b_instruct",
+        "category": "single_vs_family",
+        "family": "phi"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.370752427184466,
+          "ridge_overlap": 0.36923543689320387
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.33313106796116504
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.2867111650485437
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.8901699029126213
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.27336165048543687
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.8944174757281553
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.372876213592233
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4065533980582524
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2745752427184466
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.2712378640776699
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.568871359223301
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.96875
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.3149271844660194
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.254247572815534
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.27245145631067963
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.2949029126213592
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.22026699029126215
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.17233009708737865
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6711165048543689
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6692961165048543
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.6756674757281553
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.26152912621359226
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.33100728155339804
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4945388349514563
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.7059326171875
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.0087890625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.43234223300970875
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "phi_3_5_mini_instruct__to__llama_3_2_3b_instruct": {
+      "meta": {
+        "src": "phi_3_5_mini_instruct",
+        "tgt": "llama_3_2_3b_instruct",
+        "category": "single_vs_family",
+        "family": "phi"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.32524271844660196,
+          "ridge_overlap": 0.3270631067961165
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.34981796116504854
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.30764563106796117
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7302791262135923
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.2087378640776699
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7099514563106796
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3443567961165049
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.38288834951456313
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.277002427184466
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.27245145631067963
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5203276699029126
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.3143203883495146
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.27487864077669905
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.279126213592233
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.2955097087378641
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.19720873786407767
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.12014563106796117
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5952669902912622
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5907160194174758
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7560679611650486
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.2982402912621359
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.3237257281553398
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4095873786407767
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6920166015625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.011962890625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4344660194174757
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "qwen2_5_3b_instruct__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "qwen2_5_3b_instruct",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "within_family",
+        "family": "qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3874393203883495,
+          "ridge_overlap": 0.3895631067961165
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.41383495145631066
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.1595873786407767
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.6635315533980582
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.2509101941747573
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.6259101941747572
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.49393203883495146
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4535800970873786
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.40351941747572817
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.38076456310679613
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5807038834951457
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5221480582524272
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.39927184466019416
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.6256067961165048
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.433252427184466
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6595873786407767
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.2933859223300971
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.7017597087378641
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7512135922330098
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8128033980582524
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.24393203883495146
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.2509101941747573
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.31978155339805825
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.63525390625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.022216796875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.39745145631067963
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "qwen2_5_7b_instruct__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "qwen2_5_7b_instruct",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "within_family",
+        "family": "qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3595266990291262,
+          "ridge_overlap": 0.3619538834951456
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3613470873786408
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9714805825242718
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9329490291262136
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9805825242718447
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.5103155339805825
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.45964805825242716
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.41565533980582525
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.39472087378640774
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.6019417475728155
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.6180218446601942
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.39745145631067963
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.6316747572815534
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4308252427184466
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6705097087378641
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.3941140776699029
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.625
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.691747572815534
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7084344660194175
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9368932038834952
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.5509708737864077
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.5863037109375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.022705078125
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4068567961165049
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "mistral_7b_instruct_v0_3__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "mistral_7b_instruct_v0_3",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "single_vs_family",
+        "family": "mistral"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3637742718446602,
+          "ridge_overlap": 0.36984223300970875
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3616504854368932
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9766383495145631
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9329490291262136
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9839199029126213
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.4848300970873786
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.44660194174757284
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.38410194174757284
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.37985436893203883
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5928398058252428
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5412621359223301
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3907766990291262
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.5491504854368932
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.41565533980582525
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6389563106796117
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.37105582524271846
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.620752427184466
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6893203883495146
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8316140776699029
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9368932038834952
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9678398058252428
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.3719660194174757
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.585205078125
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.006591796875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4211165048543689
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "mistral_7b_instruct_v0_3__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "mistral_7b_instruct_v0_3",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "single_vs_family",
+        "family": "mistral"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3910800970873786,
+          "ridge_overlap": 0.3941140776699029
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.40898058252427183
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7181432038834952
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.629247572815534
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.4845266990291262
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4523665048543689
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.4050364077669903
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.38440533980582525
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.589502427184466
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.4851334951456311
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.3258495145631068
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.558252427184466
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.3586165048543689
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.6614077669902912
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.2757888349514563
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6975121359223301
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7530339805825242
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.9065533980582524
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4830097087378641
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.64697265625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.0048828125
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4238470873786408
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "phi_3_5_mini_instruct__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "phi_3_5_mini_instruct",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "single_vs_family",
+        "family": "phi"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.35072815533980584,
+          "ridge_overlap": 0.3537621359223301
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.35194174757281554
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.31856796116504854
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9171723300970874
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.28974514563106796
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.912621359223301
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.33859223300970875
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.36559466019417475
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.25879854368932037
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.27336165048543687
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5482402912621359
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.3137135922330097
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.2621359223300971
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.27063106796116504
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.30339805825242716
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.19781553398058252
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.24302184466019416
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5449029126213593
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5391383495145631
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8033980582524272
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.19569174757281554
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.31887135922330095
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.41565533980582525
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.586181640625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.008544921875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.44599514563106796
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "phi_3_5_mini_instruct__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "phi_3_5_mini_instruct",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "single_vs_family",
+        "family": "phi"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.38531553398058255,
+          "ridge_overlap": 0.38470873786407767
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.39745145631067963
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.33798543689320387
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.6480582524271845
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.2503033980582524
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.6007281553398058
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.33495145631067963
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.3601334951456311
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2621359223300971
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.27154126213592233
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5412621359223301
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.30218446601941745
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.2566747572815534
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.2512135922330097
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.27245145631067963
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.21480582524271843
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.17384708737864077
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6231796116504854
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6222694174757282
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.6841626213592233
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.23968446601941748
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.3504247572815534
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.44660194174757284
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6483154296875
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.00927734375
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.435376213592233
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "gemma_2_2b__to__llama_3_2_1b_instruct": {
+      "meta": {
+        "src": "gemma_2_2b",
+        "tgt": "llama_3_2_1b_instruct",
+        "category": "small_small",
+        "family": "gemma_vs_llama"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.38379854368932037,
+          "ridge_overlap": 0.3816747572815534
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.35133495145631066
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9572208737864077
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9478155339805825
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.30370145631067963
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9481189320388349
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3925970873786408
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.4071601941747573
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2630461165048544
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.2630461165048544
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5712985436893204
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.96875
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5218446601941747
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.2651699029126214
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.30643203883495146
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.5224514563106796
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.2967233009708738
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.1104368932038835
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6878033980582524
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.7111650485436893
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7126820388349514
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.6155946601941747
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9575242718446602
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.39745145631067963
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.7081298828125
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.00390625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4183859223300971
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "llama_3_2_1b_instruct__to__gemma_2_2b": {
+      "meta": {
+        "src": "llama_3_2_1b_instruct",
+        "tgt": "gemma_2_2b",
+        "category": "small_small",
+        "family": "gemma_vs_llama"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.33464805825242716,
+          "ridge_overlap": 0.3370752427184466
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.38410194174757284
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.3149271844660194
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7138956310679612
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.29277912621359226
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7472694174757282
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.33768203883495146
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.24726941747572814
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.26850728155339804
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.2766990291262136
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5470266990291263
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 0.15625
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.4071601941747573
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.25849514563106796
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.3058252427184466
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.2633495145631068
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.3313106796116505
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.17020631067961164
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5075849514563107
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5591626213592233
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.46359223300970875
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.35194174757281554
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.3149271844660194
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4550970873786408
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.493896484375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.004638671875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.38349514563106796
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "gemma_2_2b__to__llama_3_2_3b_instruct": {
+      "meta": {
+        "src": "gemma_2_2b",
+        "tgt": "llama_3_2_3b_instruct",
+        "category": "small_big",
+        "family": "gemma_vs_llama"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3640776699029126,
+          "ridge_overlap": 0.36529126213592233
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3786407766990291
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9554004854368932
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7569781553398058
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.28913834951456313
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7366504854368932
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3725728155339806
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.39927184466019416
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.27518203883495146
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.28762135922330095
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5406553398058253
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.47481796116504854
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.27184466019417475
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.3112864077669903
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.5497572815533981
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.3294902912621359
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.09526699029126214
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6656553398058253
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6902305825242718
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7545509708737864
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.631371359223301
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9554004854368932
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4016990291262136
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.6634521484375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.015625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4408373786407767
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "gemma_2_2b__to__qwen2_5_3b_instruct": {
+      "meta": {
+        "src": "gemma_2_2b",
+        "tgt": "qwen2_5_3b_instruct",
+        "category": "small_small",
+        "family": "gemma_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.38197815533980584,
+          "ridge_overlap": 0.38531553398058255
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3898665048543689
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9265776699029126
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.9608616504854369
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.3079490291262136
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.9720873786407767
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3483009708737864
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.36559466019417475
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2776092233009709
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.27730582524271846
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5464199029126213
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.5864684466019418
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.25788834951456313
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.28944174757281554
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.5260922330097088
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.2803398058252427
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.14987864077669902
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5637135922330098
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5888956310679612
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.7745752427184466
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.6013349514563107
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9265776699029126
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.41322815533980584
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.585693359375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.0380859375
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.44811893203883496
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "qwen2_5_3b_instruct__to__gemma_2_2b": {
+      "meta": {
+        "src": "qwen2_5_3b_instruct",
+        "tgt": "gemma_2_2b",
+        "category": "small_small",
+        "family": "gemma_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.33616504854368934,
+          "ridge_overlap": 0.341626213592233
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3850121359223301
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.19174757281553398
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7114684466019418
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.26152912621359226
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7472694174757282
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3428398058252427
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.2490898058252427
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2657766990291262
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.2669902912621359
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5324635922330098
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.42779126213592233
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.24150485436893204
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.29065533980582525
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.2506067961165049
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.30279126213592233
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.16777912621359223
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5169902912621359
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5612864077669902
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.4723907766990291
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.19114077669902912
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.2518203883495146
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4350728155339806
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.4964599609375
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.039306640625
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4541868932038835
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "gemma_2_2b__to__qwen2_5_7b_instruct": {
+      "meta": {
+        "src": "gemma_2_2b",
+        "tgt": "qwen2_5_7b_instruct",
+        "category": "small_big",
+        "family": "gemma_vs_qwen"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.39836165048543687,
+          "ridge_overlap": 0.40048543689320387
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.4192961165048544
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9560072815533981
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.695995145631068
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.2803398058252427
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.629247572815534
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.35194174757281554
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.3625606796116505
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.25910194174757284
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.26850728155339804
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5394417475728155
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.47269417475728154
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.24696601941747573
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.29975728155339804
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.4799757281553398
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.29065533980582525
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.10558252427184465
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.6404733009708737
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.6544296116504854
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.8440533980582524
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.6368325242718447
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9560072815533981
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4016990291262136
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.644775390625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.013671875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.44811893203883496
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "mistral_7b_instruct_v0_3__to__gemma_2_2b": {
+      "meta": {
+        "src": "mistral_7b_instruct_v0_3",
+        "tgt": "gemma_2_2b",
+        "category": "single_vs_family",
+        "family": "mistral"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3470873786407767,
+          "ridge_overlap": 0.35285194174757284
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.37985436893203883
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.9954490291262136
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.7044902912621359
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.9560072815533981
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7405946601941747
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3455703883495146
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.24302184466019416
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.27518203883495146
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.279126213592233
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5282160194174758
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.4026092233009709
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.25728155339805825
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.2827669902912621
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.27184466019417475
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.3276699029126214
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.16717233009708737
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5109223300970874
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5712985436893204
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.36984223300970875
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.9514563106796117
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.9954490291262136
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.3719660194174757
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.4871826171875
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.013671875
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4359830097087379
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    },
+    "phi_3_5_mini_instruct__to__gemma_2_2b": {
+      "meta": {
+        "src": "phi_3_5_mini_instruct",
+        "tgt": "gemma_2_2b",
+        "category": "single_vs_family",
+        "family": "phi"
+      },
+      "n_anchors": 512,
+      "results": {
+        "Set-ConCA": {
+          "status": "ok",
+          "procrustes_overlap": 0.3270631067961165,
+          "ridge_overlap": 0.33222087378640774
+        },
+        "ConCA (S=1)": {
+          "status": "ok",
+          "overlap": 0.3850121359223301
+        },
+        "SAE-L1": {
+          "status": "ok",
+          "overlap": 0.29156553398058255
+        },
+        "SAE-TopK": {
+          "status": "ok",
+          "overlap": 0.6899271844660194
+        },
+        "Gated SAE": {
+          "status": "ok",
+          "overlap": 0.2970266990291262
+        },
+        "k-Sparse Learned Threshold": {
+          "status": "ok",
+          "overlap": 0.7217839805825242
+        },
+        "PCA": {
+          "status": "ok",
+          "overlap": 0.3261529126213592
+        },
+        "PCA-threshold": {
+          "status": "ok",
+          "overlap": 0.22936893203883496
+        },
+        "ICA": {
+          "status": "ok",
+          "overlap": 0.2621359223300971
+        },
+        "Sparse ICA": {
+          "status": "ok",
+          "overlap": 0.2645631067961165
+        },
+        "NMF": {
+          "status": "ok",
+          "overlap": 0.5382281553398058
+        },
+        "Sparse NMF": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "Random": {
+          "status": "ok",
+          "overlap": 0.2949029126213592
+        },
+        "CCA": {
+          "status": "ok",
+          "overlap": 0.2675970873786408
+        },
+        "SVCCA": {
+          "status": "ok",
+          "overlap": 0.24271844660194175
+        },
+        "PWCCA": {
+          "status": "ok",
+          "overlap": 0.30339805825242716
+        },
+        "Contrastive Alignment": {
+          "status": "ok",
+          "overlap": 0.25788834951456313
+        },
+        "RepE": {
+          "status": "ok",
+          "overlap": 0.1550364077669903
+        },
+        "INLP": {
+          "status": "ok",
+          "overlap": 0.5233616504854369
+        },
+        "LEACE": {
+          "status": "ok",
+          "overlap": 0.5251820388349514
+        },
+        "CrossCoder": {
+          "status": "ok",
+          "overlap": 0.45813106796116504
+        },
+        "Switch SAE": {
+          "status": "ok",
+          "overlap": 0.33768203883495146
+        },
+        "Matryoshka SAE": {
+          "status": "ok",
+          "overlap": 0.2988470873786408
+        },
+        "Deep CCA": {
+          "status": "ok",
+          "overlap": 0.4174757281553398
+        },
+        "Optimal Transport": {
+          "status": "ok",
+          "overlap": 0.4830322265625
+        },
+        "Gromov-Wasserstein": {
+          "status": "ok",
+          "overlap": 0.00927734375
+        },
+        "Activation Patching": {
+          "status": "ok",
+          "overlap": 0.4375
+        },
+        "Tuned Lens": {
+          "status": "ok",
+          "overlap": 1.0
+        },
+        "deferred": {
+          "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+        }
+      }
+    }
+  },
+  "deferred_baselines": {
+    "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
+  },
+  "elapsed_s": 4063.03213429451
+}

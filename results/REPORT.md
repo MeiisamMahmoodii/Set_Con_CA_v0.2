@@ -1,6 +1,6 @@
 # Set-ConCA: Verified Results Report
 **Concept Component Analysis on Representation Sets**  
-*Canonical results regenerated from `results/results_v2.json`, `results/extended_alignment_results.json`, and `results/benchmark_matrix_wmt14_fr_en.json` on RTX 3090.*
+*Canonical results regenerated from `results/results_v2.json`, `results/extended_alignment_results.json`, `results/benchmark_matrix_wmt14_fr_en.json`, and `results/benchmark_matrix_opus100_multi_en.json` on RTX 3090.*
 
 ---
 
@@ -17,7 +17,7 @@ This report is the cleaned, evidence-aligned version of the project status after
 
 Current validation status:
 
-- **Tests:** `60 passed`
+- **Tests:** `62 passed`
 - **Canonical metrics file:** `results/results_v2.json`
 - **Extended diagnostics:** `results/extended_alignment_results.json`
 - **Terminal report artifact:** `results/extended_alignment_terminal_report.txt`
@@ -34,6 +34,10 @@ Current validation status:
 - **Linear bridge beats nonlinear bridge in this rerun.** EXP12 gives **69.3%** for linear vs **64.2%** for MLP.
 - **PCA-32 hurts, not helps, in the direct distilled-input experiment.** EXP14 falls to **31.4% +/- 1.3pp**.
 
+![Claim Strength Map](./figures/fig20_claim_strength_map.png)
+
+![Report Dashboard](./figures/fig17_report_dashboard.png)
+
 ---
 
 ## Experimental Setup
@@ -44,6 +48,19 @@ Current validation status:
 - **Hardware:** RTX 3090
 
 The current repo artifacts only contain one extracted hidden-state layer per model, so the new “layerwise” diagnostics use **pseudo-layer views** created by splitting the hidden dimension into `early/mid/late` buckets. That means those diagnostics are useful exploratory signals, not true per-layer activation results yet.
+
+![Final-Pass Pipeline](./figures/fig18_pipeline_flow.png)
+
+## At-a-Glance Metrics
+
+| Item | Final-pass value | Evidence source |
+|---|---:|---|
+| Full test suite | 62 passed | `pytest` |
+| Cross-family transfer (Gemma4B->Llama8B) | 69.5% +/- 0.6pp | `exp4_cross_family` |
+| Steering gain at alpha=10 (Set-ConCA) | +9.8pp | `exp7_steering` |
+| Pointwise TopK transfer | 78.4% +/- 4.6pp | `exp16_topk_pointwise_vs_set` |
+| Set-ConCA multilingual mean (WMT14/OPUS100) | 0.3802 / 0.3688 | matrix artifacts |
+| Matrix coverage per multilingual dataset | 7 models, 26 directed pairs | matrix artifacts |
 
 ---
 
@@ -355,76 +372,65 @@ Interpretation:
 - The asymmetry picture is more nuanced than “small transfers better to large.”
 - The direction that helps most depends on sender/receiver pair and likely reflects both capacity and training-recipe mismatch.
 
-### Cross-Language
+### Multilingual Benchmarks (Final Pass)
 
-- **Status:** partially completed
-- **Canonical WMT14 artifact set:** `data/benchmarks/wmt14_fr_en/`
-- **Canonical matrix results:** `results/benchmark_matrix_wmt14_fr_en.json`
-- **Completed model tensors:** `Qwen2.5-3B-Instruct`, `Qwen2.5-7B-Instruct`, `Mistral-7B-Instruct-v0.3`, `Gemma-2-2B`
-- **Deferred models:** `Llama-3.2-1B-Instruct`, `Llama-3.2-3B-Instruct`, `Gemma-2-27B` (gated/auth), `Phi-3.5-mini-instruct` (runtime compatibility error)
+- **Status:** completed for final-pass target configuration (non-27B model set).
+- **Canonical datasets:** `wmt14_fr_en` and `opus100_multi_en`.
+- **Canonical matrix artifacts:**
+  - `results/benchmark_matrix_wmt14_fr_en.json`
+  - `results/benchmark_matrix_opus100_multi_en.json`
+- **Model coverage:** 7 models, 26 directed pairs per dataset.
 
-Verified WMT14 EN/FR transfer averages over the completed 8-pair matrix:
-
-| Method | Mean raw overlap |
-|---|---:|
-| Set-ConCA | 0.3187 |
-| ConCA (S=1) | 0.3212 |
-| PCA | 0.3398 |
-| CCA | 0.3389 |
-| SVCCA | 0.3882 |
-| PWCCA | 0.5439 |
-| Contrastive alignment | 0.3690 |
-
-Full WMT14 EN/FR mean-overlap comparison across the completed matrix:
-
-| Method | Mean overlap |
-|---|---:|
-| Set-ConCA | 0.3187 |
-| ConCA (S=1) | 0.3212 |
-| SAE-TopK | 0.7689 |
-| Gated SAE | 0.6442 |
-| k-Sparse Learned Threshold | 0.7584 |
-| PCA | 0.3398 |
-| ICA | 0.2541 |
-| NMF | 0.3896 |
-| CCA | 0.3389 |
-| SVCCA | 0.3882 |
-| PWCCA | 0.5439 |
-| Contrastive alignment | 0.3690 |
-| RepE | 0.2625 |
-| INLP | 0.6514 |
-| LEACE | 0.6872 |
-
-Representative pair results:
-
-| Pair | Set-ConCA | ConCA (S=1) | PCA | SVCCA | PWCCA | Contrastive |
-|---|---:|---:|---:|---:|---:|---:|
-| Qwen-3B -> Qwen-7B | 0.3077 | 0.3233 | 0.3161 | 0.4904 | 0.5144 | 0.5361 |
-| Qwen-7B -> Qwen-3B | 0.3401 | 0.3281 | 0.3594 | 0.5024 | 0.6466 | 0.5288 |
-| Mistral-7B -> Qwen-3B | 0.3269 | 0.3197 | 0.3618 | 0.4591 | 0.6731 | 0.4952 |
-| Gemma-2-2B -> Qwen-3B | 0.3365 | 0.2933 | 0.3450 | 0.3005 | 0.3774 | 0.2236 |
-
-Completed-vs-deferred multilingual model status:
+Completed multilingual model status:
 
 | Model | Status | Note |
 |---|---|---|
-| Qwen2.5-3B-Instruct | completed | WMT14 tensors built |
-| Qwen2.5-7B-Instruct | completed | WMT14 tensors built |
-| Mistral-7B-Instruct-v0.3 | completed | WMT14 tensors built |
-| Gemma-2-2B | completed | WMT14 tensors built |
-| Llama-3.2-1B-Instruct | deferred | gated repo / no local auth |
-| Llama-3.2-3B-Instruct | deferred | gated repo / no local auth |
-| Gemma-2-27B | deferred | gated repo / best-effort heavy model |
-| Phi-3.5-mini-instruct | deferred | local runtime compatibility failure |
+| Qwen2.5-3B-Instruct | completed | final-pass tensors built |
+| Qwen2.5-7B-Instruct | completed | final-pass tensors built |
+| Mistral-7B-Instruct-v0.3 | completed | final-pass tensors built |
+| Gemma-2-2B | completed | final-pass tensors built |
+| Llama-3.2-1B-Instruct | completed | final-pass tensors built |
+| Llama-3.2-3B-Instruct | completed | final-pass tensors built |
+| Phi-3.5-mini-instruct | completed | final-pass tensors built |
+
+Matrix-level mean scores from final pass:
+
+| Method | WMT14 fr-en | OPUS100 multi-en |
+|---|---:|---:|
+| Set-ConCA | 0.3802 | 0.3688 |
+| ConCA (S=1) | 0.3720 | 0.3725 |
+| PCA | 0.4542 | 0.4355 |
+| CCA | 0.3433 | 0.3196 |
+| SVCCA | 0.4198 | 0.4425 |
+| PWCCA | 0.4839 | 0.3864 |
+| Contrastive Alignment | 0.4658 | 0.4793 |
+| SAE-TopK | 0.8558 | 0.8128 |
+| CrossCoder | 0.8122 | 0.7295 |
+| Switch SAE | 0.6272 | 0.5891 |
+| Matryoshka SAE | 0.4955 | 0.6673 |
+| Deep CCA | 0.4377 | 0.4275 |
+| Optimal Transport | 0.6823 | 0.6264 |
+| Gromov-Wasserstein | 0.0100 | 0.0128 |
+| Activation Patching | 0.4272 | 0.4286 |
+| Tuned Lens | 1.0000 | 1.0000 |
+
+![Multilingual Method Heatmap](./figures/fig19_multilingual_method_heatmap.png)
+
+Top-5 methods by mean score on each multilingual dataset:
+
+| Rank | WMT14 fr-en | Score | OPUS100 multi-en | Score |
+|---:|---|---:|---|---:|
+| 1 | Tuned Lens | 1.0000 | Tuned Lens | 1.0000 |
+| 2 | Sparse NMF | 1.0000 | Sparse NMF | 0.8810 |
+| 3 | SAE-TopK | 0.8558 | SAE-TopK | 0.8128 |
+| 4 | k-Sparse Learned Threshold | 0.8387 | k-Sparse Learned Threshold | 0.8000 |
+| 5 | CrossCoder | 0.8122 | CrossCoder | 0.7295 |
 
 Interpretation:
 
-- The repo now has a **real** EN/FR benchmark rather than a placeholder skip path.
-- On this WMT14 run, Set-ConCA is **competitive but not leading** on raw overlap.
-- The safest claim is that multilingual set-based transfer is now demonstrated, not that Set-ConCA dominates strong dense or pointwise alignment baselines on WMT14.
-- Some newly added controls are clearly not headline-safe yet. In particular, thresholded or erasure-style methods score unusually high on this 128-anchor benchmark and should be treated as task-mismatch references until the Europarl follow-up is complete.
-
-Europarl extraction has been launched as the larger follow-up benchmark, but those results were still running at the time of this report refresh and are therefore not included in the tables above.
+- The multilingual benchmark path is now fully operational across both datasets with the intended model set.
+- Set-ConCA remains competitive and usually close to ConCA (S=1), but is not the top raw-overlap method in these matrix summaries.
+- Several newly implemented baselines behave as strong or extreme controls (for example `SAE-TopK` and `Tuned Lens`), so the safest framing remains comparative and conservative rather than dominance claims.
 
 ---
 
@@ -444,7 +450,7 @@ The core experiment plots are embedded above. Additional high-level overview fig
 
 ## Validation Status
 
-- `uv run pytest` -> **60 passed**
+- `uv run pytest` -> **62 passed**
 - Claim-level contradiction tests are now included in `tests/test_validation_gates.py`
 - `run_evaluation_v2.py` now writes framing consistent with measured results
 - `run_extended_alignment.py` writes:
@@ -470,6 +476,15 @@ But the strongest defensible positioning is now narrower and more honest:
 - **Strong claims:** cross-family transfer exists, steering works, linear bridges are sufficient or better, and Set-ConCA remains competitive on the sparse reconstruction/transfer frontier.
 - **Mixed claims:** single-model interpretability advantage, consistency necessity, and corruption sensitivity.
 - **Not yet completed:** the larger Europarl follow-up, gated Llama/Gemma-27B access, and true per-layer extraction across heterogeneous model depths.
+
+Claim guardrail table:
+
+| Safe to claim | Do not claim |
+|---|---|
+| Set-ConCA shows credible cross-family transfer and steering. | Set-ConCA dominates all baselines on raw overlap. |
+| Multilingual benchmark pipeline is now operational on WMT14 + OPUS100. | Consistency loss is strictly necessary in current TopK setup. |
+| Linear bridge is competitive/strong in this repo’s final pass. | Corruption test proves semantic collapse under noise. |
+| Set-ConCA remains competitive in sparse concept-transfer framing. | PCA-32 universally improves transfer in this project. |
 
 If this is being framed for paper/reporting, the safest core message is:
 

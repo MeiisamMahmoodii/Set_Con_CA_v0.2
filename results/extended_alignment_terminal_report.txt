@@ -2,7 +2,7 @@
 ========================================================================
 SetConCA Extended Alignment Terminal Report
 ========================================================================
-Elapsed: 348.0s
+Elapsed: 194.2s
 Run profile: FAST_EPOCHS=20, FAST_SEEDS=[42, 1337, 2024]
 Heavy baselines sample size: N=512
 

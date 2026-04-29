@@ -3,6 +3,13 @@
 ## Scope Executed
 
 - Full unit/integration test suite rerun (`pytest`) completed.
+- Full end-to-end final pass completed with unified logging:
+  - `pytest`
+  - `experiments/neurips/run_evaluation_v2.py`
+  - `experiments/neurips/run_extended_alignment.py`
+  - `experiments/neurips/build_multilingual_benchmarks.py`
+  - `experiments/neurips/run_benchmark_matrix.py wmt14_fr_en`
+  - `experiments/neurips/run_benchmark_matrix.py opus100_multi_en`
 - Reproduction scripts executed for:
   - `S=3/8/16` comparative run on synthetic set-structured data.
   - Bridge overlap vs random baseline significance on synthetic paired latents.
@@ -12,6 +19,9 @@
 
 - `docs/paper/artifacts/s_threshold_synthetic.csv`
 - `docs/paper/artifacts/bridge_significance_synthetic.csv`
+- `results/final_full_pass.log`
+- `results/benchmark_matrix_wmt14_fr_en.json`
+- `results/benchmark_matrix_opus100_multi_en.json`
 
 ## Key Results (Synthetic Reproduction)
 

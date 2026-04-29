@@ -10,18 +10,22 @@ def topk_overlap(z1, z2, k=32):
         z1 = z1.detach().cpu().numpy()
     if isinstance(z2, torch.Tensor):
         z2 = z2.detach().cpu().numpy()
-        
+
+    k_eff = min(int(k), int(z1.shape[-1]), int(z2.shape[-1]))
+    if k_eff <= 0:
+        return 0.0
+
     if z1.ndim == 1:
-        idx1 = np.argsort(z1)[-k:]
-        idx2 = np.argsort(z2)[-k:]
-        return len(set(idx1) & set(idx2)) / k
+        idx1 = np.argsort(np.abs(z1))[-k_eff:]
+        idx2 = np.argsort(np.abs(z2))[-k_eff:]
+        return len(set(idx1) & set(idx2)) / k_eff
     else:
         # Batched computation
         overlaps = []
         for i in range(len(z1)):
-            idx1 = np.argsort(z1[i])[-k:]
-            idx2 = np.argsort(z2[i])[-k:]
-            overlaps.append(len(set(idx1) & set(idx2)) / k)
+            idx1 = np.argsort(np.abs(z1[i]))[-k_eff:]
+            idx2 = np.argsort(np.abs(z2[i]))[-k_eff:]
+            overlaps.append(len(set(idx1) & set(idx2)) / k_eff)
         return np.mean(overlaps)
 
 def cka(X, Y):
