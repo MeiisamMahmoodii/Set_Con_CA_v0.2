@@ -1,36 +1,28 @@
-# Set-ConCA: Executive Summary (NeurIPS 2025)
+# Set-ConCA: Executive Summary (Verified Rerun)
 
-## 🎯 The Core Problem: Pointwise Conflation
-*   **Standard SAEs are Pointwise**: They process individual hidden states. This forces them to encode both **semantics** (what it means) and **syntax/surface noise** (how it's said) into the same dictionary.
-*   **The Conflation Penalty**: Because features are "flavored" by model-specific syntax, they do not transfer across different LLMs (e.g., Gemma features rarely map to Llama features).
+## What Is Strong
+* **Cross-family transfer:** Gemma-3 4B -> LLaMA-3 8B reaches **69.5% +/- 0.6pp** vs **25% chance**.
+* **Causal steering:** Set-ConCA gains **+9.8pp** at `alpha=10`; weak-to-strong gains **+10.7pp**; random control degrades sharply.
+* **Linear bridge sufficiency:** linear bridge reaches **69.3%**, while nonlinear MLP falls to **64.2%**.
+* **Sparse reconstruction trade-off:** Set-ConCA still beats SAE-TopK on MSE (**0.1735** vs **0.1868**) at roughly matched sparsity.
 
-## 🚀 Our Solution: Set-ConCA
-*   **Representation Sets**: Instead of single vectors, we train on sets of **paraphrases**.
-*   **Semantic Invariance**: By forcing the model to produce a *single* concept code for a set of different sentences, we mathematically average out the surface variation.
-*   **Dual Decoder**: A novel architecture that splits reconstruction:
-    1.  **Shared Stream**: Reconstructs the semantic core common to the set.
-    2.  **Residual Stream**: Reconstructs the sentence-specific syntax.
+## What Is Mixed or Weaker
+* **Pointwise raw transfer:** SAE-TopK now beats Set-ConCA on raw overlap (**78.4%** vs **69.5%**).
+* **Consistency loss:** in TopK mode, it changes transfer by only **+0.1pp**.
+* **Corruption test:** transfer stays near **69%** even under full corruption; this does **not** support a collapse-to-chance claim.
+* **Single-model interpretability:** Set-ConCA is competitive, but not clearly better than SAE-L1 or PCA on the proxy metrics.
 
-## 🛠️ Implementation Choices
-*   **Architecture**:
-    *   **Linear Encoder**: (B, S, D) -> (B, S, C). No activation (preserving geometric linearity).
-    *   **Mean-Pool Aggregator**: Permutation-invariant pooling across the paraphrase set.
-    *   **TopK Sparsity**: Hard k=32 bottleneck for maximum interpretability and zero hyperparameter tuning for L1.
-*   **Training**:
-    *   **Datasets**: Gemma-3 (1B/4B), Gemma-2 (9B), LLaMA-3 (8B).
-    *   **Anchors**: 2,048 diverse news-based semantic anchors.
-    *   **Loss**: Mean Squared Error (MSE) + Subset Consistency Loss.
+## New Extended Diagnostics
+* **SOTA-like extensions:** Procrustes **0.7302**, Ridge **0.7242**, CCA **0.7300**, NMF **0.8348**, ICA **0.1307**.
+* **Layerwise proxy search:** best pseudo-layer pair is **early -> mid = 0.7413**.
+* **Relative-depth mapping:** 60% depth lands at **mid -> mid = 0.7405**.
+* **Steering by layer bucket:** late pseudo-layer bucket gives the strongest gain (**+0.1861** at `alpha=5`).
+* **Cross-language EN/FR:** now has a real **WMT14 fr-en** benchmark path with completed tensors for **Qwen-3B**, **Qwen-7B**, **Mistral-7B**, and **Gemma-2-2B**.
+* **WMT14 multilingual result:** Set-ConCA averages **0.3187** raw overlap over the completed 8-pair matrix; this is competitive but **not** a win over several dense/pointwise alignment references on the current 128-anchor run.
 
-## 📊 Key Experimental Results
-*   **Cross-Model Transfer**: Set-ConCA achieves **64.6%** concept overlap (Gemma -> Llama) vs **56.4%** for standard SAEs (**+8.2pp gain**).
-*   **PCA-32 Breakthrough (EXP 14)**: Pre-distilling hidden states to the top 32 principal components yields **77.8% transfer**—confirming the most universal semantics live in the dominant spectral directions.
-*   **Weak-to-Strong Steering (EXP 7)**: Concepts discovered in a 1B model are **more causal** when steering an 8B model than concepts from a 4B model (+3.0pp gain), indicating "semantic distillation" in smaller models.
-*   **Linear Sufficiency (EXP 12)**: A nonlinear MLP bridge provides only a **+0.5pp** gain over an Orthogonal Procrustes rotation, proving the **Platonic Representation Hypothesis**: different models share a nearly linear conceptual geometry.
-
-## 🆚 SOTA Comparison
-*   **RAVEL/Patchscopes**: We provide the **sparse discovery mechanism** that explains why these benchmarks/inspection tools work.
-*   **SAE-TopK**: We maintain similar single-model interpretability but provide a significant advantage in **causal transferability**.
-*   **RepE**: We are **unsupervised**; we discover the concepts that RepE requires manual labeling to find.
+## Current Positioning
+* **Best framing:** Set-ConCA is a credible set-based sparse concept method with strong cross-family transfer and steering evidence, plus a now-working multilingual benchmark path.
+* **Unsafe framing now:** claiming consistency is essential, corruption proves semantic dependence, PCA-32 improves transfer, or Set-ConCA beats all strong baselines on raw WMT14 EN/FR overlap.
 
 ---
-*Results based on 2,048 anchors, 3 seeds, and 50 epochs. All experiments validated on RTX 3090 GPU.*
+*Verified on RTX 3090 GPU | 2,048 anchors | 5 seeds | 60 tests passed*

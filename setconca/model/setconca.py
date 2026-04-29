@@ -34,7 +34,7 @@ class SetConCA(nn.Module):
         return f_hat, z_hat, u
 
 
-def compute_loss(model, x, alpha=1e-3, beta=1e-2):
+def compute_loss(model, x, alpha=1e-3, beta=1e-2, gamma=10.0, lambda_res=0.1):
     # Step through internals explicitly to access u_bar for sparsity.
     u = model.encoder(x)
     z_hat, u_bar, u_res = model.aggregator(u)
@@ -45,17 +45,28 @@ def compute_loss(model, x, alpha=1e-3, beta=1e-2):
         mask = torch.zeros_like(z_hat)
         mask.scatter_(-1, topk_indices, 1.0)
         z_hat_sparse = z_hat * mask
-        f_hat = model.decoder(z_hat_sparse, u_res)
         
-        # MSE: mean over batch and set elements
-        mse = ((f_hat - x) ** 2).mean(dim=-1).mean(dim=-1).mean()
+        # 1. Full Reconstruction (Shared + Residual)
+        f_hat_full = model.decoder(z_hat_sparse, u_res)
+        mse_full = ((f_hat_full - x) ** 2).mean()
         
-        # In fixed-k Top-K, we don't need the L1/Sigmoid sparsity loss (it's hard-coded k)
+        # 2. Semantic Exclusive Reconstruction (Shared ONLY)
+        # Force the concept vector Z to carry the weight of reconstruction.
+        f_hat_shared = model.decoder.shared(z_hat_sparse).unsqueeze(1) + model.decoder.b_d
+        mse_shared = ((f_hat_shared - x) ** 2).mean()
+        
+        # Weigh shared loss much higher than full/residual loss
+        mse = gamma * mse_shared + lambda_res * mse_full
         spar = torch.tensor(0.0, device=x.device)
     else:
         # Standard Sigmoid + L1 Path
-        f_hat = model.decoder(z_hat, u_res)
-        mse = ((f_hat - x) ** 2).mean(dim=-1).mean(dim=-1).mean()
+        f_hat_full = model.decoder(z_hat, u_res)
+        mse_full = ((f_hat_full - x) ** 2).mean()
+        
+        f_hat_shared = model.decoder.shared(z_hat).unsqueeze(1) + model.decoder.b_d
+        mse_shared = ((f_hat_shared - x) ** 2).mean()
+        
+        mse = gamma * mse_shared + lambda_res * mse_full
         spar = alpha * sparsity_loss(u_bar)
 
     # Consistency: mean over batch
@@ -72,4 +83,4 @@ def compute_loss(model, x, alpha=1e-3, beta=1e-2):
     cons = beta * consistency_loss(x, _enc_agg)
 
     total = mse + spar + cons
-    return total, {'mse': mse, 'sparsity': spar, 'consistency': cons}
+    return total, {'mse': mse, 'mse_full': mse_full, 'mse_shared': mse_shared, 'sparsity': spar, 'consistency': cons}

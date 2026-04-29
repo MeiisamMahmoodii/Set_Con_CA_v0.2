@@ -26,7 +26,11 @@ Figures produced
   fig14_capability_matrix.png      SUMMARY — Capability comparison table
 """
 
-import os, json
+import os, json, sys
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+except Exception:
+    pass
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")

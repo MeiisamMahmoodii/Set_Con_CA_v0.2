@@ -8,9 +8,8 @@
 - `[x]` Integrate new experiments into `run_evaluation_v2.py`
 - `[x]` Verify script runs (Quick Test)
 - `[x]` Create bullet-point Executive Summary (`results/EXECUTIVE_SUMMARY.md`)
-- `[/]` Execute full experimental suite (N=2048, Seeds=5, Epochs=80) **ON GPU**
-    - `[/]` EXP 1: Set vs Pointwise
-    - `[ ]` EXP 2-16 in queue
-- `[ ]` Collect final results and update `REPORT.md` with data
-- `[ ]` Update Figure Gallery with new charts
-- `[ ]` Create final walkthrough
+- `[x]` Execute full experimental suite (N=2048, Seeds=5, Epochs=80) **ON GPU**
+- `[x]` Collect final results and update `REPORT.md` with data
+- `[x]` Update Figure Gallery with new charts
+- `[x]` Synchronize results and SOTA comparisons in `README.md`
+- `[x]` Create final walkthrough

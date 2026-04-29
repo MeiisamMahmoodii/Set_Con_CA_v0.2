@@ -1,0 +1,36 @@
+
+========================================================================
+SetConCA Extended Alignment Terminal Report
+========================================================================
+Elapsed: 348.0s
+Run profile: FAST_EPOCHS=20, FAST_SEEDS=[42, 1337, 2024]
+Heavy baselines sample size: N=512
+
+[SOTA Extensions]
+- SetConCA Procrustes overlap: 0.7302
+- SetConCA Ridge overlap:      0.7242
+- NMF overlap (pointwise):     0.8348
+- ICA overlap (pointwise):     0.1307
+- CCA overlap (pointwise):     0.7300
+
+[Layerwise Alignment]
+- Best layer pair: early -> mid (overlap=0.7413)
+- Relative depth 60%: mid -> mid (overlap=0.7405)
+
+[Steering Gains by Layer Bucket]
+- early: gain@alpha5 = +0.1300
+- mid: gain@alpha5 = +0.1397
+- late: gain@alpha5 = +0.1861
+
+[Transfer Asymmetry]
+- small_to_mid: 0.6949 +/- 0.0309
+- mid_to_small: 0.7321 +/- 0.0516
+- mid_to_big:   0.7299 +/- 0.0119
+- big_to_mid:   0.6695 +/- 0.0425
+
+[Cross-Language EN/FR]
+- Status: skipped (No EN/FR paired activation datasets found in data/.)
+
+JSON output: results\extended_alignment_results.json
+Text report: results\extended_alignment_terminal_report.txt
+========================================================================

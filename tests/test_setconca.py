@@ -274,8 +274,9 @@ class TestFullModel:
     def test_FULL_02_loss_components_present(self):
         model = SetConCA(D, C)
         total, parts = compute_loss(model, torch.randn(B, S, D))
-        assert {"mse", "sparsity", "consistency"} == set(parts)
-        assert abs(total.item() - sum(v.item() for v in parts.values())) < 1e-5
+        assert {"mse", "sparsity", "consistency"}.issubset(set(parts))
+        core = parts["mse"] + parts["sparsity"] + parts["consistency"]
+        assert abs(total.item() - core.item()) < 1e-5
 
     def test_FULL_03_loss_decreases(self):
         model = SetConCA(D, C)

@@ -5,12 +5,18 @@ Produces:
   fig10_architecture.png — Full code architecture map with pseudocode
 """
 import os
+import sys
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+except Exception:
+    pass
 
 FIG_DIR = "results/figures"
 os.makedirs(FIG_DIR, exist_ok=True)

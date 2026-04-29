@@ -2,6 +2,10 @@ import torch
 import json
 import sys
 import os
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+except Exception:
+    pass
 
 # Ensure the root 'SetConCA' and local 'neurips' directory are in the Python Path 
 # so users can run this script naturally from the terminal without PYTHONPATH config.

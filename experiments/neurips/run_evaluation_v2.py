@@ -17,9 +17,15 @@ Usage
 
 import sys, os, json, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+except Exception:
+    pass
 
 import torch
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from scipy import stats as scipy_stats
 from sklearn.decomposition import PCA, FastICA
 from sklearn.preprocessing import StandardScaler
@@ -85,7 +91,7 @@ def train_setconca(data, concept_dim=CONCEPT_DIM, epochs=N_EPOCHS, lr=LR,
         for (xb,) in loader:
             xb = xb.to(DEVICE)
             opt.zero_grad()
-            loss, _ = compute_loss(model, xb)
+            loss, _ = compute_loss(model, xb, gamma=10.0, lambda_res=0.1)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
@@ -379,9 +385,9 @@ def exp2_s_scaling():
         }
         print(f"  S={S:2d}  MSE={mse_m:.4f}+/-{mse_s:.4f}  Stab={stab_m:.4f}+/-{stab_s:.4f}")
     result["framing"] = (
-        "Stability grows monotonically with S but with diminishing returns after S=8 "
-        "(Δstab per additional paraphrase: +0.0029 for S=1->3, vs +0.00054 for S=16->32). "
-        "S=8 captures ~80% of the benefit of S=32 at 1/4 the batch cost."
+        "MSE improves monotonically with S and shows diminishing returns after S=8. "
+        "Stability is relatively flat across S in this TopK setup (not strictly monotonic). "
+        "S=8 captures most of the reconstruction gain of larger S at substantially lower batch cost."
     )
     return result
 
@@ -403,12 +409,9 @@ def exp3_aggregator_ablation():
         print(f"  {mode:10s}  MSE={mse_m:.4f}+/-{mse_s:.4f}  Stab={stab_m:.4f}+/-{stab_s:.4f}")
 
     result["framing"] = (
-        "Mean pool dominates on stability. Attention achieves marginally lower MSE (easier "
-        "reconstruction via adaptive weighting) but at a severe stability cost: attention "
-        "weights depend on the learned query vector which differs across seeds, producing "
-        "seed-dependent concept spaces. For interpretability, stability dominates MSE: "
-        "a concept you can reproduce is more valuable than a slightly better reconstruction "
-        "you cannot."
+        "In this run, attention achieves slightly lower MSE and higher within-metric stability "
+        "than mean pooling. Mean pooling remains attractive for simpler deterministic "
+        "aggregation, but stability superiority is not supported by this result."
     )
     return result
 
@@ -767,7 +770,7 @@ def exp9_consistency_ablation():
                 for (xb,) in loader:
                     xb = xb.to(DEVICE)
                     opt.zero_grad()
-                    loss, _ = compute_loss(model, xb, beta=beta)
+                    loss, _ = compute_loss(model, xb, beta=beta, gamma=10.0, lambda_res=0.1)
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     opt.step()
@@ -800,13 +803,11 @@ def exp9_consistency_ablation():
 
     delta_transfer = result["full_model"]["transfer"] - result["no_consistency"]["transfer"]
     result["framing"] = (
-        f"Removing the subset consistency loss (beta=0) drops cross-model transfer "
+        f"Removing the subset consistency loss (beta=0) changes cross-model transfer "
         f"by {delta_transfer*100:.1f} percentage points "
-        f"({result['full_model']['transfer']*100:.1f}% -> {result['no_consistency']['transfer']*100:.1f}%). "
-        "This demonstrates that the consistency loss—not just the set structure—drives the "
-        "cross-model transfer improvement. The loss forces the encoder to find directions "
-        "that are invariant to paraphrase variation; those directions are precisely the "
-        "semantically universal ones that survive a cross-model linear bridge."
+        f"({result['full_model']['transfer']*100:.1f}% vs {result['no_consistency']['transfer']*100:.1f}%). "
+        "In this TopK configuration, the effect is small and within typical CI overlap; "
+        "consistency is not the dominant transfer driver here."
     )
     return result
 
@@ -863,11 +864,10 @@ def exp10_corruption_test():
     t0c = result["corruption_0pct"]["transfer"]
     t100c = result["corruption_100pct"]["transfer"]
     result["framing"] = (
-        f"Clean sets achieve {t0c*100:.1f}% transfer. Full corruption (all paraphrases replaced "
-        f"with randomly sampled paraphrases from different anchor topics) drops transfer to "
-        f"{t100c*100:.1f}%—near chance (25%). This confirms that Set-ConCA's gains arise from "
-        "the semantic consistency within the set, not from simple batching or aggregation. "
-        "The method requires and exploits true paraphrase structure."
+        f"Clean sets achieve {t0c*100:.1f}% transfer. Full corruption "
+        f"yields {t100c*100:.1f}%, which remains far above chance (25%) in this setup. "
+        "This indicates robustness to this corruption procedure under current TopK settings; "
+        "it does not establish collapse to chance."
     )
     return result
 
@@ -1136,9 +1136,8 @@ def exp14_pca32_transfer():
         "transfer_ci95": ci95(transfers),
         "framing": (
             f"Set-ConCA on PCA-32 reduced inputs achieves {np.mean(transfers)*100:.1f}% +/- {ci95(transfers)*100:.1f}pp transfer. "
-            "This is remarkably high, confirming that the most transferable semantic "
-            "information is concentrated in the top-32 principal components of the hidden states. "
-            "By removing 98%+ of the input variance, we actually improve alignment precision."
+            "In this run, PCA-32 transfer is below the full-rank baseline, indicating that "
+            "aggressive dimensionality reduction removes useful cross-model alignment signal."
         )
     }
     print(f"  PCA-32 Transfer: {result['transfer_mean']:.4f} +/-{result['transfer_ci95']:.4f}")
@@ -1172,7 +1171,7 @@ def exp15_soft_sparsity_consistency():
             for _ in range(N_EPOCHS):
                 for (xb,) in loader:
                     xb = xb.to(DEVICE); opt.zero_grad()
-                    loss, _ = compute_loss(model, xb, alpha=0.1, beta=beta)
+                    loss, _ = compute_loss(model, xb, alpha=0.1, beta=beta, gamma=10.0, lambda_res=0.1)
                     loss.backward(); opt.step()
             model.eval()
             with torch.no_grad():
@@ -1190,9 +1189,8 @@ def exp15_soft_sparsity_consistency():
 
     diff = result["full_soft"]["transfer"] - result["no_cons_soft"]["transfer"]
     result["framing"] = (
-        f"In soft-sparsity (Sigmoid-L1) mode, the consistency loss provides a {diff*100:+.1f}pp gain. "
-        "Unlike TopK mode where the hard constraint provides stability, soft-sparsity "
-        "requires the explicit consistency penalty to find stable, alignable directions."
+        f"In soft-sparsity (Sigmoid-L1) mode, adding consistency changes transfer by {diff*100:+.1f}pp. "
+        "Under this configuration, consistency does not improve transfer."
     )
     return result
 
@@ -1237,10 +1235,9 @@ def exp16_topk_pointwise_vs_set():
         "set":       {"mean": float(m_set), "ci95": ci_set},
         "diff":      float(diff),
         "framing": (
-            f"Comparing TopK Pointwise (SAE) vs TopK Set-ConCA: Set training achieves "
-            f"{m_set*100:.1f}% transfer vs {m_pt*100:.1f}% for pointwise ({diff*100:+.1f}pp gain). "
-            "This proves that the 'set' signal is the primary driver of cross-model "
-            "alignment, even when the sparsity constraint is identical."
+            f"Comparing TopK Pointwise (SAE) vs TopK Set-ConCA: set training achieves "
+            f"{m_set*100:.1f}% transfer vs {m_pt*100:.1f}% for pointwise ({diff*100:+.1f}pp). "
+            "In this configuration, pointwise TopK has higher raw transfer overlap."
         )
     }
     print(f"  Pointwise: {m_pt:.4f} +/-{ci_pt:.4f}")
@@ -1279,9 +1276,58 @@ if __name__ == "__main__":
         if isinstance(o, torch.Tensor): return _json(o.tolist())
         return o
 
+    # EXP 14 Plot
+    plt.figure(figsize=(6, 4))
+    plt.bar(["Full Rank (2048)", "PCA-32 Reduced"], 
+            [results["exp4_cross_family"]["SetConCA"]["transfer_g_to_l"], results["exp14_pca32_transfer"]["transfer_mean"]],
+            color=["#45b6fe", "#ff6b6b"])
+    plt.ylabel("Transfer Overlap (J@10)")
+    plt.title("EXP 14: PCA-32 Input Distillation")
+    plt.ylim(0, 1.0)
+    plt.savefig(os.path.join(FIG_DIR, "fig14_pca32_transfer.png"), bbox_inches="tight")
+    plt.close()
+
+    # EXP 15 Plot
+    plt.figure(figsize=(6, 4))
+    try:
+        df_15 = pd.DataFrame(results["exp15_soft_sparsity_consistency"]).T
+        plt.bar(df_15.index, df_15["transfer"], yerr=df_15["ci95"], color="purple", alpha=0.7)
+        plt.ylabel("Transfer Overlap")
+        plt.title("EXP 15: Soft-Sparsity Consistency Benefit")
+        plt.savefig(os.path.join(FIG_DIR, "fig15_soft_consistency.png"), bbox_inches="tight")
+    except: pass
+    plt.close()
+
+    # EXP 16 Plot
+    plt.figure(figsize=(6, 4))
+    plt.bar(["Pointwise (SAE)", "Set (Set-ConCA)"],
+            [results["exp16_topk_pointwise_vs_set"]["pointwise"]["mean"], 
+             results["exp16_topk_pointwise_vs_set"]["set"]["mean"]],
+            yerr=[results["exp16_topk_pointwise_vs_set"]["pointwise"]["ci95"],
+                  results["exp16_topk_pointwise_vs_set"]["set"]["ci95"]],
+            color=["gray", "#45b6fe"])
+    plt.ylabel("Transfer Overlap")
+    plt.title("EXP 16: TopK Pointwise vs Set")
+    plt.savefig(os.path.join(FIG_DIR, "fig16_topk_transfer.png"), bbox_inches="tight")
+    plt.close()
+
     path = os.path.join(RESULTS_DIR, "results_v2.json")
     with open(path, "w") as f:
         json.dump(_json(results), f, indent=2)
+
+    manifest = {
+        "device": str(DEVICE),
+        "n_samples": N_SAMPLES,
+        "n_epochs": N_EPOCHS,
+        "batch_size": BATCH_SIZE,
+        "concept_dim": CONCEPT_DIM,
+        "k_topk": K_TOPK,
+        "n_seeds": N_SEEDS,
+        "seeds": SEEDS[:N_SEEDS],
+        "results_path": path,
+    }
+    with open(os.path.join(RESULTS_DIR, "run_manifest_v2.json"), "w") as f:
+        json.dump(manifest, f, indent=2)
 
     elapsed = time.time() - t0
     print(f"\n{'='*60}")

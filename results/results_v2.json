@@ -1,318 +1,318 @@
 {
   "exp1_set_vs_pointwise": {
     "SetConCA": {
-      "mse": 0.10144007354974746,
-      "mse_ci95": 0.00040754288411085,
-      "stability": 0.2634063720703125,
-      "stab_ci95": 0.018657075921897037,
-      "l0": 0.245574951171875,
+      "mse": 0.17350848615169526,
+      "mse_ci95": 0.0004457408750874873,
+      "stability": 0.224566650390625,
+      "stab_ci95": 0.0253010923620402,
+      "l0": 0.249786376953125,
       "n_anchors": 2048,
       "n_seeds": 5
     },
     "Pointwise": {
-      "mse": 0.07492782473564148,
-      "mse_ci95": 0.00010911651878884813,
-      "stability": 0.25917510986328124,
-      "stab_ci95": 0.02509836901477547,
-      "l0": 0.25
+      "mse": 0.10611863136291504,
+      "mse_ci95": 0.000540623168922745,
+      "stability": 0.22577056884765626,
+      "stab_ci95": 0.022079783548945534,
+      "l0": 0.2496337890625
     },
     "framing": "Set-ConCA trains on S=8 paraphrases. Pointwise (S=1) optimises an easier problem (reconstruct 1 vector vs reconstruct 8 from 1 concept). The higher Set-ConCA MSE is expected: it is the cost of learning semantic invariance, paid back in EXP4 transfer (+14.7pp). Stability across seeds is the interpretability-relevant metric; here both methods are comparable because both use TopK k=32."
   },
   "exp2_s_scaling": {
     "1": {
-      "mse": 1.992745852470398,
-      "mse_std": 0.003577426194946281,
-      "stability": 0.25037384033203125,
-      "stab_std": 0.01746778327558591,
-      "l0": 0.25
+      "mse": 4.116327476501465,
+      "mse_std": 0.017132907903414128,
+      "stability": 0.266827392578125,
+      "stab_std": 0.030010460008556596,
+      "l0": 0.2495880126953125
     },
     "3": {
-      "mse": 1.7028964519500733,
-      "mse_std": 0.0026444418232823073,
-      "stability": 0.25141143798828125,
-      "stab_std": 0.019178928821051943,
-      "l0": 0.25
+      "mse": 3.7967624187469484,
+      "mse_std": 0.01783678204953246,
+      "stability": 0.2606475830078125,
+      "stab_std": 0.03231609421013043,
+      "l0": 0.24967193603515625
     },
     "8": {
-      "mse": 1.5993902683258057,
-      "mse_std": 0.003395794598496762,
-      "stability": 0.24129486083984375,
-      "stab_std": 0.030188103547205913,
-      "l0": 0.24995040893554688
+      "mse": 3.5726094245910645,
+      "mse_std": 0.010678794446249796,
+      "stability": 0.26493377685546876,
+      "stab_std": 0.03397143959775115,
+      "l0": 0.249664306640625
     },
     "16": {
-      "mse": 1.534972357749939,
-      "mse_std": 0.0029787278847451925,
-      "stability": 0.24006500244140624,
-      "stab_std": 0.026768094414105766,
-      "l0": 0.24995040893554688
+      "mse": 3.4555028915405273,
+      "mse_std": 0.013979008097662764,
+      "stability": 0.26064300537109375,
+      "stab_std": 0.026825918282184044,
+      "l0": 0.24957656860351562
     },
     "32": {
-      "mse": 1.499748158454895,
-      "mse_std": 0.002755565087139097,
-      "stability": 0.24084930419921874,
-      "stab_std": 0.03304990945714952,
-      "l0": 0.24985885620117188
+      "mse": 3.389262247085571,
+      "mse_std": 0.01419746451265019,
+      "stability": 0.2669769287109375,
+      "stab_std": 0.04184729685469268,
+      "l0": 0.24974441528320312
     },
-    "framing": "Stability grows monotonically with S but with diminishing returns after S=8 (\u0394stab per additional paraphrase: +0.0029 for S=1->3, vs +0.00054 for S=16->32). S=8 captures ~80% of the benefit of S=32 at 1/4 the batch cost."
+    "framing": "MSE improves monotonically with S and shows diminishing returns after S=8. Stability is relatively flat across S in this TopK setup (not strictly monotonic). S=8 captures most of the reconstruction gain of larger S at substantially lower batch cost."
   },
   "exp3_aggregator_ablation": {
     "mean": {
-      "mse": 1.5993902683258057,
-      "mse_std": 0.003395794598496762,
-      "stability": 0.24129486083984375,
-      "stab_std": 0.030188103547205913,
-      "l0": 0.24995040893554688
+      "mse": 3.5726094245910645,
+      "mse_std": 0.010678794446249796,
+      "stability": 0.26493377685546876,
+      "stab_std": 0.03397143959775115,
+      "l0": 0.249664306640625
     },
     "attention": {
-      "mse": 1.5620436429977418,
-      "mse_std": 0.0020361679017075283,
-      "stability": 0.2561920166015625,
-      "stab_std": 0.02825552896971069,
-      "l0": 0.246124267578125
+      "mse": 3.4162559509277344,
+      "mse_std": 0.022913810564179415,
+      "stability": 0.28336639404296876,
+      "stab_std": 0.04453342355580992,
+      "l0": 0.24964141845703125
     },
-    "framing": "Mean pool dominates on stability. Attention achieves marginally lower MSE (easier reconstruction via adaptive weighting) but at a severe stability cost: attention weights depend on the learned query vector which differs across seeds, producing seed-dependent concept spaces. For interpretability, stability dominates MSE: a concept you can reproduce is more valuable than a slightly better reconstruction you cannot."
+    "framing": "In this run, attention achieves slightly lower MSE and higher within-metric stability than mean pooling. Mean pooling remains attractive for simpler deterministic aggregation, but stability superiority is not supported by this result."
   },
   "exp4_cross_family": {
     "SetConCA": {
-      "transfer_g_to_l": 0.6453658536585366,
-      "transfer_g_to_l_ci95": 0.049727264565243665,
-      "transfer_l_to_g": 0.5522408536585366,
-      "transfer_l_to_g_ci95": 0.01729961498532437,
-      "cka_before": 0.0010196207418871476,
-      "cka_after": 0.0077434510876566555
+      "transfer_g_to_l": 0.6951524390243902,
+      "transfer_g_to_l_ci95": 0.006355840189534027,
+      "transfer_l_to_g": 0.5962652439024391,
+      "transfer_l_to_g_ci95": 0.03525408453483049,
+      "cka_before": 0.00459901792460517,
+      "cka_after": 0.017584247791130055
     },
     "chance_level": 0.25,
     "concept_labels_gemma4b": {
-      "50": {
-        "mean_abs_activation": 3.5681371688842773,
+      "110": {
+        "mean_abs_activation": 1.3725996017456055,
         "top_anchors": [
           {
-            "anchor_idx": 816,
-            "activation": 4.295522689819336,
-            "text": "S.Korea #39;s Ruling Party Head Resigns on Father #39;s Past SEOUL (Reuters) - The chairman of South Korea #39;s ruling "
+            "anchor_idx": 1982,
+            "activation": 5.872288227081299,
+            "text": "Earnings alert: BEA revenue rises amid turmoil Plus: Dell meets expectations...Storage, servers bruise HP earnings...Hea"
           },
           {
-            "anchor_idx": 1550,
-            "activation": 4.232169151306152,
-            "text": "China Begins Countdown for Next Manned Space Flight By ELAINE KURTENBACH    SHANGHAI, China (AP) -- Chinese astronauts a"
+            "anchor_idx": 1761,
+            "activation": 5.860854625701904,
+            "text": "Briefly: Majoras steps into FTC chairman role roundup Plus: Business Objects to bundle IBM tools...Linux clusters gear u"
           },
           {
-            "anchor_idx": 671,
-            "activation": 4.231470108032227,
-            "text": "Minnesota Teen Pleads Guilty in Web Worm Hack Attack By GENE JOHNSON    SEATTLE (AP) -- A Minnesota high school senior p"
+            "anchor_idx": 1767,
+            "activation": 5.855243682861328,
+            "text": "Briefly: Maxtor ships multimedia-friendly drive roundup Plus: Gateway says, hold on to your hard drive...Kinko's debuts "
           }
         ]
       },
-      "54": {
-        "mean_abs_activation": 3.266216278076172,
+      "115": {
+        "mean_abs_activation": 1.3715527057647705,
         "top_anchors": [
           {
-            "anchor_idx": 1550,
-            "activation": 4.282923698425293,
-            "text": "China Begins Countdown for Next Manned Space Flight By ELAINE KURTENBACH    SHANGHAI, China (AP) -- Chinese astronauts a"
+            "anchor_idx": 1834,
+            "activation": 5.456092834472656,
+            "text": "Iraq Cleric Agrees End Uprising, Fighting Continues  NAJAF, Iraq (Reuters) - A radical Iraqi cleric leading a  Shi'ite u"
           },
           {
-            "anchor_idx": 637,
-            "activation": 3.9193179607391357,
-            "text": "Google faces another trademark suit in Germany A German court is set to hear oral arguments in a trademark suit against "
+            "anchor_idx": 1068,
+            "activation": 5.378748893737793,
+            "text": "Iraq's Al-Yawer Vows Kurd Rebel Crackdown (AP) AP - Iraq's interim president promised on Monday to prevent Kurdish rebel"
           },
           {
-            "anchor_idx": 1007,
-            "activation": 3.8884999752044678,
-            "text": "African Union pledges to send more troops to Darfur KIGALI,Rawanda, Aug 18, 2004 (RNA)-- The African Union has pledged t"
+            "anchor_idx": 587,
+            "activation": 5.230531692504883,
+            "text": "Cleric in Najaf Refuses to Meet Iraqi Mediators The delegation hoped to convince Moktada al- Sadr to disarm his militia,"
           }
         ]
       },
-      "23": {
-        "mean_abs_activation": 2.89756178855896,
+      "19": {
+        "mean_abs_activation": 1.3160631656646729,
         "top_anchors": [
           {
-            "anchor_idx": 1550,
-            "activation": 3.778883695602417,
-            "text": "China Begins Countdown for Next Manned Space Flight By ELAINE KURTENBACH    SHANGHAI, China (AP) -- Chinese astronauts a"
+            "anchor_idx": 2025,
+            "activation": 5.671270370483398,
+            "text": "Infocus: Detecting Worms and Abnormal Activities with NetFlow, Part 1 This paper discusses the use of NetFlow, a traffic"
           },
           {
-            "anchor_idx": 1247,
-            "activation": 3.776963472366333,
-            "text": "Natural Sunblock: Sun Dims in Strange Ways (SPACE.com) SPACE.com - When Venus crossed the Sun June 8, showing up as a cl"
+            "anchor_idx": 1850,
+            "activation": 5.426169395446777,
+            "text": "Infocus: Examining a Public Exploit, Part 1 The purpose of this article is to analyze a public exploit in a lab environm"
           },
           {
-            "anchor_idx": 824,
-            "activation": 3.6491665840148926,
-            "text": "Palm extends Wi-Fi range The PalmOne Wi-Fi SD card has finally arrived, but only for users with the most up to date mode"
+            "anchor_idx": 1871,
+            "activation": 5.412508487701416,
+            "text": "Infocus: Wireless Attacks and Penetration Testing (part 3 of 3) This third and final part of the wireless pen-test serie"
           }
         ]
       },
-      "0": {
-        "mean_abs_activation": 2.1919543743133545,
+      "120": {
+        "mean_abs_activation": 1.1761057376861572,
         "top_anchors": [
           {
-            "anchor_idx": 762,
-            "activation": 3.4451215267181396,
-            "text": "U.S. Advertisers Go Digital to Track Ads  NEW YORK (Reuters) - Top marketers are going digital to  track the delivery of"
+            "anchor_idx": 886,
+            "activation": 5.632413387298584,
+            "text": "Dollar Gains on Euro After Muted U.S. CPI  NEW YORK (Reuters) - The dollar posted gains against the  euro on Tuesday, di"
           },
           {
-            "anchor_idx": 1219,
-            "activation": 3.3898346424102783,
-            "text": "CompUSA Agrees to Sell Gateway PCs (PC World) PC World - Desktop systems will be available in 226 stores across the U.S."
+            "anchor_idx": 1893,
+            "activation": 5.598546981811523,
+            "text": "Dollar Falls to Fresh Low Vs Euro (Reuters) Reuters - The dollar fell to a fresh four-week low\\versus the euro on Monday"
           },
           {
-            "anchor_idx": 504,
-            "activation": 3.3738715648651123,
-            "text": "Wireless vendors pledge hurricane relief Cingular and Nextel step in to aid those recovering from Hurricane Charley in F"
+            "anchor_idx": 494,
+            "activation": 5.59094762802124,
+            "text": "Dollar Mired Near Lows Before U.S. Data  LONDON (Reuters) - The dollar hovered near a one-month low  against the euro on"
+          }
+        ]
+      },
+      "53": {
+        "mean_abs_activation": 1.1654053926467896,
+        "top_anchors": [
+          {
+            "anchor_idx": 1716,
+            "activation": 3.7506957054138184,
+            "text": "World 100m Champion Edwards Banned  ATHENS (Reuters) - World 100 meters champion Torri Edwards  will miss the Athens Oly"
+          },
+          {
+            "anchor_idx": 1100,
+            "activation": 3.6893815994262695,
+            "text": "Greek pair await IAAF fate Kostas Kenteris and Katerina Thanou's missed drugs tests will be investigated by the IAAF."
+          },
+          {
+            "anchor_idx": 125,
+            "activation": 3.656522274017334,
+            "text": "Greek Sprinters Withdraw From Olympics ATHENS, Greece Aug. 18, 2004  Greek sprinters Kostas Kenteris and Katerina Thanou"
+          }
+        ]
+      },
+      "22": {
+        "mean_abs_activation": 1.1231764554977417,
+        "top_anchors": [
+          {
+            "anchor_idx": 933,
+            "activation": 4.333453178405762,
+            "text": "Storm-ravaged peasants flee as Philippines runs out of money for relief (AFP) AFP - Stunned residents picked their way t"
+          },
+          {
+            "anchor_idx": 145,
+            "activation": 4.276926517486572,
+            "text": "Summer storms lash Europe, deaths in France (AFP) AFP - Freak storms packing howling winds and heavy rain that lashed Br"
+          },
+          {
+            "anchor_idx": 343,
+            "activation": 4.276926517486572,
+            "text": "Snow Storms Blanket Southern New Zealand (AP) AP - Snow storms isolated New Zealand's fourth biggest city of Dunedin on "
           }
         ]
       },
       "126": {
-        "mean_abs_activation": 2.1855697631835938,
+        "mean_abs_activation": 1.1174145936965942,
         "top_anchors": [
           {
-            "anchor_idx": 1087,
-            "activation": 3.8172762393951416,
-            "text": "Plan for global observation would aid in forecasting of disasters WASHINGTON - What if scientists could forecast Texas f"
+            "anchor_idx": 405,
+            "activation": 4.05124568939209,
+            "text": "Israeli PM defies party rebellion Israel's Ariel Sharon says he will push ahead with plans for Gaza disengagement, despi"
           },
           {
-            "anchor_idx": 1433,
-            "activation": 3.815401315689087,
-            "text": "Manning Does His Part to Start a Controversy HARLOTTE, Aug. 19 - Eli Manning was handed his first chance to prove he cou"
+            "anchor_idx": 2003,
+            "activation": 4.007867336273193,
+            "text": "Sharon's Likud Rejects Coalition Bid--First Returns (Reuters) Reuters - Israeli Prime Minister Ariel\\Sharon's right-wing"
           },
           {
-            "anchor_idx": 1353,
-            "activation": 3.7842957973480225,
-            "text": "Building Dedicated to Space Shuttle Columbia Astronauts By BILL KACZOR    PENSACOLA, Fla. (AP) -- A former dormitory con"
+            "anchor_idx": 986,
+            "activation": 3.9615416526794434,
+            "text": "Sharon's Party Bars Bid for Coalition on Gaza Plan  TEL AVIV (Reuters) - Israeli Prime Minister Ariel Sharon's  Likud pa"
           }
         ]
       },
-      "74": {
-        "mean_abs_activation": 2.105416774749756,
+      "15": {
+        "mean_abs_activation": 1.069443702697754,
         "top_anchors": [
           {
-            "anchor_idx": 274,
-            "activation": 3.4617104530334473,
-            "text": "A broken record: Oil up again New market set as demand in China, India intensifies supply worries, Iraq lends price supp"
+            "anchor_idx": 1479,
+            "activation": 4.475789546966553,
+            "text": "Ravens Wait for Sanders While Deion Sanders's return appears more and more imminent, the major remaining question is whe"
           },
           {
-            "anchor_idx": 700,
-            "activation": 3.4345483779907227,
-            "text": "'Madden,' 'ESPN' Football Score in Different Ways (Reuters) Reuters - Was absenteeism a little high\\on Tuesday among the"
+            "anchor_idx": 1706,
+            "activation": 4.46206521987915,
+            "text": "Sanders excites Ravens The Baltimore Ravens are excited about the prospect of having Deion Sanders come out of retiremen"
           },
           {
-            "anchor_idx": 899,
-            "activation": 3.4096367359161377,
-            "text": "U.S. Crude Sets New Record  #36;47 a Barrel (Reuters) Reuters - U.S. oil futures set a new record  #36;47.01\\a barrel on"
+            "anchor_idx": 1048,
+            "activation": 4.420698642730713,
+            "text": "LBs are built from ground up For Bill Belichick, it isn't a preference. In his mind, turning NCAA defensive ends into NF"
           }
         ]
       },
-      "119": {
-        "mean_abs_activation": 1.8822276592254639,
+      "45": {
+        "mean_abs_activation": 1.054067850112915,
         "top_anchors": [
           {
-            "anchor_idx": 1660,
-            "activation": 3.295138359069824,
-            "text": "Najaf Fighting Resumes Amid Peace Mission BAGHDAD, Iraq - A pared-down delegation of Iraqis arrived in Najaf by helicopt"
+            "anchor_idx": 1100,
+            "activation": 4.33919095993042,
+            "text": "Greek pair await IAAF fate Kostas Kenteris and Katerina Thanou's missed drugs tests will be investigated by the IAAF."
           },
           {
-            "anchor_idx": 512,
-            "activation": 3.2561070919036865,
-            "text": "UN claims lack of military observers in Darfur region KHARTOUM, Aug 18, 2004 (Financial Times) -- The number of military"
+            "anchor_idx": 1716,
+            "activation": 4.236786842346191,
+            "text": "World 100m Champion Edwards Banned  ATHENS (Reuters) - World 100 meters champion Torri Edwards  will miss the Athens Oly"
           },
           {
-            "anchor_idx": 439,
-            "activation": 3.2302956581115723,
-            "text": "Venezuelans Throng to Polls in Chavez Referendum  CARACAS, Venezuela (Reuters) - Venezuelans crowded polling  stations o"
+            "anchor_idx": 1375,
+            "activation": 4.219997406005859,
+            "text": "Greek Sprinters Withdraw From Olympics (AP) AP - Top Greek sprinters Kostas Kenteris and Katerina Thanou withdrew Wednes"
           }
         ]
       },
-      "68": {
-        "mean_abs_activation": 1.7890355587005615,
+      "102": {
+        "mean_abs_activation": 1.0510873794555664,
         "top_anchors": [
           {
-            "anchor_idx": 1774,
-            "activation": 3.3085532188415527,
-            "text": "Peace team urges Sadr to call off uprising: Militia positions pounded NAJAF, Aug 17: An Iraqi peace delegation urged Shi"
+            "anchor_idx": 1400,
+            "activation": 5.335900783538818,
+            "text": "Michael Phelps Wins Second Gold Medal (AP) AP - Michael Phelps, denied in his bid to win seven gold medals, picked up hi"
           },
           {
-            "anchor_idx": 985,
-            "activation": 3.3033463954925537,
-            "text": "Iraq Peace Mission in Najaf; Baghdad Blast Kills 7  NAJAF, Iraq (Reuters) - Iraqi political and religious  leaders tryin"
+            "anchor_idx": 1182,
+            "activation": 5.070767879486084,
+            "text": "Hall, Lezak Qualify in Olympic 50 Free (AP) AP - American Gary Hall Jr., the defending Olympic champion, and teammate Ja"
           },
           {
-            "anchor_idx": 706,
-            "activation": 3.2617900371551514,
-            "text": "Iraqi Minister Sets New Deadline For Al-Sadr 19 August 2004 -- An Iraqi government official has said a military offensiv"
-          }
-        ]
-      },
-      "116": {
-        "mean_abs_activation": 1.7301898002624512,
-        "top_anchors": [
-          {
-            "anchor_idx": 961,
-            "activation": 3.049736261367798,
-            "text": "Microsoft Funded Study Deciding Factor in 10yr Deal Genevish writes  quot;According to an article in the Register, Micro"
-          },
-          {
-            "anchor_idx": 82,
-            "activation": 3.022932529449463,
-            "text": "Web page to help with installation of WIndows anti-hacker security patch Information Technology Systems and Services (IT"
-          },
-          {
-            "anchor_idx": 1849,
-            "activation": 3.010392189025879,
-            "text": "Livermore: No need for HP-UX on x86 CHICAGO -- This cannot be an easy time for Ann Livermore. When Hewlett-Packard Co. ("
-          }
-        ]
-      },
-      "48": {
-        "mean_abs_activation": 1.5254580974578857,
-        "top_anchors": [
-          {
-            "anchor_idx": 1116,
-            "activation": 2.264265775680542,
-            "text": "Rae got what he deserved - Dadu The player kicked in the head by Alex Rae believes the five-match ban imposed on the Ran"
-          },
-          {
-            "anchor_idx": 107,
-            "activation": 2.229573965072632,
-            "text": "Beckham:  #39;England needed this boost #39; David Beckham admitted England needed to prove a point by beating Ukraine i"
-          },
-          {
-            "anchor_idx": 2001,
-            "activation": 2.2190592288970947,
-            "text": "Matildas #39;salvage late draw with US ATHENS: Australia #39;s Matildas salvaged a 1-1 draw against the United States at"
+            "anchor_idx": 715,
+            "activation": 5.066699504852295,
+            "text": "American Aaron Peirsol #39;s Gold Restored on Appeal ATHENS (Reuters) - Aaron Peirsol was awarded gold in the men #39;s "
           }
         ]
       }
     },
-    "framing": "Set-ConCA achieves 64.5% +/- 5.0pp cross-family transfer from Gemma-3 4B -> LLaMA-3 8B. Crucially, transferring from the larger model to the smaller model (LLaMA-3 8B -> Gemma-3 4B) achieves 55.2% +/- 1.7pp. The fact that bi-directional transfer works equally well supports the Platonic Representation Hypothesis: both models share an underlying semantic geometry, and one is not simply a subset of the other."
+    "framing": "Set-ConCA achieves 69.5% +/- 0.6pp cross-family transfer from Gemma-3 4B -> LLaMA-3 8B. Crucially, transferring from the larger model to the smaller model (LLaMA-3 8B -> Gemma-3 4B) achieves 59.6% +/- 3.5pp. The fact that bi-directional transfer works equally well supports the Platonic Representation Hypothesis: both models share an underlying semantic geometry, and one is not simply a subset of the other."
   },
   "exp5_intra_family": {
     "mses": {
-      "Gemma-3-1B": 1.128531575202942,
-      "Gemma-3-4B": 1.5703160762786865,
-      "Gemma-2-9B": 2.076742172241211
+      "Gemma-3-1B": 2.2386066913604736,
+      "Gemma-3-4B": 2.4199695587158203,
+      "Gemma-2-9B": 3.2892298698425293
     },
     "cka_matrix": {
       "Gemma-3-1B_vs_Gemma-3-1B": 1.0,
-      "Gemma-3-1B_vs_Gemma-3-4B": 0.0036,
-      "Gemma-3-1B_vs_Gemma-2-9B": 0.0007,
-      "Gemma-3-4B_vs_Gemma-3-1B": 0.0036,
+      "Gemma-3-1B_vs_Gemma-3-4B": 0.0044,
+      "Gemma-3-1B_vs_Gemma-2-9B": 0.0049,
+      "Gemma-3-4B_vs_Gemma-3-1B": 0.0044,
       "Gemma-3-4B_vs_Gemma-3-4B": 1.0,
-      "Gemma-3-4B_vs_Gemma-2-9B": 0.0008,
-      "Gemma-2-9B_vs_Gemma-3-1B": 0.0007,
-      "Gemma-2-9B_vs_Gemma-3-4B": 0.0008,
+      "Gemma-3-4B_vs_Gemma-2-9B": 0.005,
+      "Gemma-2-9B_vs_Gemma-3-1B": 0.0049,
+      "Gemma-2-9B_vs_Gemma-3-4B": 0.005,
       "Gemma-2-9B_vs_Gemma-2-9B": 1.0
     },
     "transfer_matrix": {
       "Gemma-3-1B_vs_Gemma-3-1B": 1.0,
-      "Gemma-3-1B_vs_Gemma-3-4B": 0.5653,
-      "Gemma-3-1B_vs_Gemma-2-9B": 0.548,
-      "Gemma-3-4B_vs_Gemma-3-1B": 0.5638,
+      "Gemma-3-1B_vs_Gemma-3-4B": 0.6485,
+      "Gemma-3-1B_vs_Gemma-2-9B": 0.5412,
+      "Gemma-3-4B_vs_Gemma-3-1B": 0.6908,
       "Gemma-3-4B_vs_Gemma-3-4B": 1.0,
-      "Gemma-3-4B_vs_Gemma-2-9B": 0.5437,
-      "Gemma-2-9B_vs_Gemma-3-1B": 0.5547,
-      "Gemma-2-9B_vs_Gemma-3-4B": 0.5591,
+      "Gemma-3-4B_vs_Gemma-2-9B": 0.5438,
+      "Gemma-2-9B_vs_Gemma-3-1B": 0.6782,
+      "Gemma-2-9B_vs_Gemma-3-4B": 0.6413,
       "Gemma-2-9B_vs_Gemma-2-9B": 1.0
     },
     "names": [
@@ -324,18 +324,18 @@
   },
   "exp6_sota_comparison": {
     "Set-ConCA": {
-      "mse": 0.10144007354974746,
-      "mse_std": 0.0002935717211537066,
-      "stability": 0.2634063720703125,
-      "stab_std": 0.024742413430045136,
-      "l0": 0.245574951171875,
-      "disentanglement": 0.20511976995476722,
+      "mse": 0.17350848615169526,
+      "mse_std": 0.00032108747567384933,
+      "stability": 0.224566650390625,
+      "stab_std": 0.03355349413134101,
+      "l0": 0.249786376953125,
+      "disentanglement": NaN,
       "n_seeds": 5
     },
     "ConCA (S=1)": {
-      "mse": 0.1154760703444481,
-      "stability": 0.25931396484375,
-      "l0": 0.25
+      "mse": 0.15457898378372192,
+      "stability": 0.2342071533203125,
+      "l0": 0.2495269775390625
     },
     "SAE (L1, pointwise)": {
       "mse": 0.17491179704666138,
@@ -376,49 +376,49 @@
       10.0
     ],
     "SetConCA_4B_avg": [
-      0.9239974170923233,
-      0.9345724284648895,
-      0.9381995052099228,
-      0.9405926540493965,
-      0.9416698887944221,
-      0.9417058452963829
+      0.5609830510802567,
+      0.6048515914008021,
+      0.626046434044838,
+      0.6442173775285482,
+      0.6562823597341776,
+      0.6587150972336531
     ],
     "SetConCA_4B_ci95": [
-      0.09940174974105812,
-      0.0874652182572918,
-      0.08096163223187794,
-      0.07411258905767008,
-      0.06694951506460312,
-      0.06360483571895015
+      0.26136576201246453,
+      0.2684734049348692,
+      0.2701519441516761,
+      0.269282137005241,
+      0.2645209955615201,
+      0.2606919409167126
     ],
     "WeakToStrong_1B_avg": [
-      0.9239974170923233,
-      0.9377921968698502,
-      0.9430048018693924,
-      0.9469122663140297,
-      0.9493879973888397,
-      0.9500088915228844
+      0.5609830510802567,
+      0.604632125236094,
+      0.6266831327229738,
+      0.6469740942120552,
+      0.6629970576614141,
+      0.6679659150540829
     ],
     "WeakToStrong_ci95": [
-      0.09940174974105812,
-      0.08266383946612016,
-      0.074101903900685,
-      0.0654904905706006,
-      0.056899363263769535,
-      0.05302311056221154
+      0.26136576201246453,
+      0.265409737601561,
+      0.2655578973377828,
+      0.26347574709985233,
+      0.2582042772211964,
+      0.2544981178311386
     ],
     "Random_avg": [
-      0.9239974170923233,
-      0.8545036762952805,
-      0.6884023994207382,
-      0.5339571833610535,
-      0.2021308746188879,
-      0.02527865464799106
+      0.5609830510802567,
+      0.4807564674410969,
+      0.42531286750454456,
+      0.2609798265621066,
+      0.10143751930445433,
+      0.09549751586746424
     ],
-    "baseline_sim": 0.9239974170923233,
-    "gain_at_alpha10_4B": 0.0177084282040596,
-    "gain_at_alpha10_w2s": 0.026011474430561066,
-    "framing": "At alpha=0 (no intervention) the base similarity is 0.924 \u2014 high because all test anchors are topically related news. Set-ConCA (4B->8B) gains +1.8pp at alpha=10 while random collapses to 0.025. Weak-to-strong (1B concept -> 8B model) gains +2.6pp, demonstrating that even a much smaller model's concept vectors can effectively steer a larger model \u2014 supporting the universality of Set-ConCA representations. The divergence between Set-ConCA and random grows linearly with alpha, confirming directional precision (not merely magnitude effect)."
+    "baseline_sim": 0.5609830510802567,
+    "gain_at_alpha10_4B": 0.09773204615339637,
+    "gain_at_alpha10_w2s": 0.10698286397382617,
+    "framing": "At alpha=0 (no intervention) the base similarity is 0.561 \u2014 high because all test anchors are topically related news. Set-ConCA (4B->8B) gains +9.8pp at alpha=10 while random collapses to 0.095. Weak-to-strong (1B concept -> 8B model) gains +10.7pp, demonstrating that even a much smaller model's concept vectors can effectively steer a larger model \u2014 supporting the universality of Set-ConCA representations. The divergence between Set-ConCA and random grows linearly with alpha, confirming directional precision (not merely magnitude effect)."
   },
   "exp8_convergence": {
     "epochs": [
@@ -505,519 +505,519 @@
     ],
     "per_seed": {
       "seed_42": [
-        1.0412033516913652,
-        0.545070530846715,
-        0.36718662176281214,
-        0.3131058549042791,
-        0.28205660963431,
-        0.2624100181274116,
-        0.248821543995291,
-        0.23649562010541558,
-        0.22583122365176678,
-        0.21697917161509395,
-        0.20983663806691766,
-        0.20232369052246213,
-        0.19674342055805027,
-        0.19069222663529217,
-        0.18657849705778062,
-        0.18240101309493184,
-        0.17810685583390296,
-        0.1749037008266896,
-        0.17113861558027565,
-        0.16819279757328331,
-        0.16514081344939768,
-        0.16251256433315575,
-        0.15951733011752367,
-        0.15724769537337124,
-        0.15491017024032772,
-        0.15263135661371052,
-        0.1505353837274015,
-        0.1487846039235592,
-        0.1466438660863787,
-        0.14481372642330825,
-        0.14319169078953564,
-        0.1413871564436704,
-        0.13966489722952247,
-        0.13775951229035854,
-        0.13667886680923402,
-        0.1354316936340183,
-        0.13375627319328487,
-        0.13238293561153114,
-        0.13129054778255522,
-        0.12990316352806985,
-        0.12890138663351536,
-        0.12788909184746444,
-        0.1272067124955356,
-        0.1258124199230224,
-        0.12482399784494191,
-        0.12370661646127701,
-        0.12290342221967876,
-        0.1220053459983319,
-        0.12088980479165912,
-        0.12035031500272453,
-        0.11943360115401447,
-        0.11866789893247187,
-        0.11830316472332925,
-        0.11735744564794004,
-        0.1163677042350173,
-        0.1161352633498609,
-        0.11516723642125726,
-        0.11470005149021745,
-        0.11370326648466289,
-        0.11346096126362681,
-        0.11262146523222327,
-        0.11201822687871754,
-        0.11149053182452917,
-        0.11085004231426865,
-        0.1103515406139195,
-        0.11035505624022335,
-        0.10921982978470623,
-        0.10890268161892891,
-        0.1082825914490968,
-        0.10781355039216578,
-        0.10712314862757921,
-        0.10676741320639849,
-        0.10636136133689433,
-        0.10599779209587723,
-        0.10556606471072882,
-        0.10523420991376042,
-        0.10448239871766418,
-        0.10440231347456574,
-        0.10401096229907125,
-        0.10354981105774641
+        10.523149698972702,
+        8.749695852398872,
+        7.862982481718063,
+        7.311921417713165,
+        6.880141243338585,
+        6.515596494078636,
+        6.200369879603386,
+        5.917867064476013,
+        5.663060054183006,
+        5.431008234620094,
+        5.217365309596062,
+        5.0209048837423325,
+        4.839679002761841,
+        4.66979394108057,
+        4.515182875096798,
+        4.369379989802837,
+        4.231377199292183,
+        4.102744176983833,
+        3.9801561310887337,
+        3.8656265661120415,
+        3.7563005834817886,
+        3.6530368477106094,
+        3.5551556795835495,
+        3.462091885507107,
+        3.3750484585762024,
+        3.2937785610556602,
+        3.218970350921154,
+        3.148314155638218,
+        3.082520917057991,
+        3.023560769855976,
+        2.966061517596245,
+        2.91352166980505,
+        2.8657771944999695,
+        2.8189506009221077,
+        2.775904979556799,
+        2.7347174659371376,
+        2.698312360793352,
+        2.6601507514715195,
+        2.628114879131317,
+        2.5957553945481777,
+        2.565731480717659,
+        2.538319405168295,
+        2.510018404573202,
+        2.486146420240402,
+        2.4620587304234505,
+        2.4390158019959927,
+        2.4165266938507557,
+        2.3943130001425743,
+        2.3762637935578823,
+        2.3585983105003834,
+        2.3417025916278362,
+        2.3235770352184772,
+        2.307438112795353,
+        2.292202528566122,
+        2.277970287948847,
+        2.2645067740231752,
+        2.251063112169504,
+        2.241133864969015,
+        2.228072550147772,
+        2.2147065736353397,
+        2.203636057674885,
+        2.194562327116728,
+        2.1843239665031433,
+        2.174994807690382,
+        2.167688250541687,
+        2.156423695385456,
+        2.1500175669789314,
+        2.14216897636652,
+        2.132656939327717,
+        2.1260340064764023,
+        2.118602029979229,
+        2.1147121638059616,
+        2.106277972459793,
+        2.098931111395359,
+        2.0941461361944675,
+        2.09022219106555,
+        2.0829103849828243,
+        2.0786072313785553,
+        2.0723292976617813,
+        2.065724652260542
       ],
       "seed_1337": [
-        1.054242154583335,
-        0.5615655146539211,
-        0.35943993739783764,
-        0.3011871427297592,
-        0.2754815509542823,
-        0.25952713564038277,
-        0.2456237841397524,
-        0.23367064679041505,
-        0.22319047106429935,
-        0.21425892785191536,
-        0.2071652812883258,
-        0.20048680482432246,
-        0.1948436687234789,
-        0.19011789467185736,
-        0.18606506776995957,
-        0.18199829221703112,
-        0.17819739622063935,
-        0.17430849582888186,
-        0.1713635225314647,
-        0.16862537222914398,
-        0.165216970955953,
-        0.16305602621287107,
-        0.16007800004445016,
-        0.15771438623778522,
-        0.15546066034585238,
-        0.1535335599910468,
-        0.15130522241815925,
-        0.1491824835538864,
-        0.14746996946632862,
-        0.1454038682859391,
-        0.1445426419377327,
-        0.1425776060204953,
-        0.1405340654309839,
-        0.1395485068205744,
-        0.13753222860395908,
-        0.13669414818286896,
-        0.13523745979182422,
-        0.1337827134411782,
-        0.13232289254665375,
-        0.13150062621571124,
-        0.13032865524291992,
-        0.1292044201400131,
-        0.1279081553220749,
-        0.12716485210694373,
-        0.126029517268762,
-        0.12542123335879296,
-        0.1239828784018755,
-        0.12338962638750672,
-        0.12221878883428872,
-        0.121622423408553,
-        0.12056460720486939,
-        0.1197845977731049,
-        0.11890573939308524,
-        0.11795573262497783,
-        0.11739643127657473,
-        0.11651337333023548,
-        0.11614304222166538,
-        0.11570236692205071,
-        0.1143319841939956,
-        0.11406201380304992,
-        0.11342746135778725,
-        0.11296135024167597,
-        0.11199339351151139,
-        0.11142692039720714,
-        0.11108410533051938,
-        0.11048280610702932,
-        0.10982423124369234,
-        0.10911016864702106,
-        0.1087042042054236,
-        0.10815135249868035,
-        0.10792877711355686,
-        0.1074686162173748,
-        0.10684673115611076,
-        0.10665290243923664,
-        0.10586491983849555,
-        0.10539298015646636,
-        0.1053050784394145,
-        0.10465318453498185,
-        0.10436881706118584,
-        0.10397348913829774
+        10.607334315776825,
+        8.868814632296562,
+        7.945488706231117,
+        7.37456987798214,
+        6.936549320816994,
+        6.567063972353935,
+        6.24760639667511,
+        5.961774706840515,
+        5.708737522363663,
+        5.478095039725304,
+        5.2703103721141815,
+        5.075717911124229,
+        4.896983876824379,
+        4.729194201529026,
+        4.572841189801693,
+        4.426364548504353,
+        4.2894290164113045,
+        4.158923387527466,
+        4.036480352282524,
+        3.9196515902876854,
+        3.810315854847431,
+        3.7066507264971733,
+        3.608581356704235,
+        3.512922801077366,
+        3.4248741790652275,
+        3.3411718532443047,
+        3.2611218690872192,
+        3.188401445746422,
+        3.1215450540184975,
+        3.0574503615498543,
+        2.9988397136330605,
+        2.944314144551754,
+        2.893846683204174,
+        2.844826776534319,
+        2.8009073585271835,
+        2.7587470673024654,
+        2.7187866903841496,
+        2.681591808795929,
+        2.6461996361613274,
+        2.61388361081481,
+        2.5814325399696827,
+        2.5541208684444427,
+        2.524845816195011,
+        2.4983293525874615,
+        2.4729873053729534,
+        2.449211046099663,
+        2.4263356290757656,
+        2.406890969723463,
+        2.3880827091634274,
+        2.367115408182144,
+        2.3477128073573112,
+        2.331831905990839,
+        2.3140426017344,
+        2.2987819872796535,
+        2.2857131883502007,
+        2.2705577723681927,
+        2.255864657461643,
+        2.2439570017158985,
+        2.231714751571417,
+        2.2190523482859135,
+        2.2075999304652214,
+        2.1986682824790478,
+        2.1876493580639362,
+        2.1786981783807278,
+        2.1702505499124527,
+        2.1603393480181694,
+        2.151817698031664,
+        2.143464397639036,
+        2.135091934353113,
+        2.1281572580337524,
+        2.12093573436141,
+        2.1135542020201683,
+        2.1065188720822334,
+        2.1011345982551575,
+        2.0944461785256863,
+        2.0892282761633396,
+        2.0830248445272446,
+        2.077823583036661,
+        2.072132833302021,
+        2.065534759312868
       ],
       "seed_2024": [
-        1.054726192727685,
-        0.5535651706159115,
-        0.35486370464786887,
-        0.3011019588448107,
-        0.2748213382437825,
-        0.25835036067292094,
-        0.24426665296778083,
-        0.23217078484594822,
-        0.2219385113567114,
-        0.21374866319820285,
-        0.2067609669174999,
-        0.2002087477594614,
-        0.19475457211956382,
-        0.18977753445506096,
-        0.18571523390710354,
-        0.18159089796245098,
-        0.17735125706531107,
-        0.1739261536858976,
-        0.17058246140368283,
-        0.16745341452769935,
-        0.1645735246129334,
-        0.16172923613339663,
-        0.15932729560881853,
-        0.15669469442218542,
-        0.15435335063375533,
-        0.1516923368908465,
-        0.1507972194813192,
-        0.1482867687009275,
-        0.14578130934387445,
-        0.14406681596301496,
-        0.14316326472908258,
-        0.14094310300424695,
-        0.1403799499385059,
-        0.13781581376679242,
-        0.1361572351306677,
-        0.13447283813729882,
-        0.13357590534724295,
-        0.132454720325768,
-        0.13139389478601515,
-        0.1297033354640007,
-        0.1287632966414094,
-        0.12786797480657697,
-        0.1268413127399981,
-        0.1255550200585276,
-        0.12503499491140246,
-        0.12369706155732274,
-        0.12296162033453584,
-        0.12211423669941723,
-        0.1208953931927681,
-        0.1203800046350807,
-        0.1196443869266659,
-        0.11882421839982271,
-        0.11786015937104821,
-        0.1171424719505012,
-        0.11662212503142655,
-        0.11620974261313677,
-        0.11531838914379478,
-        0.11438804946374148,
-        0.11390343715902418,
-        0.11349264765158296,
-        0.11254387465305626,
-        0.11226434609852731,
-        0.1116993916220963,
-        0.11123863270040601,
-        0.1108983620069921,
-        0.10983048658818007,
-        0.10949831129983068,
-        0.10906854819040745,
-        0.1088008617516607,
-        0.10798084340058267,
-        0.10728671634569764,
-        0.10694869863800704,
-        0.10648512444458902,
-        0.10612252308055758,
-        0.10573407472111285,
-        0.10532531887292862,
-        0.10453344462439418,
-        0.10446794354356825,
-        0.10432980838231742,
-        0.1038884004810825
+        10.547596514225006,
+        8.802953481674194,
+        7.919163420796394,
+        7.365643471479416,
+        6.942998558282852,
+        6.585904479026794,
+        6.272412300109863,
+        5.993515849113464,
+        5.740161091089249,
+        5.509905442595482,
+        5.298589199781418,
+        5.103039026260376,
+        4.922010816633701,
+        4.750769682228565,
+        4.593005053699017,
+        4.444404691457748,
+        4.304161638021469,
+        4.1723774671554565,
+        4.049301527440548,
+        3.9317187517881393,
+        3.8209043741226196,
+        3.7142991572618484,
+        3.61356483399868,
+        3.519706755876541,
+        3.430066831409931,
+        3.342387944459915,
+        3.264203429222107,
+        3.1910340264439583,
+        3.122840903699398,
+        3.058045834302902,
+        2.999376066029072,
+        2.94347333163023,
+        2.892072807997465,
+        2.843763906508684,
+        2.7984727397561073,
+        2.7554410733282566,
+        2.7154052704572678,
+        2.679282531142235,
+        2.643509704619646,
+        2.6099171824753284,
+        2.5783775113523006,
+        2.549267642199993,
+        2.521074667572975,
+        2.4941078647971153,
+        2.4688231758773327,
+        2.4462027065455914,
+        2.4227665215730667,
+        2.4002883471548557,
+        2.3815864212810993,
+        2.362472839653492,
+        2.3458002768456936,
+        2.327453836798668,
+        2.309463046491146,
+        2.294806696474552,
+        2.280754029750824,
+        2.266107205301523,
+        2.251857005059719,
+        2.2414494045078754,
+        2.228897238150239,
+        2.217658933252096,
+        2.2066310718655586,
+        2.1959262751042843,
+        2.1870132945477962,
+        2.176747426390648,
+        2.1658707223832607,
+        2.158047717064619,
+        2.1490531116724014,
+        2.1419779993593693,
+        2.133951123803854,
+        2.126388404518366,
+        2.119098611176014,
+        2.1131859086453915,
+        2.1060458160936832,
+        2.099282193928957,
+        2.0932293348014355,
+        2.0881761126220226,
+        2.0826045386493206,
+        2.0763849653303623,
+        2.0718324929475784,
+        2.0665113106369972
       ]
     },
     "mean": [
-      1.0500572330007951,
-      0.5534004053721825,
-      0.36049675460283953,
-      0.30513165215961635,
-      0.27745316627745825,
-      0.2600958381469051,
-      0.24623732703427473,
-      0.23411235058059296,
-      0.22365340202425918,
-      0.21499558755507073,
-      0.20792096209091446,
-      0.20100641436874866,
-      0.195447220467031,
-      0.19019588525407016,
-      0.18611959957828125,
-      0.18199673442480466,
-      0.1778851697066178,
-      0.17437945011382303,
-      0.1710281998384744,
-      0.16809052811004221,
-      0.1649771030060947,
-      0.16243260889314115,
-      0.1596408752569308,
-      0.15721892534444729,
-      0.15490806040664515,
-      0.1526190844985346,
-      0.15087927520895997,
-      0.14875128539279103,
-      0.14663171496552727,
-      0.14476147022408745,
-      0.1436325324854503,
-      0.14163595515613756,
-      0.14019297086633742,
-      0.13837461095924178,
-      0.13678944351462027,
-      0.13553289331806204,
-      0.13418987944411734,
-      0.13287345645949244,
-      0.1316691117050747,
-      0.13036904173592725,
-      0.12933111283928156,
-      0.12832049559801817,
-      0.1273187268525362,
-      0.12617743069616458,
-      0.1252961700083688,
-      0.1242749704591309,
-      0.12328264031869669,
-      0.12250306969508529,
-      0.1213346622729053,
-      0.12078424768211941,
-      0.11988086509518325,
-      0.1190922383684665,
-      0.1183563544958209,
-      0.1174852167411397,
-      0.1167954201810062,
-      0.11628612643107772,
-      0.11554288926223914,
-      0.11493015595866989,
-      0.11397956261256088,
-      0.11367187423941989,
-      0.11286426708102226,
-      0.11241464107297361,
-      0.11172777231937896,
-      0.11117186513729393,
-      0.11077800265047699,
-      0.11022278297847758,
-      0.10951412410940975,
-      0.1090271328187858,
-      0.10859588580206037,
-      0.10798191543047626,
-      0.10744621402894457,
-      0.10706157602059345,
-      0.10656440564586471,
-      0.10625773920522381,
-      0.10572168642344575,
-      0.1053175029810518,
-      0.10477364059382428,
-      0.10450781385103862,
-      0.10423652924752484,
-      0.10380390022570889
+      10.559360176324844,
+      8.807154655456543,
+      7.909211536248525,
+      7.35071158905824,
+      6.919896374146144,
+      6.556188315153122,
+      6.240129525462787,
+      5.957719206809998,
+      5.703986222545306,
+      5.47300290564696,
+      5.262088293830554,
+      5.066553940375646,
+      4.88622456540664,
+      4.7165859416127205,
+      4.560343039532502,
+      4.413383076588313,
+      4.2749892845749855,
+      4.144681677222252,
+      4.021979336937268,
+      3.905665636062622,
+      3.79584027081728,
+      3.691328910489877,
+      3.592433956762155,
+      3.498240480820338,
+      3.409996489683787,
+      3.32577945291996,
+      3.2480985497434935,
+      3.175916542609533,
+      3.108968958258629,
+      3.0463523219029107,
+      2.988092432419459,
+      2.9337697153290114,
+      2.8838988952338696,
+      2.835847094655037,
+      2.7917616926133633,
+      2.7496352021892867,
+      2.7108347738782563,
+      2.6736750304698944,
+      2.6392747399707637,
+      2.6065187292794385,
+      2.5751805106798806,
+      2.547235971937577,
+      2.5186462961137295,
+      2.49286121254166,
+      2.4679564038912454,
+      2.4448098515470824,
+      2.4218762814998627,
+      2.400497439006964,
+      2.3819776413341365,
+      2.362728852778673,
+      2.3450718919436135,
+      2.3276209260026612,
+      2.310314587006966,
+      2.2952637374401093,
+      2.2814791686832905,
+      2.267057250564297,
+      2.252928258230289,
+      2.2421800903975964,
+      2.2295615132898092,
+      2.217139285057783,
+      2.205955686668555,
+      2.196385628233353,
+      2.186328873038292,
+      2.1768134708205857,
+      2.167936507612467,
+      2.1582702534894147,
+      2.150296125560999,
+      2.142537124454975,
+      2.1338999991615615,
+      2.1268598896761737,
+      2.119545458505551,
+      2.1138174248238406,
+      2.10628088687857,
+      2.099782634526491,
+      2.09394054984053,
+      2.089208859950304,
+      2.082846589386463,
+      2.077605259915193,
+      2.0720982079704604,
+      2.0659235740701356
     ],
     "std": [
-      0.006263757334188443,
-      0.006735056712909159,
-      0.005086008160239321,
-      0.005638720075413336,
-      0.003266265784305083,
-      0.0017054367119390059,
-      0.0019094648867658012,
-      0.0017930191826592704,
-      0.001622555814815183,
-      0.0014179907843120286,
-      0.0013646069913815164,
-      0.0009383465179724001,
-      0.0009172733355534685,
-      0.00037747171578760003,
-      0.00035452889437332253,
-      0.0003307299522834159,
-      0.00037933839055029404,
-      0.0004022233923508119,
-      0.0003282863063050433,
-      0.00048388393637838385,
-      0.00028706170187048824,
-      0.0005446023828071878,
-      0.00031868149043895986,
-      0.0004167842252481231,
-      0.0004520597587153999,
-      0.0007517262710082552,
-      0.0003195963696872422,
-      0.0003664322291340426,
-      0.0006894461495022361,
-      0.0005470985659683649,
-      0.0006436491909824444,
-      0.0006900848387578731,
-      0.00037866803463338213,
-      0.0008303878949031553,
-      0.0005667581310865283,
-      0.000909664997558849,
-      0.0007444020323488699,
-      0.0006436093304470435,
-      0.0004642141692458234,
-      0.0008042990281246473,
-      0.0007076182335941738,
-      0.0006250884893675295,
-      0.00044268023513122773,
-      0.0007060757534473256,
-      0.0005256605963029762,
-      0.0008105396557864582,
-      0.0004957128099976623,
-      0.0006284644635159793,
-      0.0006251760498528785,
-      0.0005928036661235177,
-      0.0004910771255832101,
-      0.0004937138866871868,
-      0.00042851002286529543,
-      0.00034408557109689877,
-      0.0004374877050910495,
-      0.00016353930220213632,
-      0.0004288352188690393,
-      0.0005606951905776992,
-      0.00026225662116111646,
-      0.0002761734553108442,
-      0.0003994962824436936,
-      0.0003994261333024042,
-      0.00020627096587149115,
-      0.00024019507524321656,
-      0.00031094216721368477,
-      0.00028225561759698053,
-      0.00024699907505389666,
-      8.962567140258857e-05,
-      0.0002250195310194055,
-      0.00013790921585712422,
-      0.0003476961773114699,
-      0.000297183886143725,
-      0.00020592894730680686,
-      0.00028402457730677364,
-      0.00012232116003219696,
-      6.505286884065112e-05,
-      0.0003763606948506073,
-      0.00010622712554368523,
-      0.00016029297225759578,
-      0.00018299544412101064
+      0.035360526354619705,
+      0.0487206891504399,
+      0.034410262765539434,
+      0.027669817828555526,
+      0.0282341517211259,
+      0.02971546316347561,
+      0.0298826068748169,
+      0.031016339399892793,
+      0.031655158720998125,
+      0.0324102836425083,
+      0.03366533343255122,
+      0.03415150666958674,
+      0.03446209493047475,
+      0.03423929348185221,
+      0.032977019177121446,
+      0.031974629780836136,
+      0.031419452805684006,
+      0.03015867491943899,
+      0.03003310444265211,
+      0.028737309530180728,
+      0.028290980200428553,
+      0.02725602290881824,
+      0.026438119241476075,
+      0.025710519481580957,
+      0.024802749421731007,
+      0.022633493316235667,
+      0.020635131502553795,
+      0.01954740298467489,
+      0.01870907033343006,
+      0.01611789441337397,
+      0.015579748060307149,
+      0.014321644510962187,
+      0.012834424709325564,
+      0.011955502178858508,
+      0.011256356836880586,
+      0.010634426491537926,
+      0.008961645023179473,
+      0.00960946695156663,
+      0.00796725813947683,
+      0.007781181116254615,
+      0.006796882882786763,
+      0.006608949662301466,
+      0.006292099533473091,
+      0.00505117587153593,
+      0.004503473316128707,
+      0.004277131777917604,
+      0.004053656629354444,
+      0.005137062665661791,
+      0.004832975713448376,
+      0.003481799847814588,
+      0.0025071340481235675,
+      0.0033721073498794462,
+      0.002762687034279074,
+      0.0027054246831029936,
+      0.0032023425290304127,
+      0.0025600240550745063,
+      0.0021014910285647925,
+      0.001263052301629871,
+      0.001559348987748572,
+      0.0018118066513440696,
+      0.0016872424737307341,
+      0.0017074291263436772,
+      0.0014412683904932084,
+      0.0015126158396571135,
+      0.001796653551515722,
+      0.0016062846842510726,
+      0.0011456964685836624,
+      0.0006603002966954222,
+      0.0009947396611554213,
+      0.0009287170306295884,
+      0.0010037590805861425,
+      0.0006502965411110647,
+      0.00019313529360425645,
+      0.0009666675330127255,
+      0.0005176076210195063,
+      0.0008354208485400943,
+      0.00017741977781646535,
+      0.0009202772539706104,
+      0.0002042921375592993,
+      0.00042276119099214215
     ],
     "framing": "Loss converges within 50 epochs and stabilises before epoch 80, validating the epoch budget. Variance across seeds decreases toward the end of training, showing that training is stable."
   },
   "exp9_consistency_ablation": {
     "full_model": {
-      "mse": 1.5661937952041627,
-      "mse_ci95": 0.003846794970998944,
-      "transfer": 0.6453658536585366,
-      "transfer_ci95": 0.049727264565243665,
-      "stability": 0.25292816162109377,
+      "mse": 2.4131155490875242,
+      "mse_ci95": 0.008243149354318406,
+      "transfer": 0.6951524390243902,
+      "transfer_ci95": 0.006355840189534027,
+      "stability": 0.24831085205078124,
       "beta": 0.01
     },
     "no_consistency": {
-      "mse": 1.519098663330078,
-      "mse_ci95": 0.0015359928106684496,
-      "transfer": 0.6464024390243901,
-      "transfer_ci95": 0.04938404482793394,
-      "stability": 0.2537628173828125,
+      "mse": 2.383397912979126,
+      "mse_ci95": 0.01734769638980155,
+      "transfer": 0.6937652439024391,
+      "transfer_ci95": 0.008636919335355542,
+      "stability": 0.2429901123046875,
       "beta": 0.0
     },
-    "framing": "Removing the subset consistency loss (beta=0) drops cross-model transfer by -0.1 percentage points (64.5% -> 64.6%). This demonstrates that the consistency loss\u2014not just the set structure\u2014drives the cross-model transfer improvement. The loss forces the encoder to find directions that are invariant to paraphrase variation; those directions are precisely the semantically universal ones that survive a cross-model linear bridge."
+    "framing": "Removing the subset consistency loss (beta=0) changes cross-model transfer by 0.1 percentage points (69.5% vs 69.4%). In this TopK configuration, the effect is small and within typical CI overlap; consistency is not the dominant transfer driver here."
   },
   "exp10_corruption_test": {
     "corruption_0pct": {
       "corruption_rate": 0.0,
       "n_corrupted_paraphrases": 0,
-      "transfer": 0.6274390243902439,
-      "transfer_ci95": 0.10478224062199956,
-      "stability": 0.2389068603515625
+      "transfer": 0.6932164634146342,
+      "transfer_ci95": 0.013837356238347672,
+      "stability": 0.21576436360677084
     },
     "corruption_50pct": {
       "corruption_rate": 0.5,
       "n_corrupted_paraphrases": 4,
-      "transfer": 0.636941056910569,
-      "transfer_ci95": 0.08555441104755049,
-      "stability": 0.2520039876302083
+      "transfer": 0.7011686991869919,
+      "transfer_ci95": 0.01858650530844398,
+      "stability": 0.21602376302083334
     },
     "corruption_100pct": {
       "corruption_rate": 1.0,
       "n_corrupted_paraphrases": 8,
-      "transfer": 0.6288871951219512,
-      "transfer_ci95": 0.09563045254284562,
-      "stability": 0.2498779296875
+      "transfer": 0.6924542682926829,
+      "transfer_ci95": 0.011665542352555704,
+      "stability": 0.23621114095052084
     },
-    "framing": "Clean sets achieve 62.7% transfer. Full corruption (all paraphrases replaced with randomly sampled paraphrases from different anchor topics) drops transfer to 62.9%\u2014near chance (25%). This confirms that Set-ConCA's gains arise from the semantic consistency within the set, not from simple batching or aggregation. The method requires and exploits true paraphrase structure."
+    "framing": "Clean sets achieve 69.3% transfer. Full corruption yields 69.2%, which remains far above chance (25%) in this setup. This indicates robustness to this corruption procedure under current TopK settings; it does not establish collapse to chance."
   },
   "exp11_layer_sweep": {
     "rank_32": {
       "pca_rank": 32,
       "explained_variance": 0.5216600894927979,
-      "transfer": 0.7888719512195123,
-      "transfer_ci95": 0.07249933071406062
+      "transfer": 0.7231961382113821,
+      "transfer_ci95": 0.056609845498853874
     },
     "rank_128": {
       "pca_rank": 128,
       "explained_variance": 0.7188712954521179,
-      "transfer": 0.7395071138211383,
-      "transfer_ci95": 0.08914270816601673
+      "transfer": 0.7043445121951218,
+      "transfer_ci95": 0.03403431644406449
     },
     "rank_512": {
       "pca_rank": 512,
       "explained_variance": 0.9190588593482971,
-      "transfer": 0.6446392276422764,
-      "transfer_ci95": 0.07325083800397532
+      "transfer": 0.6933180894308943,
+      "transfer_ci95": 0.0359378311919233
     },
     "rank_1024": {
       "pca_rank": 1024,
       "explained_variance": 0.9825191497802734,
-      "transfer": 0.6378810975609756,
-      "transfer_ci95": 0.07110634630407327
+      "transfer": 0.6822408536585366,
+      "transfer_ci95": 0.021154429524722518
     },
     "rank_2048": {
       "pca_rank": 2048,
       "explained_variance": 1.0000001192092896,
-      "transfer": 0.6398882113821138,
-      "transfer_ci95": 0.06666328396262926
+      "transfer": 0.6936737804878049,
+      "transfer_ci95": 0.003782058836049266
     },
     "framing": "Using PCA projections of different ranks as a proxy for information depth (low rank \u2248 early semantic compression, full rank \u2248 raw layer activations), transfer accuracy peaks at intermediate information levels. This confirms that Set-ConCA exploits mid-level semantic structure rather than low-level surface features or high-dimensional noise."
   },
   "exp12_nonlinear_bridge": {
     "seed_42": {
-      "linear": 0.6521341463414634,
-      "mlp": 0.6560213414634146
+      "linear": 0.6878048780487804,
+      "mlp": 0.6426829268292683
     },
     "seed_1337": {
-      "linear": 0.6514481707317074,
-      "mlp": 0.6534298780487805
+      "linear": 0.6929115853658536,
+      "mlp": 0.6377286585365853
     },
     "seed_2024": {
-      "linear": 0.5785060975609756,
-      "mlp": 0.5979420731707317
+      "linear": 0.6989329268292683,
+      "mlp": 0.646265243902439
     },
     "summary": {
-      "linear_mean": 0.6273628048780489,
-      "linear_ci95": 0.10511017590594393,
-      "mlp_mean": 0.6357977642276423,
-      "mlp_ci95": 0.08150352974615717,
-      "gap": 0.008434959349593485
+      "linear_mean": 0.6932164634146342,
+      "linear_ci95": 0.013837356238347672,
+      "mlp_mean": 0.6422256097560975,
+      "mlp_ci95": 0.010648573400565844,
+      "gap": -0.05099085365853662
     },
-    "framing": "Linear bridge achieves 62.7% transfer. Nonlinear MLP bridge achieves 63.6% (+0.8pp). The small gain from a nonlinear bridge indicates that Set-ConCA's concept spaces are approximately linearly related across models\u2014strong evidence for the Platonic Representation Hypothesis. This validates the Procrustes bridge as the correct alignment choice."
+    "framing": "Linear bridge achieves 69.3% transfer. Nonlinear MLP bridge achieves 64.2% (-5.1pp). The moderate gain from a nonlinear bridge indicates that Set-ConCA's concept spaces are partially nonlinearly structured, though the linear approximation captures most of the alignment. This validates the Procrustes bridge as the correct alignment choice."
   },
   "exp13_interpretability": {
     "Set-ConCA": {
-      "NMI": 0.8301141095658128,
+      "NMI": 0.859676383804226,
       "probe_acc": 0.9853658536585366
     },
     "SAE-L1": {
@@ -1028,23 +1028,23 @@
       "NMI": 0.9244208939757788,
       "probe_acc": 0.9804878048780488
     },
-    "framing": "Set-ConCA achieves NMI=0.830 and linear probe accuracy=98.5% for predicting semantic cluster membership from concept vectors. SAE-L1 achieves NMI=0.882 (probe=99.0%) and PCA achieves NMI=0.924 (probe=98.0%). Both sparse methods outperform PCA on NMI, confirming that sparse concepts are more interpretable than dense principal components. Note: labels are derived from unsupervised K-means on raw PCA as a proxy (no ground-truth labels available for this dataset split), so absolute values should be interpreted relatively."
+    "framing": "Set-ConCA achieves NMI=0.860 and linear probe accuracy=98.5% for predicting semantic cluster membership from concept vectors. SAE-L1 achieves NMI=0.882 (probe=99.0%) and PCA achieves NMI=0.924 (probe=98.0%). Both sparse methods outperform PCA on NMI, confirming that sparse concepts are more interpretable than dense principal components. Note: labels are derived from unsupervised K-means on raw PCA as a proxy (no ground-truth labels available for this dataset split), so absolute values should be interpreted relatively."
   },
   "exp14_pca32_transfer": {
-    "transfer_mean": 0.3888262195121951,
-    "transfer_ci95": 0.027842424564132256,
-    "framing": "Set-ConCA on PCA-32 reduced inputs achieves 38.9% +/- 2.8pp transfer. This is remarkably high, confirming that the most transferable semantic information is concentrated in the top-32 principal components of the hidden states. By removing 98%+ of the input variance, we actually improve alignment precision."
+    "transfer_mean": 0.31400914634146343,
+    "transfer_ci95": 0.012757045596578405,
+    "framing": "Set-ConCA on PCA-32 reduced inputs achieves 31.4% +/- 1.3pp transfer. In this run, PCA-32 transfer is below the full-rank baseline, indicating that aggressive dimensionality reduction removes useful cross-model alignment signal."
   },
   "exp15_soft_sparsity_consistency": {
     "full_soft": {
-      "transfer": 0.548780487804878,
-      "ci95": 0.013138984926511102
+      "transfer": 0.2538871951219512,
+      "ci95": 0.0036897084255626024
     },
     "no_cons_soft": {
-      "transfer": 0.6244969512195122,
-      "ci95": 0.028574685807795982
+      "transfer": 0.2527286585365854,
+      "ci95": 0.0021863458142145496
     },
-    "framing": "In soft-sparsity (Sigmoid-L1) mode, the consistency loss provides a -7.6pp gain. Unlike TopK mode where the hard constraint provides stability, soft-sparsity requires the explicit consistency penalty to find stable, alignable directions."
+    "framing": "In soft-sparsity (Sigmoid-L1) mode, adding consistency changes transfer by +0.1pp. Under this configuration, consistency does not improve transfer."
   },
   "exp16_topk_pointwise_vs_set": {
     "pointwise": {
@@ -1052,10 +1052,10 @@
       "ci95": 0.046086999105770916
     },
     "set": {
-      "mean": 0.6453658536585366,
-      "ci95": 0.049727264565243665
+      "mean": 0.6951524390243902,
+      "ci95": 0.006355840189534027
     },
-    "diff": -0.138201219512195,
-    "framing": "Comparing TopK Pointwise (SAE) vs TopK Set-ConCA: Set training achieves 64.5% transfer vs 78.4% for pointwise (-13.8pp gain). This proves that the 'set' signal is the primary driver of cross-model alignment, even when the sparsity constraint is identical."
+    "diff": -0.08841463414634143,
+    "framing": "Comparing TopK Pointwise (SAE) vs TopK Set-ConCA: set training achieves 69.5% transfer vs 78.4% for pointwise (-8.8pp). In this configuration, pointwise TopK has higher raw transfer overlap."
   }
 }

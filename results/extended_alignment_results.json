@@ -1,0 +1,114 @@
+{
+  "sota_extensions": {
+    "setconca_procrustes_overlap": 0.7301829268292683,
+    "setconca_ridge_overlap": 0.7241615853658536,
+    "nmf_overlap": 0.8348388671875,
+    "ica_overlap": 0.1307373046875,
+    "cca_overlap": 0.72998046875,
+    "note": "NMF/ICA/CCA baselines are pointwise latent-space references, not set-trained methods."
+  },
+  "layerwise_alignment_and_steering": {
+    "layer_pair_overlap_matrix": {
+      "early_to_early": 0.723094512195122,
+      "early_to_mid": 0.7413109756097561,
+      "early_to_late": 0.6742378048780487,
+      "mid_to_early": 0.7239329268292682,
+      "mid_to_mid": 0.7404725609756098,
+      "mid_to_late": 0.6743902439024391,
+      "late_to_early": 0.7233231707317073,
+      "late_to_mid": 0.7400914634146342,
+      "late_to_late": 0.6690548780487805
+    },
+    "best_layer_pair": {
+      "source": "early",
+      "target": "mid",
+      "overlap": 0.7413109756097561
+    },
+    "steering_early_mid_late": {
+      "early": {
+        "alphas": [
+          0.0,
+          1.0,
+          2.0,
+          5.0
+        ],
+        "sims": [
+          0.7753394246101379,
+          0.8605704307556152,
+          0.8859953284263611,
+          0.9052907824516296
+        ],
+        "gain_a5": 0.1299513578414917
+      },
+      "mid": {
+        "alphas": [
+          0.0,
+          1.0,
+          2.0,
+          5.0
+        ],
+        "sims": [
+          0.7762007713317871,
+          0.8712964653968811,
+          0.8978145122528076,
+          0.9159197807312012
+        ],
+        "gain_a5": 0.13971900939941406
+      },
+      "late": {
+        "alphas": [
+          0.0,
+          1.0,
+          2.0,
+          5.0
+        ],
+        "sims": [
+          0.7086336612701416,
+          0.8258972764015198,
+          0.8629262447357178,
+          0.8947671055793762
+        ],
+        "gain_a5": 0.18613344430923462
+      }
+    },
+    "relative_depth_60pct": {
+      "source_layer": "mid",
+      "target_layer": "mid",
+      "overlap": 0.7404725609756098
+    },
+    "note": "Layerwise results use pseudo-layer views from hidden-dimension partition because only one extracted model layer is available in current data artifacts."
+  },
+  "asymmetry_diagnostics": {
+    "small_to_mid": {
+      "mean": 0.6949441056910569,
+      "ci95": 0.030881735457996256
+    },
+    "mid_to_small": {
+      "mean": 0.7320884146341463,
+      "ci95": 0.05156615566349639
+    },
+    "mid_to_big": {
+      "mean": 0.7299288617886178,
+      "ci95": 0.011940921075786827
+    },
+    "big_to_mid": {
+      "mean": 0.6695376016260163,
+      "ci95": 0.042462933704911485
+    },
+    "interpretation_hint": "Asymmetry can reflect receiver capacity limits, architecture/training-recipe differences, and information bottleneck mismatch."
+  },
+  "cross_language_en_fr": {
+    "status": "skipped",
+    "reason": "No EN/FR paired activation datasets found in data/.",
+    "expected_paths": [
+      [
+        "data/enfr_gemma3_4b_dataset.pt",
+        "data/enfr_llama_8b_dataset.pt"
+      ],
+      [
+        "data/gemma3_4b_enfr_dataset.pt",
+        "data/llama_8b_enfr_dataset.pt"
+      ]
+    ]
+  }
+}
