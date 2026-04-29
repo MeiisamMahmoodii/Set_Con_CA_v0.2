@@ -24,6 +24,10 @@ __pycache__/
 CLAUDE.md
 .claude/
 
+# Obsidian vault local config (keep in working tree, do not version)
+.obsidian/
+results/obsidian_report/.obsidian/
+
 # System
 .DS_Store
 Thumbs.db
