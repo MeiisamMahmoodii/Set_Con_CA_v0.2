@@ -6,6 +6,16 @@ checkpoints/
 *.h5
 .agent
 *graphify*
+graphify-out/
+
+# LaTeX build outputs (keep sources; regenerate locally)
+docs/paper/*.aux
+docs/paper/*.blg
+docs/paper/*.bbl
+docs/paper/*.out
+docs/paper/*.toc
+docs/paper/*.lof
+docs/paper/*.lot
 
 # Results / temp outputs
 *.pdf
@@ -24,9 +34,8 @@ __pycache__/
 CLAUDE.md
 .claude/
 
-# Obsidian vault local config (keep in working tree, do not version)
+# Obsidian vault local config (do not version)
 .obsidian/
-results/obsidian_report/.obsidian/
 
 # System
 .DS_Store

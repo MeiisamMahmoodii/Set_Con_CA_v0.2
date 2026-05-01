@@ -1,6 +1,6 @@
 # Set-ConCA: Verified Results Report
 **Concept Component Analysis on Representation Sets**  
-*Canonical results regenerated from `results/results_v2.json`, `results/extended_alignment_results.json`, `results/benchmark_matrix_wmt14_fr_en.json`, and `results/benchmark_matrix_opus100_multi_en.json` on RTX 3090.*
+*Canonical results regenerated from `results/results_v2.json`, `results/extended_alignment_results.json`, `results/benchmark_matrix_wmt14_fr_en.json`, and (when present) `results/benchmark_matrix_opus100_multi_en.json` via `evaluation/*.py` on RTX 3090.*
 
 ---
 
@@ -452,12 +452,13 @@ The core experiment plots are embedded above. Additional high-level overview fig
 
 - `uv run pytest` -> **62 passed**
 - Claim-level contradiction tests are now included in `tests/test_validation_gates.py`
-- `run_evaluation_v2.py` now writes framing consistent with measured results
-- `run_extended_alignment.py` writes:
+- `evaluation/run_evaluation_v2.py` now writes framing consistent with measured results
+- `evaluation/run_extended_alignment.py` writes:
   - `results/extended_alignment_results.json`
   - `results/extended_alignment_terminal_report.txt`
-- `experiments/neurips/build_multilingual_benchmarks.py` now writes canonical EN/FR benchmark tensors and extraction manifests
-- `experiments/neurips/run_benchmark_matrix.py` now writes matrix-wide baseline results for the multilingual benchmark
+- `evaluation/build_multilingual_benchmarks.py` now writes canonical EN/FR benchmark tensors and extraction manifests
+- `evaluation/run_benchmark_matrix.py` now writes matrix-wide baseline results for the multilingual benchmark
+- Long-form narrative (ConCA → Set-ConCA, findings, SOTA pointers): [`docs/report/README.md`](../docs/report/README.md) (also `scripts/build_report.py` for generated pages)
 
 ---
 

@@ -5,11 +5,11 @@
 - Full unit/integration test suite rerun (`pytest`) completed.
 - Full end-to-end final pass completed with unified logging:
   - `pytest`
-  - `experiments/neurips/run_evaluation_v2.py`
-  - `experiments/neurips/run_extended_alignment.py`
-  - `experiments/neurips/build_multilingual_benchmarks.py`
-  - `experiments/neurips/run_benchmark_matrix.py wmt14_fr_en`
-  - `experiments/neurips/run_benchmark_matrix.py opus100_multi_en`
+  - `evaluation/run_evaluation_v2.py`
+  - `evaluation/run_extended_alignment.py`
+  - `evaluation/build_multilingual_benchmarks.py`
+  - `evaluation/run_benchmark_matrix.py wmt14_fr_en`
+  - `evaluation/run_benchmark_matrix.py opus100_multi_en`
 - Reproduction scripts executed for:
   - `S=3/8/16` comparative run on synthetic set-structured data.
   - Bridge overlap vs random baseline significance on synthetic paired latents.

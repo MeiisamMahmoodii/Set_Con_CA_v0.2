@@ -2,9 +2,16 @@
 
 **NeurIPS 2025 Draft v0.1**
 
+> **Deprecated during cleanup (2026-04-30):** This is a legacy draft kept for history only.  
+> Use canonical docs instead:
+> - `results/REPORT.md`
+> - `results/EXECUTIVE_SUMMARY.md`
+> - `results/final_bundle/Submission_Master_Paper.md`
+> - `docs/paper/setconca_neurips.tex`
+
 > **Author note:** This is a working draft. Sections marked [TODO] need additional content.
-> All numerical results are real, from 2,048-anchor experiments across 5 seeds.
-> Figures reference: `results/figures/` (regenerate: `uv run python experiments/neurips/plot_results.py`)
+> **Do not cite numeric claims from this file.** Many numbers and interpretations in this legacy draft predate the verified rerun and have since been corrected/narrowed. Use `results/REPORT.md` (and the JSON artifacts it cites) for anything quantitative.
+> Figures reference: `results/figures/` (regenerate: `uv run python evaluation/plot_results.py`).
 
 ---
 
@@ -446,7 +453,7 @@ All experiments are fully reproducible. The codebase includes 52 unit tests (`uv
 - Fixed seeds $\{42, 1337, 2024, 7, 314\}$ via `torch.manual_seed` + `torch.Generator`
 - Deterministic DataLoader with fixed generator seed
 - Model checkpoints and result JSON saved to `results/results_v2.json`
-- All figure generation in `experiments/neurips/plot_results.py` (`uv run python experiments/neurips/plot_results.py`)
+- All figure generation in `evaluation/plot_results.py` (`uv run python evaluation/plot_results.py`)
 
 Code and data will be released at [TODO: repository URL].
 

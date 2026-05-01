@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from experiments.neurips.runner.eval_metrics import bootstrap_ci, cka, topk_overlap
+from evaluation.runner.eval_metrics import bootstrap_ci, cka, topk_overlap
 
 
 def test_METRIC_01_topk_overlap_is_symmetric_and_bounded():

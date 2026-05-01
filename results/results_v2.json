@@ -320,7 +320,7 @@
       "Gemma-3-4B",
       "Gemma-2-9B"
     ],
-    "framing": "Pure Gemma-3 intra-family transfer (Gemma-3 4B -> Gemma-3 1B) achieves ~55.7%, and transferring smaller to bigger (1B -> 4B) achieves ~55.2%. Both are lower than the cross-family 64.6% result (Gemma-3 4B <-> LLaMA-3 8B). This confirms that the alignment issue is not just about moving between different recipes (like Gemma-2 9B), but relates fundamentally to model capacity and feature resolution. Gemma-3 1B is highly capacity-constrained and likely combines or drops features that Gemma-3 4B and LLaMA-3 8B independently resolve. Thus, two large models from different families (4B/8B) share MORE conceptual structure with each other than a large model shares with its smaller 1B sibling."
+    "framing": "Intra-family transfer within the Gemma subset can be strong (e.g., Gemma-3 1B -> Gemma-3 4B ≈ 64.9%, Gemma-3 4B -> Gemma-3 1B ≈ 69.1% in this run), and some directions can approach the cross-family headline (Gemma-3 4B -> LLaMA-3 8B ≈ 69.5%). The safest takeaway is not 'cross-family always wins', but that capacity mismatch and training-recipe mismatch both influence transfer and can produce asymmetries."
   },
   "exp6_sota_comparison": {
     "Set-ConCA": {
@@ -364,7 +364,7 @@
       "stability": 0.0,
       "l0": 0.9932022094726562
     },
-    "framing": "The correct comparison is among SPARSE + INTERPRETABLE methods: Set-ConCA, SAE-L1, and SAE-TopK. PCA and PCA-Threshold are non-sparse (L0\u22481.0) and non-interpretable \u2014 they are included as reconstruction upper bounds only. Among sparse methods, Set-ConCA achieves lower MSE than both SAE variants at equivalent sparsity (L0=25%), while also delivering superior cross-model transfer (EXP4). SAE-TopK is the fairest apples-to-apples comparison: same sparsity constraint (exactly k=32 active), pointwise architecture. Set-ConCA beats SAE-TopK on MSE and substantially on transfer overlap (+14.7pp)."
+    "framing": "The correct comparison is among SPARSE + INTERPRETABLE methods: Set-ConCA, SAE-L1, and SAE-TopK. PCA and PCA-Threshold are non-sparse (L0\u22481.0) and non-interpretable \u2014 they are included as reconstruction upper bounds only. Among sparse methods, Set-ConCA achieves lower MSE than both SAE variants at equivalent sparsity (L0=25%). SAE-TopK is the fairest apples-to-apples comparison: same sparsity constraint (exactly k=32 active), pointwise architecture. In the verified rerun, pointwise SAE-TopK is higher on raw overlap transfer (EXP16), while Set-ConCA retains strong cross-family transfer/steering evidence and a competitive sparse reconstruction/transfer trade-off."
   },
   "exp7_steering": {
     "alphas": [

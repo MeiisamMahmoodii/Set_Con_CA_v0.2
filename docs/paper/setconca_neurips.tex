@@ -40,11 +40,11 @@
 \begin{document}
 \maketitle
 
-We introduce Set-ConCA, a distributional extension of Concept Component Analysis that models latent representations as local semantic neighborhoods rather than isolated activations. While Pointwise methods often succumb to \textit{polysemy shift}---where linguistic variance displaces a concept from its semantic centroid---Set-ConCA aggregates nearest neighbors through a permutation-invariant encoder to extract stable concept coordinates.
+We introduce Set-ConCA, a distributional extension of Concept Component Analysis that models latent representations as local semantic neighborhoods rather than isolated activations. While pointwise methods often mix semantic and surface-form variation, Set-ConCA aggregates neighborhood evidence through a permutation-invariant encoder to extract stable sparse concept coordinates.
 
-We empirically demonstrate that set-based representations achieve an alignment score of **0.927** in cross-model transfer, a **5$\times$ improvement** over random baselines. We observe a consistent \textit{empirical stability knee} around moderate neighborhood sizes (e.g., $S \approx 8$) across multiple model families. 
+In the current verified rerun, Set-ConCA reaches 69.5\% $\pm$ 0.6pp cross-family transfer from Gemma-3 4B to LLaMA-3 8B (chance 25\%), shows +9.8pp steering gain at $\alpha=10$, and uses a linear bridge that outperforms a nonlinear MLP bridge (69.3\% vs 64.2\%). At the same time, pointwise SAE-TopK is higher on raw overlap (78.4\% vs 69.5\%), consistency effect is small in TopK mode, and corruption does not collapse transfer to chance.
 
-Interventions along mapped concept directions produce a target shift of **0.289**, indicating that the learned coordinates capture functionally meaningful and causally steering-ready structure. Our results suggest that local distributional structure provides a robust inductive bias for architecture-independent interpretability.
+These results support a disciplined framing: Set-ConCA is a credible and competitive set-based sparse concept method with strong transfer and steering evidence, but not universal dominance across all overlap metrics.
 
 \section{Introduction}
 Mechanistic interpretability aims to extract semantically meaningful structure from latent representations in large models \citep{bricken2023monosemanticity,elhage2022superposition,zou2023transparency}. While Pointwise methods such as Sparse Autoencoders (SAEs) have isolated discrete lexical features, they often struggle with representational drift and architectural entanglement, making cross-model concept transplantation brittle and idiosyncratic. We propose that the fundamental unit of representation in LLMs is not the individual token activation, but rather the \textit{semantic neighborhood}---the local distributional set formed by a token and its nearest neighbors in latent space.

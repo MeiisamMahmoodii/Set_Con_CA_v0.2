@@ -1,5 +1,10 @@
 # EN/FR Benchmark Deferrals
 
+> **Legacy run-note (non-canonical narrative):** preserved for traceability.  
+> Canonical benchmark reporting now lives in:
+> - `results/REPORT.md`
+> - `results/final_bundle/SOTAReproductionAppendix_vFinal.md`
+
 This file records methods and models that were explicitly deferred during the multilingual benchmark expansion, plus the concrete reason.
 
 ## Model Deferrals

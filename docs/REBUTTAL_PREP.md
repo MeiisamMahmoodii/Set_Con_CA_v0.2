@@ -2,6 +2,8 @@
 
 This document prepares the research team for NeurIPS peer review and oral defense (viva). It categorizes 50 critical questions, provides background context, lists key findings, and justifies experimental decisions.
 
+**Status note (2026-05):** this is a prep/rehearsal document and can drift. For canonical verified numbers + safe framing, use `results/REPORT.md` and `results/EXECUTIVE_SUMMARY.md` (metrics source: `results/*.json`).
+
 ---
 
 ## Part 1: Architecture & Methodology
@@ -18,8 +20,8 @@ This document prepares the research team for NeurIPS peer review and oral defens
 *   **Justification:** By siphoning syntax into a residual stream, we ensure the concept code Z is "pure" semantics.
 
 ### 3. Why Mean Pooling instead of Attention for aggregation?
-*   **Finding (EXP3):** Mean pooling is more stable across seeds.
-*   **Justification:** Attention weights are dynamic and seed-dependent, which breaks concept stability—a dealbreaker for interpretability.
+*   **Finding (EXP3, verified rerun):** attention pooling is better on the tracked metrics in the latest pass (both reconstruction and within-metric stability).
+*   **Justification:** mean pooling remains simpler and easier to reason about, but it is no longer supported as the empirical winner in the verified rerun.
 
 ### 4. Why LayerNorm with `affine=False`?
 *   **Background:** Affine parameters allow the model to "undo" normalization.
@@ -42,8 +44,8 @@ This document prepares the research team for NeurIPS peer review and oral defens
 *   **Justification:** It is the standard for autoencoders; we augment it with Sigmoid-L1 for sparsity.
 
 ### 9. What is the role of the subset consistency loss ($\beta$)?
-*   **Finding (EXP15):** It is essential in soft-sparsity modes.
-*   **Justification:** It provides an explicit invariance signal when the hard TopK bottleneck is absent.
+*   **Finding (EXP15, verified rerun):** soft-sparsity mode is near chance and the consistency term has only a very small effect.
+*   **Justification:** consistency remains a clean invariance signal conceptually, but should not be framed as a large empirical driver in the current verified rerun.
 
 ### 10. Does the model actually learn different things in shared vs. residual streams?
 *   **Finding:** Unit tests (DEC_03/04) confirm decoupling.
@@ -62,12 +64,12 @@ This document prepares the research team for NeurIPS peer review and oral defens
 *   **Justification:** S=8 captures the core "meaning" of the anchor; more paraphrases just add redundant noise.
 
 ### 13. Which aggregator is best for interpretability? (EXP3)
-*   **Finding:** Mean pooling is significantly more stable (+2.8pp).
-*   **Justification:** High stability = Reproducible concepts.
+*   **Finding (verified rerun):** attention pooling is better on the tracked metrics in this rerun.
+*   **Justification:** reproducibility still matters, but the latest pass does not support “mean is more stable” as the core empirical claim.
 
 ### 14. What is the state-of-the-art result for cross-model transfer? (EXP4)
-*   **Finding:** 64.6% (Gemma-4B to LLaMA-8B).
-*   **Justification:** This is the headline result proving universal semantic alignment.
+*   **Finding (verified rerun):** **69.5% +/- 0.6pp** (Gemma-3 4B → LLaMA-3 8B), vs **25% chance**.
+*   **Justification:** this is the headline cross-family result, but should be framed as “strong and reproducible” rather than universal dominance over all baselines/metrics.
 
 ### 15. Why does 4B -> 8B transfer better than 1B -> 4B? (EXP5)
 *   **Finding:** Capacity dominates family.
@@ -82,8 +84,8 @@ This document prepares the research team for NeurIPS peer review and oral defens
 *   **Justification:** Proof of causal validity.
 
 ### 18. Does "Weak-to-Strong" steering work? (EXP7)
-*   **Finding:** Yes, 1B concepts can steer 8B models (+3.0pp).
-*   **Justification:** Confirms concepts are "Platonic" and scale-independent.
+*   **Finding (verified rerun):** yes; weak-to-strong steering gain at `alpha=10` is **+10.7pp**.
+*   **Justification:** supports a causal/interventional story for the learned concept directions.
 
 ### 19. Does the model converge stably? (EXP8)
 *   **Finding:** Yes, within 50 epochs.
@@ -94,16 +96,16 @@ This document prepares the research team for NeurIPS peer review and oral defens
 *   **Justification:** TopK is a "brute force" stability signal.
 
 ### 21. What happens if you corrupt the sets? (EXP10)
-*   **Finding:** Transfer collapses to chance.
-*   **Justification:** Proves the model is learning from *semantic sets*, not just batch statistics.
+*   **Finding (verified rerun):** transfer does **not** collapse to chance under the tested corruption procedure (it stays ~**69%**, far above **25%** chance).
+*   **Justification:** this is best framed as robustness under the tested protocol, plus motivation for stronger semantic-disruption tests if the goal is to probe semantic dependence.
 
 ### 22. Why is PCA Rank 32 the "best" for transfer? (EXP11/14)
-*   **Finding:** 77.8% transfer at Rank 32.
-*   **Justification:** Dominant spectral components contain the most universal semantics; high-rank noise hurts alignment.
+*   **Finding (verified rerun):** EXP11 (proxy analysis) peaks at **72.3%** transfer at PCA rank 32, but EXP14 (explicit PCA-32 distilled-input intervention) is **31.4% +/- 1.3pp** and harms transfer.
+*   **Justification:** these are different interventions and must not be presented as one unified “PCA-32 helps” claim.
 
 ### 23. Is a linear bridge enough? (EXP12)
-*   **Finding:** Yes, MLP gain is negligible (+0.5pp).
-*   **Justification:** Supports the hypothesis that latent spaces are linearly related.
+*   **Finding (verified rerun):** yes; the linear bridge reaches **69.3%** while the nonlinear MLP falls to **64.2%**.
+*   **Justification:** strengthens the case for linear alignment as the correct default in this repo’s current setting.
 
 ### 24. How interpretable are the concepts? (EXP13)
 *   **Finding:** NMI=0.832, Probe=98.5%.

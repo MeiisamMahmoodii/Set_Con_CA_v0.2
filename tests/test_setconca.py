@@ -11,7 +11,7 @@ TestData             – Dataset / DataLoader      (DATA_01 – DATA_04)
 TestFullModel        – End-to-end SetConCA       (FULL_01 – FULL_10)
 TestTopK             – Hard Top-K mode           (TOPK_01 – TOPK_02)
 TestThresholdBridge  – S-sweep sanity + bridge   (THRESHOLD_01, BRIDGE_01)
-TestExperiments      – Smoke tests for all 5 NeurIPS experiments
+TestExperiments      – Smoke tests for all 5 evaluation experiment runners
 """
 
 import os
@@ -430,7 +430,7 @@ class TestExperiments:
         return (data @ q) + torch.randn_like(data) * 0.1
 
     def test_EXP_01_set_vs_pointwise(self):
-        from experiments.neurips.runner.exp1_set_vs_pointwise import run_exp1
+        from evaluation.runner.exp1_set_vs_pointwise import run_exp1
         res = run_exp1(self._data_small, seeds=[42, 1337])
         assert "SetConCA"  in res
         assert "Pointwise" in res
@@ -439,26 +439,26 @@ class TestExperiments:
             assert key in res["Pointwise"]
 
     def test_EXP_02_set_size_scaling(self):
-        from experiments.neurips.runner.exp2_set_size_scaling import run_exp2
+        from evaluation.runner.exp2_set_size_scaling import run_exp2
         res = run_exp2(self._data_small, sweep=[1, 3, 8], seeds=[42, 1337])
         for s in (1, 3, 8):
             assert s in res
             assert "mse" in res[s] and "stability" in res[s]
 
     def test_EXP_03_aggregator_ablation(self):
-        from experiments.neurips.runner.exp3_aggregator_ablation import run_exp3
+        from evaluation.runner.exp3_aggregator_ablation import run_exp3
         res = run_exp3(self._data_small, seeds=[42, 1337])
         for mode in ("attention", "mean", "random"):
             assert mode in res
 
     def test_EXP_04_cross_model_transfer(self):
-        from experiments.neurips.runner.exp4_cross_model_transfer import run_exp4
+        from evaluation.runner.exp4_cross_model_transfer import run_exp4
         res = run_exp4(self._data_small, self._rotated(self._data_small))
         for key in ("setconca_overlap", "pointwise_overlap", "random_overlap", "cka"):
             assert key in res
 
     def test_EXP_05_interventional_steering(self):
-        from experiments.neurips.runner.exp5_interventional_steering import run_exp5
+        from evaluation.runner.exp5_interventional_steering import run_exp5
         res = run_exp5(self._data_small, self._rotated(self._data_small))
         for key in ("base", "setconca", "random"):
             assert key in res

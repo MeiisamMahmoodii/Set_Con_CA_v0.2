@@ -1,0 +1,114 @@
+[
+  {
+    "id": "C001",
+    "claim": "Cross-family transfer is strong and reproducible.",
+    "tier": "core_result",
+    "status": "supported",
+    "value": 69.5,
+    "unit": "percent",
+    "evidence": [
+      "results/results_v2.json:exp4_cross_family.SetConCA.transfer_g_to_l"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C002",
+    "claim": "Set-ConCA steering provides meaningful gains at high alpha.",
+    "tier": "core_result",
+    "status": "supported",
+    "value": 9.8,
+    "unit": "pp_gain",
+    "evidence": [
+      "results/results_v2.json:exp7_steering.gain_at_alpha10_4B"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C003",
+    "claim": "Linear bridge is sufficient or better than nonlinear MLP bridge in current rerun.",
+    "tier": "core_result",
+    "status": "supported",
+    "value": {
+      "linear": 69.3,
+      "mlp": 64.2
+    },
+    "unit": "percent",
+    "evidence": [
+      "results/results_v2.json:exp12_nonlinear_bridge.summary"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C004",
+    "claim": "Pointwise TopK beats Set-ConCA on raw overlap in current setup.",
+    "tier": "core_result",
+    "status": "supported",
+    "value": {
+      "pointwise": 78.4,
+      "set": 69.5
+    },
+    "unit": "percent",
+    "evidence": [
+      "results/results_v2.json:exp16_topk_pointwise_vs_set"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C005",
+    "claim": "Consistency loss is not a dominant transfer driver in TopK mode.",
+    "tier": "negative_result",
+    "status": "supported",
+    "value": 0.1,
+    "unit": "pp_delta",
+    "evidence": [
+      "results/results_v2.json:exp9_consistency_ablation"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C006",
+    "claim": "Corruption does not collapse transfer to chance in current TopK configuration.",
+    "tier": "negative_result",
+    "status": "supported",
+    "value": {
+      "clean": 69.3,
+      "full_corruption": 69.2
+    },
+    "unit": "percent",
+    "evidence": [
+      "results/results_v2.json:exp10_corruption_test"
+    ],
+    "script": "evaluation/run_evaluation_v2.py"
+  },
+  {
+    "id": "C007",
+    "claim": "Multilingual benchmark path is operational across WMT14 and OPUS100.",
+    "tier": "core_result",
+    "status": "supported",
+    "value": {
+      "set_wmt14_mean": 0.3802,
+      "set_opus100_mean": 0.3688
+    },
+    "unit": "mean_overlap",
+    "evidence": [
+      "results/benchmark_matrix_wmt14_fr_en.json",
+      "results/benchmark_matrix_opus100_multi_en.json"
+    ],
+    "script": "evaluation/run_benchmark_matrix.py"
+  },
+  {
+    "id": "C008",
+    "claim": "Extended SOTA-like diagnostics show strong NMF and Procrustes baselines.",
+    "tier": "supporting",
+    "status": "supported",
+    "value": {
+      "setconca_procrustes": 0.7302,
+      "nmf_overlap": 0.8348
+    },
+    "unit": "overlap",
+    "evidence": [
+      "results/extended_alignment_results.json:sota_extensions"
+    ],
+    "script": "evaluation/run_extended_alignment.py"
+  }
+]

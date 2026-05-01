@@ -14,7 +14,7 @@ Set-ConCA discovers concept components that are stable across **sets** of repres
 *   **Causal Steering**: Set-ConCA gains **+9.8pp** at `alpha=10`, and weak-to-strong steering from 1B to 8B gains **+10.7pp**.
 *   **Linear Bridge Wins**: Linear bridge reaches **69.3%**, while nonlinear MLP falls to **64.2%** in the latest rerun.
 *   **PCA-32 Does Not Help Here**: direct PCA-32 distilled-input transfer falls to **31.4% +/- 1.3pp**, below the full-rank baseline.
-*   **Real EN/FR Benchmark Exists**: WMT14 `fr-en` tensors and matrix results now exist for `Qwen2.5-3B`, `Qwen2.5-7B`, `Mistral-7B`, and `Gemma-2-2B`; Set-ConCA averages **0.3187** raw overlap on the completed multilingual matrix and should be framed as competitive, not dominant, there.
+*   **Real Multilingual Benchmark Exists**: final-pass matrices are completed for **WMT14 `fr-en`** and **OPUS100 `multi-en`** with **7 models / 26 directed pairs** each; Set-ConCA averages **0.3802** (WMT14) and **0.3688** (OPUS100) and should be framed as competitive, not dominant, on raw overlap.
 
 ---
 
@@ -69,16 +69,18 @@ cd SetConCA
 uv sync
 ```
 
+### Smoke check (data tensors + pytest)
+
+```bash
+uv run python scripts/smoke_check.py
+```
+
+Exits `0` when required `data/*.pt` files exist and tests pass; `2` if tests pass but data is incomplete (use before a long GPU run).
+
 ### Run Evaluation Suite (GPU recommended)
 ```bash
-# High-fidelity evaluation (2,048 anchors, 5 seeds, GPU)
-uv run python experiments/neurips/run_evaluation_v2.py
-
-# Build multilingual EN/FR benchmark tensors
-uv run python experiments/neurips/build_multilingual_benchmarks.py
-
-# Evaluate the multilingual model matrix
-uv run python experiments/neurips/run_benchmark_matrix.py wmt14_fr_en
+# One command: data prep → eval → multilingual matrices → figures → docs/report generation
+uv run python scripts/run_full_pipeline.py
 ```
 
 ### Quick Training
@@ -90,9 +92,11 @@ uv run python train.py --use_topk --k 32 --epochs 50
 
 ## 📂 Project Structure
 *   `setconca/`: Core model implementation (Encoder, Aggregator, Dual-Decoder).
-*   `experiments/neurips/`: Activation extraction pipeline and all 16 experiments.
-*   `results/`: Detailed `REPORT.md`, `EXECUTIVE_SUMMARY.md`, and all visualization charts.
-*   `tests/`: 60 tests including claim-level validation gates for result/report consistency.
+*   `evaluation/`: Benchmarks, training/eval runners, plots, and multilingual matrix scripts.
+*   `scripts/run_full_pipeline.py`: The single official entrypoint that runs the whole pipeline end-to-end.
+*   `docs/report/`: Narrative (ConCA → Set-ConCA) plus auto-generated deep-dive pages from JSON (`scripts/build_report.py`).
+*   `results/`: Metrics JSON, `REPORT.md`, figures (`*.png`), and validation artifacts.
+*   `tests/`: 62 tests including claim-level validation gates for result/report consistency.
 
 ---
 

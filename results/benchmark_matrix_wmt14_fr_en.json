@@ -3316,5 +3316,5 @@
   "deferred_baselines": {
     "none": "All requested baseline families are implemented in this runner; per-pair failures are recorded inline."
   },
-  "elapsed_s": 4580.745772123337
+  "elapsed_s": 4180.595740556717
 }

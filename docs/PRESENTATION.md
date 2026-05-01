@@ -108,10 +108,10 @@ This document outlines a 20-slide technical presentation for Set-ConCA, designed
 ## Slide 11: EXP 4: Cross-Family Transfer (The "Platonic" Test)
 **What it shows:**  
 - **Figure:** `results/figures/fig04_cross_family_transfer.png`.  
-- Transfer results: Gemma-3 4B → LLaMA-3 8B (64.6%).  
-- Comparison to chance (25%).  
+- Transfer results: Gemma-3 4B → LLaMA-3 8B (**69.5% +/- 0.6pp**).  
+- Comparison to chance (**25%**).  
 **Speaker Notes:**  
-"This is the heart of our paper. We trained Set-ConCA on Gemma-3 and attempted to transfer its dictionary to LLaMA-3 using a linear Procrustes bridge. We achieved 64.6% overlap—nearly triple the chance level. This is a massive result: it proves that concepts learned under the Set-ConCA constraint are universal enough to align two models built by different organizations with different architectures."
+"This is the heart of our story. We trained Set-ConCA on Gemma-3 and transferred its dictionary to LLaMA-3 using a linear Procrustes bridge. We achieve 69.5% overlap (±0.6pp)—far above the 25% chance level. This supports strong cross-family alignment, but our framing is comparative and evidence-aligned rather than universal dominance across all baselines and metrics."
 
 ---
 
@@ -128,10 +128,10 @@ This document outlines a 20-slide technical presentation for Set-ConCA, designed
 ## Slide 13: EXP 11: Information Depth & PCA-32 Distillation
 **What it shows:**  
 - **Figure:** `results/figures/fig11_layer_sweep.png` or `results/figures/fig14_pca32_transfer.png`.  
-- Bar chart: PCA-32 Distilled (77.8%) vs. Full Rank (64.6%).  
-- Takeaway: Semantic "Core" is in the dominant spectral components.  
+- Key point: EXP11 is a proxy analysis where PCA rank 32 reaches **72.3%** transfer, while EXP14 is an explicit PCA-32 distilled-input intervention where transfer drops to **31.4% +/- 1.3pp**.  
+- Takeaway: do not claim “PCA-32 helps” universally; EXP11 and EXP14 are different interventions.  
 **Speaker Notes:**  
-"In Experiment 11, we tested whether 'pre-filtering' hidden states helps. By projecting representations into their top 32 principal components (retaining ~52% variance) and training there, we boosted transfer to 77.8%. This tells us that the transferable semantic information is highly concentrated in the dominant spectral directions. High-frequency variance in hidden states is mostly model-specific noise that complicates alignment."
+"We tested whether low-rank projections help. In the EXP11 proxy analysis, PCA rank 32 peaks at 72.3% transfer. But when we explicitly force a PCA-32 distilled-input intervention (EXP14), transfer drops to 31.4% ± 1.3pp. The safe conclusion is that low-rank structure can look helpful in certain analyses, but PCA-32 is not a universal improvement in this project."
 
 ---
 
@@ -139,9 +139,9 @@ This document outlines a 20-slide technical presentation for Set-ConCA, designed
 **What it shows:**  
 - **Figure:** `results/figures/fig06_sota_comparison.png` and `results/figures/fig14_capability_matrix.png`.  
 - Metrics Table: MSE, Stability, L0, Transfer.  
-- Highlight: Set-ConCA beats SAE-TopK and SAE-L1 on cross-model transfer.  
+- Highlight: in the verified rerun, pointwise SAE-TopK exceeds Set-ConCA on raw overlap (78.4% vs 69.5%), while Set-ConCA remains strong on cross-family transfer and steering and competitive on the sparse reconstruction/transfer trade-off.  
 **Speaker Notes:**  
-"Compared to state-of-the-art baselines like Anthropic-style SAEs (L1 or TopK variants), Set-ConCA achieves significantly higher cross-model alignment. While SAEs are excellent for single-model circuit analysis, their dictionaries are too 'pointwise-focused' for transfer. Set-ConCA is the only method that combines sparse dictionary learning with multi-view set training to achieve a truly transferable concept space."
+"Compared to strong SAE baselines, we do not claim raw-overlap dominance in the verified rerun: pointwise SAE-TopK is higher on raw overlap (78.4% vs 69.5%). Our stronger positioning is: cross-family transfer and steering evidence, plus a competitive sparse reconstruction/transfer trade-off, enabled by set-based training and the dual-decoder structure."
 
 ---
 
@@ -171,17 +171,17 @@ This document outlines a 20-slide technical presentation for Set-ConCA, designed
 - Comparison: Full Model vs. No Consistency ($\beta=0$).  
 - Result: TopK hard-sparsity provides enough stability that consistency loss is often redundant.  
 **Speaker Notes:**  
-"We also performed a rigorous ablation on our loss terms. Surprisingly, in the hard TopK mode, the consistency loss is largely redundant. The TopK bottleneck itself is a powerful enough inductive bias for stability. However, we found that the consistency loss is essential in 'soft-sparsity' modes (Sigmoid-L1) where it provide a +7.5pp gain, and remains a valuable formal guarantee for the invariance we seek."
+"We performed a loss-term ablation. In hard TopK mode, the consistency loss is largely redundant. In the verified rerun’s soft-sparsity experiment (EXP15), results are near chance and the consistency term changes transfer only slightly, so we should not present a large soft-mode gain claim. The consistency term remains conceptually aligned with invariance, but it is not a major empirical driver in the final pass."
 
 ---
 
 ## Slide 18: Linear Sufficiency: The Geometric Evidence
 **What it shows:**  
 - **Figure:** `results/figures/fig12_nonlinear_bridge.png`.  
-- Comparison: Linear Procrustes (64.0%) vs. Nonlinear MLP (64.7%).  
-- Takeaway: The gain from nonlinearity is within the noise floor (+0.5pp).  
+- Comparison: linear bridge (**69.3%**) vs. nonlinear MLP (**64.2%**) in the verified rerun.  
+- Takeaway: nonlinearity does not help here; linear sufficiency is the safer claim in this repo’s final pass.  
 **Speaker Notes:**  
-"One of our most significant theoretical findings is the linear sufficiency of the bridge. We replaced our linear Procrustes bridge with a deep MLP and found only a 0.5% gain. This is the strongest geometric evidence yet for the Platonic Representation Hypothesis: it implies that different models aren't just learning the same concepts, but they are organizing them in approximately the same linear relative positions."
+"One of our most significant empirical findings is linear sufficiency of the bridge in the verified rerun. When we replace the linear bridge with an MLP, performance drops (69.3% → 64.2%). This supports linear alignment as the default and keeps the geometric claim conservative and evidence-aligned."
 
 ---
 

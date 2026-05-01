@@ -98,17 +98,12 @@
     "interpretation_hint": "Asymmetry can reflect receiver capacity limits, architecture/training-recipe differences, and information bottleneck mismatch."
   },
   "cross_language_en_fr": {
-    "status": "skipped",
-    "reason": "No EN/FR paired activation datasets found in data/.",
-    "expected_paths": [
-      [
-        "data/enfr_gemma3_4b_dataset.pt",
-        "data/enfr_llama_8b_dataset.pt"
-      ],
-      [
-        "data/gemma3_4b_enfr_dataset.pt",
-        "data/llama_8b_enfr_dataset.pt"
-      ]
-    ]
+    "status": "ok",
+    "pair_source": "benchmark_wmt14_fr_en",
+    "dataset_paths": {
+      "source": "data\\benchmarks\\wmt14_fr_en\\wmt14_fr_en__gemma_2_2b.pt",
+      "target": "data\\benchmarks\\wmt14_fr_en\\wmt14_fr_en__llama_3_2_3b_instruct.pt"
+    },
+    "en_fr_overlap": 0.6570121951219512
   }
 }

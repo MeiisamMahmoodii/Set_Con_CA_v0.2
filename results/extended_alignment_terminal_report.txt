@@ -2,7 +2,7 @@
 ========================================================================
 SetConCA Extended Alignment Terminal Report
 ========================================================================
-Elapsed: 194.2s
+Elapsed: 200.2s
 Run profile: FAST_EPOCHS=20, FAST_SEEDS=[42, 1337, 2024]
 Heavy baselines sample size: N=512
 
@@ -29,7 +29,8 @@ Heavy baselines sample size: N=512
 - big_to_mid:   0.6695 +/- 0.0425
 
 [Cross-Language EN/FR]
-- Status: skipped (No EN/FR paired activation datasets found in data/.)
+- EN/FR overlap: 0.6570
+- Datasets: data\benchmarks\wmt14_fr_en\wmt14_fr_en__gemma_2_2b.pt | data\benchmarks\wmt14_fr_en\wmt14_fr_en__llama_3_2_3b_instruct.pt
 
 JSON output: results\extended_alignment_results.json
 Text report: results\extended_alignment_terminal_report.txt
