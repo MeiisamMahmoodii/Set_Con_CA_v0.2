@@ -94,7 +94,7 @@ def train_setconca(data, concept_dim=CONCEPT_DIM, epochs=N_EPOCHS, lr=LR,
         for (xb,) in loader:
             xb = xb.to(DEVICE)
             opt.zero_grad()
-            loss, _ = compute_loss(model, xb, gamma=10.0, lambda_res=0.1)
+            loss, _ = compute_loss(model, xb)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
@@ -772,7 +772,7 @@ def exp9_consistency_ablation():
                 for (xb,) in loader:
                     xb = xb.to(DEVICE)
                     opt.zero_grad()
-                    loss, _ = compute_loss(model, xb, beta=beta, gamma=10.0, lambda_res=0.1)
+                    loss, _ = compute_loss(model, xb, beta=beta)
                     loss.backward()
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                     opt.step()
@@ -1173,7 +1173,7 @@ def exp15_soft_sparsity_consistency():
             for _ in range(N_EPOCHS):
                 for (xb,) in loader:
                     xb = xb.to(DEVICE); opt.zero_grad()
-                    loss, _ = compute_loss(model, xb, alpha=0.1, beta=beta, gamma=10.0, lambda_res=0.1)
+                    loss, _ = compute_loss(model, xb, alpha=0.1, beta=beta)
                     loss.backward(); opt.step()
             model.eval()
             with torch.no_grad():
