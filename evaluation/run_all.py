@@ -13,15 +13,15 @@ PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 sys.path.append(PROJECT_ROOT)
 sys.path.append(SCRIPT_DIR)
 
-from datasets.dataset_builder import build_dataset, SEED_DATA
+from dataset_utils.dataset_builder import build_dataset, SEED_DATA
 from runner.exp1_set_vs_pointwise import run_exp1
 from runner.exp2_set_size_scaling import run_exp2
 from runner.exp3_aggregator_ablation import run_exp3
 from runner.exp4_cross_model_transfer import run_exp4
 from runner.exp5_interventional_steering import run_exp5
 
-from datasets.extract_activations import ActivationExtractor
-from datasets.neighbors import build_anchor_neighbors
+from dataset_utils.extract_activations import ActivationExtractor
+from dataset_utils.neighbors import build_anchor_neighbors
 
 def extract_real_activations(dataset, model_name, layer, S=32):
     """

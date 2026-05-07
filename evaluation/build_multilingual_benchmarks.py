@@ -11,14 +11,14 @@ PROJECT_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from datasets.benchmark_builder import (
+from dataset_utils.benchmark_builder import (
     BENCH_DIR,
     build_records,
     sanitize_model_name,
     save_benchmark_manifest,
     save_record_manifest,
 )
-from datasets.extract_activations import ActivationExtractor
+from dataset_utils.extract_activations import ActivationExtractor
 
 
 try:

@@ -34,7 +34,7 @@ class SetConCA(nn.Module):
         return f_hat, z_hat, u
 
 
-def compute_loss(model, x, alpha=1e-3, beta=1e-2, gamma=10.0, lambda_res=0.1):
+def compute_loss(model, x, alpha=1e-3, beta=1e-2):
     # Step through internals explicitly to access u_bar for sparsity.
     u = model.encoder(x)
     z_hat, u_bar, u_res = model.aggregator(u)
@@ -56,8 +56,8 @@ def compute_loss(model, x, alpha=1e-3, beta=1e-2, gamma=10.0, lambda_res=0.1):
         f_hat_shared = model.decoder.shared(z_hat_sparse).unsqueeze(1) + model.decoder.b_d
         mse_shared = ((f_hat_shared - x) ** 2).mean()
         
-        # Weigh shared loss much higher than full/residual loss
-        mse = gamma * mse_shared + lambda_res * mse_full
+        # Match original math formulation: Total MSE is just MSE full
+        mse = mse_full
         spar = torch.tensor(0.0, device=x.device)
     else:
         # Standard Sigmoid + L1 Path
@@ -67,7 +67,8 @@ def compute_loss(model, x, alpha=1e-3, beta=1e-2, gamma=10.0, lambda_res=0.1):
         f_hat_shared = model.decoder.shared(z_hat).unsqueeze(1) + model.decoder.b_d
         mse_shared = ((f_hat_shared - x) ** 2).mean()
         
-        mse = gamma * mse_shared + lambda_res * mse_full
+        # Match original math formulation: Total MSE is just MSE full
+        mse = mse_full
         spar = alpha * sparsity_loss(u_bar)
 
     # Consistency: mean over batch
